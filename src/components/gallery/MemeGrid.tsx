@@ -1,0 +1,118 @@
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import MemeCard from './MemeCard'
+import MemeCardSkeleton from './MemeCardSkeleton'
+import Lightbox from './Lightbox'
+import type { Meme } from '@/types/meme'
+
+interface MemeGridProps {
+  memes: Meme[]
+  isLoading?: boolean
+  initialMemeId?: string | null
+}
+
+export default function MemeGrid({ memes, isLoading = false, initialMemeId }: MemeGridProps) {
+  const [lightboxMeme, setLightboxMeme] = useState<Meme | null>(null)
+  const [lightboxIndex, setLightboxIndex] = useState(0)
+  const [hasAutoOpened, setHasAutoOpened] = useState(false)
+
+  // Auto-open lightbox if initialMemeId is provided (from shared link)
+  useEffect(() => {
+    if (initialMemeId && memes.length > 0 && !hasAutoOpened) {
+      const meme = memes.find(m => m.id === initialMemeId)
+      if (meme) {
+        const index = memes.findIndex(m => m.id === initialMemeId)
+        setLightboxMeme(meme)
+        setLightboxIndex(index)
+        setHasAutoOpened(true)
+      }
+    }
+  }, [initialMemeId, memes, hasAutoOpened])
+
+  const openLightbox = (meme: Meme) => {
+    const index = memes.findIndex((m) => m.id === meme.id)
+    setLightboxMeme(meme)
+    setLightboxIndex(index)
+  }
+
+  const closeLightbox = () => {
+    setLightboxMeme(null)
+  }
+
+  const showNext = () => {
+    if (lightboxIndex < memes.length - 1) {
+      const nextIndex = lightboxIndex + 1
+      setLightboxIndex(nextIndex)
+      setLightboxMeme(memes[nextIndex])
+    }
+  }
+
+  const showPrevious = () => {
+    if (lightboxIndex > 0) {
+      const prevIndex = lightboxIndex - 1
+      setLightboxIndex(prevIndex)
+      setLightboxMeme(memes[prevIndex])
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {[...Array(8)].map((_, i) => (
+          <MemeCardSkeleton key={i} />
+        ))}
+      </div>
+    )
+  }
+
+  if (memes.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <div className="text-6xl mb-4">🤷‍♂️</div>
+        <h3 className="text-2xl font-bold text-gray-700 mb-2">
+          לא נמצאו גיחוכים
+        </h3>
+        <p className="text-gray-500">
+          נסו להסיר כמה מהפילטרים או צרו גיחוך חדש!
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.05
+            }
+          }
+        }}
+      >
+        {memes.map((meme) => (
+          <MemeCard
+            key={meme.id}
+            meme={meme}
+            onImageClick={() => openLightbox(meme)}
+          />
+        ))}
+      </motion.div>
+
+      {lightboxMeme && (
+        <Lightbox
+          meme={lightboxMeme}
+          isOpen={!!lightboxMeme}
+          onClose={closeLightbox}
+          onNext={lightboxIndex < memes.length - 1 ? showNext : undefined}
+          onPrevious={lightboxIndex > 0 ? showPrevious : undefined}
+        />
+      )}
+    </>
+  )
+}

@@ -1,0 +1,788 @@
+import { useRef, useEffect, useState, forwardRef, useImperativeHandle } from 'react'
+import { Stage, Layer, Image as KonvaImage, Text, Transformer, Line, Rect, Group } from 'react-konva'
+import { useEditorStore } from '@/stores/useEditorStore'
+import { getContrastColor } from '@/lib/utils'
+import useImage from 'use-image'
+import Konva from 'konva'
+import type { Sticker, Location } from '@/types/editor'
+
+interface CanvasEditorProps {
+  width?: number
+  height?: number
+}
+
+export interface CanvasEditorHandle {
+  getStage: () => Konva.Stage | null
+}
+
+// Text component with transformer
+function EditableText({
+  textBox,
+  isSelected,
+  onSelect,
+  onChange,
+  onDragMove,
+  onSnapDragEnd
+}: {
+  textBox: any
+  isSelected: boolean
+  onSelect: () => void
+  onChange: (attrs: any) => void
+  onDragMove?: (e: any) => void
+  onSnapDragEnd?: (e: any, onChange: (attrs: any) => void) => void
+}) {
+  const textRef = useRef<Konva.Text>(null)
+  const transformerRef = useRef<Konva.Transformer>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const hasTriggeredEdit = useRef(false)
+
+  useEffect(() => {
+    if (isSelected && transformerRef.current && textRef.current) {
+      transformerRef.current.nodes([textRef.current])
+      transformerRef.current.getLayer()?.batchDraw()
+    } else if (transformerRef.current) {
+      transformerRef.current.nodes([])
+      transformerRef.current.getLayer()?.batchDraw()
+    }
+  }, [isSelected])
+
+  // Auto-trigger edit mode for new text boxes
+  useEffect(() => {
+    if (textBox.isEditing && !hasTriggeredEdit.current && textRef.current) {
+      hasTriggeredEdit.current = true
+      onChange({ isEditing: false }) // Clear the flag
+      setTimeout(() => {
+        handleDoubleClick()
+      }, 100)
+    }
+  }, [textBox.isEditing])
+
+  const handleDoubleClick = () => {
+    const textNode = textRef.current
+    if (!textNode) return
+
+    const stage = textNode.getStage()
+    if (!stage) return
+
+    // Store original text for potential revert
+    const originalText = textBox.text
+
+    // Get text position and stage bounds
+    const textPosition = textNode.absolutePosition()
+    const stageBox = stage.container().getBoundingClientRect()
+
+    // Set editing state
+    setIsEditing(true)
+    onSelect()
+
+    // Directly clear the Konva text node (bypasses React)
+    textNode.text('')
+    textNode.getLayer()?.batchDraw()
+
+    // Create textarea
+
+    // Use actual text width (for wrapping around content) or max width
+    const maxWidth = textBox.width || 300
+    const actualTextWidth = textNode.width()
+    const textWidth = Math.min(actualTextWidth + 20, maxWidth) // Add padding, but don't exceed max
+    const textHeight = textNode.height()
+
+    const textarea = document.createElement('textarea')
+    document.body.appendChild(textarea)
+
+    textarea.value = textBox.text
+    textarea.style.position = 'absolute'
+    textarea.style.top = stageBox.top + textPosition.y + 'px'
+    textarea.style.left = stageBox.left + textPosition.x - textWidth / 2 + 'px'
+    textarea.style.width = textWidth + 'px'
+    textarea.style.fontSize = textBox.fontSize + 'px'
+    textarea.style.fontFamily = textBox.fontFamily
+    textarea.style.fontStyle = textBox.fontStyle || 'bold'
+    // White fill with black outline (matching canvas text)
+    textarea.style.color = '#FFFFFF'
+    textarea.style.textShadow = '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000'
+    textarea.style.border = '2px solid #4ECDC4'
+    textarea.style.padding = '4px'
+    textarea.style.margin = '0px'
+    textarea.style.overflow = 'hidden'
+    textarea.style.background = 'transparent'
+    textarea.style.outline = 'none'
+    textarea.style.resize = 'none'
+    textarea.style.lineHeight = '1.2'
+    textarea.style.transformOrigin = 'left top'
+    textarea.style.textAlign = 'center'
+    textarea.style.zIndex = '1000'
+
+    textarea.focus()
+    textarea.select()
+
+    const removeTextarea = () => {
+      textarea.parentNode?.removeChild(textarea)
+      setIsEditing(false) // React will show text again via visible={!isEditing}
+    }
+
+    const PLACEHOLDER_TEXT = 'כתוב כאן...'
+    let userHasTyped = false // Track if user actually typed anything
+
+    const handleTextSave = () => {
+      const newText = textarea.value.trim()
+      // If text is empty, revert to placeholder
+      if (newText === '') {
+        onChange({ text: PLACEHOLDER_TEXT, isPlaceholder: true })
+      } else if (userHasTyped) {
+        // User typed something - mark as real content even if it matches placeholder text
+        onChange({ text: newText, isPlaceholder: false })
+      } else {
+        // User never typed - text is still the original placeholder
+        onChange({ text: newText, isPlaceholder: true })
+      }
+      removeTextarea()
+    }
+
+    // Track any input to detect user typing
+    textarea.addEventListener('input', () => {
+      userHasTyped = true
+    })
+
+    textarea.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault()
+        handleTextSave()
+      }
+      if (e.key === 'Escape') {
+        // Escape reverts without saving
+        onChange({ text: originalText })
+        removeTextarea()
+      }
+    })
+
+    textarea.addEventListener('blur', () => {
+      handleTextSave()
+    })
+  }
+
+  // Calculate effective text color (auto-contrast when background is present)
+  const effectiveTextColor = textBox.isPlaceholder
+    ? '#999999'
+    : textBox.backgroundColor
+    ? getContrastColor(textBox.backgroundColor)
+    : textBox.color
+
+  // Get text dimensions for background
+  const textWidth = textBox.width || 300
+  const padding = textBox.backgroundPadding || 8
+  const textHeight = textRef.current?.height() || textBox.fontSize * 1.5
+
+  return (
+    <>
+      {/* Background Rectangle */}
+      {textBox.backgroundColor && !isEditing && (
+        <Rect
+          x={textBox.x - textWidth / 2 - padding}
+          y={textBox.y - padding}
+          width={textWidth + padding * 2}
+          height={textHeight + padding * 2}
+          fill={textBox.backgroundColor}
+          cornerRadius={4}
+          opacity={0.9}
+          rotation={textBox.rotation}
+        />
+      )}
+
+      <Text
+        ref={textRef}
+        text={textBox.text}
+        x={textBox.x}
+        y={textBox.y}
+        width={textWidth}
+        offsetX={textWidth / 2}
+        rotation={textBox.rotation}
+        fill={effectiveTextColor}
+        fontSize={textBox.fontSize}
+        fontFamily={textBox.fontFamily}
+        fontStyle={textBox.isPlaceholder ? 'italic' : (textBox.fontStyle || 'bold')}
+        stroke={textBox.stroke || '#000000'}
+        strokeWidth={textBox.strokeWidth || 1}
+        align="center"
+        verticalAlign="top"
+        wrap="word"
+        opacity={textBox.isPlaceholder ? 0.85 : 1}
+        draggable
+        visible={!isEditing}
+        onClick={() => {
+          if (isSelected) {
+            handleDoubleClick()
+          } else {
+            onSelect()
+          }
+        }}
+        onTap={() => {
+          if (isSelected) {
+            handleDoubleClick()
+          } else {
+            onSelect()
+          }
+        }}
+        onDblClick={handleDoubleClick}
+        onDblTap={handleDoubleClick}
+        onDragMove={onDragMove}
+        onDragEnd={(e) => {
+          if (onSnapDragEnd) {
+            onSnapDragEnd(e, onChange)
+          } else {
+            onChange({
+              x: e.target.x(),
+              y: e.target.y()
+            })
+          }
+        }}
+        onTransformEnd={() => {
+          const node = textRef.current
+          if (!node) return
+
+          const scaleX = node.scaleX()
+          const scaleY = node.scaleY()
+
+          // Reset scale
+          node.scaleX(1)
+          node.scaleY(1)
+
+          // Calculate new width and fontSize
+          const newWidth = Math.max(50, node.width() * scaleX)
+          const newFontSize = Math.max(12, textBox.fontSize * scaleY)
+
+          onChange({
+            x: node.x(),
+            y: node.y(),
+            width: newWidth,
+            fontSize: newFontSize,
+            rotation: node.rotation()
+          })
+        }}
+      />
+      {isSelected && (
+        <Transformer
+          ref={transformerRef}
+          rotationSnaps={[0, 45, 90, 135, 180, 225, 270, 315]}
+          rotateEnabled={true}
+          rotateAnchorOffset={20}
+          enabledAnchors={[
+            'top-left',
+            'top-right',
+            'bottom-left',
+            'bottom-right',
+            'middle-left',
+            'middle-right'
+          ]}
+          boundBoxFunc={(oldBox, newBox) => {
+            // Limit resize
+            if (newBox.width < 5 || newBox.height < 5) {
+              return oldBox
+            }
+            return newBox
+          }}
+        />
+      )}
+    </>
+  )
+}
+
+// Sticker component with transformer
+function EditableSticker({
+  sticker,
+  isSelected,
+  onSelect,
+  onChange,
+  onDragMove,
+  onSnapDragEnd
+}: {
+  sticker: Sticker
+  isSelected: boolean
+  onSelect: () => void
+  onChange: (attrs: any) => void
+  onDragMove?: (e: any) => void
+  onSnapDragEnd?: (e: any, onChange: (attrs: any) => void) => void
+}) {
+  const stickerRef = useRef<Konva.Text>(null)
+  const transformerRef = useRef<Konva.Transformer>(null)
+
+  useEffect(() => {
+    if (isSelected && transformerRef.current && stickerRef.current) {
+      transformerRef.current.nodes([stickerRef.current])
+      transformerRef.current.getLayer()?.batchDraw()
+    } else if (transformerRef.current) {
+      transformerRef.current.nodes([])
+      transformerRef.current.getLayer()?.batchDraw()
+    }
+  }, [isSelected])
+
+  return (
+    <>
+      <Text
+        ref={stickerRef}
+        text={sticker.emoji}
+        x={sticker.x}
+        y={sticker.y}
+        fontSize={sticker.size}
+        rotation={sticker.rotation}
+        draggable
+        onClick={onSelect}
+        onTap={onSelect}
+        onDragMove={onDragMove}
+        onDragEnd={(e) => {
+          if (onSnapDragEnd) {
+            onSnapDragEnd(e, onChange)
+          } else {
+            onChange({
+              x: e.target.x(),
+              y: e.target.y()
+            })
+          }
+        }}
+        onTransformEnd={() => {
+          const node = stickerRef.current
+          if (!node) return
+
+          const scaleX = node.scaleX()
+
+          // Reset scale and apply to fontSize
+          node.scaleX(1)
+          node.scaleY(1)
+
+          onChange({
+            x: node.x(),
+            y: node.y(),
+            size: Math.max(20, sticker.size * scaleX),
+            rotation: node.rotation()
+          })
+        }}
+      />
+      {isSelected && (
+        <Transformer
+          ref={transformerRef}
+          rotationSnaps={[0, 45, 90, 135, 180, 225, 270, 315]}
+          rotateEnabled={true}
+          rotateAnchorOffset={20}
+          enabledAnchors={[
+            'top-left',
+            'top-right',
+            'bottom-left',
+            'bottom-right'
+          ]}
+          boundBoxFunc={(oldBox, newBox) => {
+            if (newBox.width < 20 || newBox.height < 20) {
+              return oldBox
+            }
+            return newBox
+          }}
+        />
+      )}
+    </>
+  )
+}
+
+// Location component with transformer
+function EditableLocation({
+  location,
+  isSelected,
+  onSelect,
+  onChange,
+  onDragMove,
+  onSnapDragEnd
+}: {
+  location: Location
+  isSelected: boolean
+  onSelect: () => void
+  onChange: (attrs: Partial<Location>) => void
+  onDragMove?: (e: any) => void
+  onSnapDragEnd?: (e: any, onChange: (attrs: any) => void) => void
+}) {
+  const locationRef = useRef<Konva.Text>(null)
+  const transformerRef = useRef<Konva.Transformer>(null)
+
+  useEffect(() => {
+    if (isSelected && transformerRef.current && locationRef.current) {
+      transformerRef.current.nodes([locationRef.current])
+      transformerRef.current.getLayer()?.batchDraw()
+    } else if (transformerRef.current) {
+      transformerRef.current.nodes([])
+      transformerRef.current.getLayer()?.batchDraw()
+    }
+  }, [isSelected])
+
+  // Get short format: Street + City
+  const parts = location.display_name.split(',').map(p => p.trim())
+  const shortLocation = parts.length >= 2 ? `${parts[0]}, ${parts[1]}` : parts[0]
+
+  const locationWidth = 300
+
+  return (
+    <>
+      <Text
+        ref={locationRef}
+        text={`📍 ${shortLocation}`}
+        x={location.x || 0}
+        y={location.y || 0}
+        width={locationWidth}
+        offsetX={locationWidth / 2}
+        fontSize={location.fontSize || 24}
+        fill={location.color || '#FFFFFF'}
+        stroke="#000000"
+        strokeWidth={1}
+        fontFamily="IBM Plex Sans Hebrew"
+        fontStyle="bold"
+        rotation={location.rotation || 0}
+        align="center"
+        verticalAlign="top"
+        wrap="word"
+        draggable
+        onClick={onSelect}
+        onTap={onSelect}
+        onDragMove={onDragMove}
+        onDragEnd={(e) => {
+          if (onSnapDragEnd) {
+            onSnapDragEnd(e, onChange)
+          } else {
+            onChange({
+              x: e.target.x(),
+              y: e.target.y()
+            })
+          }
+        }}
+        onTransformEnd={() => {
+          const node = locationRef.current
+          if (!node) return
+
+          const scaleX = node.scaleX()
+          const scaleY = node.scaleY()
+
+          // Reset scale
+          node.scaleX(1)
+          node.scaleY(1)
+
+          // Calculate new fontSize based on vertical scale
+          const newFontSize = Math.max(12, (location.fontSize || 24) * scaleY)
+
+          onChange({
+            x: node.x(),
+            y: node.y(),
+            fontSize: newFontSize,
+            rotation: node.rotation()
+          })
+        }}
+      />
+      {isSelected && (
+        <Transformer
+          ref={transformerRef}
+          rotationSnaps={[0, 45, 90, 135, 180, 225, 270, 315]}
+          rotateEnabled={true}
+          rotateAnchorOffset={20}
+          enabledAnchors={[
+            'top-left',
+            'top-right',
+            'bottom-left',
+            'bottom-right',
+            'middle-left',
+            'middle-right'
+          ]}
+          boundBoxFunc={(oldBox, newBox) => {
+            if (newBox.width < 20 || newBox.height < 20) {
+              return oldBox
+            }
+            return newBox
+          }}
+        />
+      )}
+    </>
+  )
+}
+
+const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
+  ({ width = 800, height = 600 }, ref) => {
+    const {
+      currentImageUrl,
+      textBoxes,
+      stickers,
+      selectedLocation,
+      isLocationSelected,
+      selectedTextBoxId,
+      selectedStickerId,
+      selectTextBox,
+      updateTextBox,
+      selectSticker,
+      updateSticker,
+      selectLocation,
+      updateLocationTransform,
+      setCanvasDimensions
+    } = useEditorStore()
+
+    const [image] = useImage(currentImageUrl || '', 'anonymous')
+    const stageRef = useRef<Konva.Stage>(null)
+
+    // Snapping guides state
+    const [guides, setGuides] = useState<{ vertical: number | null; horizontal: number | null }>({
+      vertical: null,
+      horizontal: null
+    })
+    const SNAP_THRESHOLD = 10
+
+    // Expose stage ref to parent
+    useImperativeHandle(ref, () => ({
+      getStage: () => stageRef.current
+    }))
+
+  // Calculate canvas dimensions to fit image
+  const canvasDimensions = (() => {
+    if (!image) return { width, height }
+
+    const imgRatio = image.width / image.height
+    const canvasRatio = width / height
+
+    if (imgRatio > canvasRatio) {
+      // Image is wider
+      return {
+        width,
+        height: width / imgRatio
+      }
+    } else {
+      // Image is taller
+      return {
+        width: height * imgRatio,
+        height
+      }
+    }
+  })()
+
+  // Update canvas dimensions in store when they change
+  useEffect(() => {
+    if (image) {
+      setCanvasDimensions(canvasDimensions)
+    }
+  }, [canvasDimensions.width, canvasDimensions.height, image, setCanvasDimensions])
+
+  const handleStageClick = (e: any) => {
+    // Deselect when clicking on empty area or background image
+    const clickedOnEmpty = e.target === e.target.getStage()
+    const clickedOnImage = e.target.className === 'Image'
+
+    if (clickedOnEmpty || clickedOnImage) {
+      selectTextBox(null)
+      selectSticker(null)
+      selectLocation(false)
+    }
+  }
+
+  // Snapping to center
+  const handleDragMove = (e: any) => {
+    const node = e.target
+    const stage = node.getStage()
+    if (!stage) return
+
+    const centerX = canvasDimensions.width / 2
+    const centerY = canvasDimensions.height / 2
+
+    const nodeX = node.x()
+    const nodeY = node.y()
+
+    let newGuides = { vertical: null as number | null, horizontal: null as number | null }
+    let snappedX = nodeX
+    let snappedY = nodeY
+
+    // Check vertical snap (horizontal center line)
+    if (Math.abs(nodeX - centerX) < SNAP_THRESHOLD) {
+      snappedX = centerX
+      newGuides.vertical = centerX
+    }
+
+    // Check horizontal snap (vertical center line)
+    if (Math.abs(nodeY - centerY) < SNAP_THRESHOLD) {
+      snappedY = centerY
+      newGuides.horizontal = centerY
+    }
+
+    // Apply snapping
+    node.x(snappedX)
+    node.y(snappedY)
+
+    // Update guides
+    setGuides(newGuides)
+  }
+
+  const handleSnapDragEnd = (e: any, onChange: (attrs: any) => void) => {
+    // Clear guides
+    setGuides({ vertical: null, horizontal: null })
+
+    // Update position
+    onChange({
+      x: e.target.x(),
+      y: e.target.y()
+    })
+  }
+
+  // Two-finger gesture tracking
+  const lastDist = useRef<number>(0)
+  const lastAngle = useRef<number>(0)
+
+  const getDistance = (p1: { x: number; y: number }, p2: { x: number; y: number }) => {
+    return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2))
+  }
+
+  const getAngle = (p1: { x: number; y: number }, p2: { x: number; y: number }) => {
+    return Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI
+  }
+
+  const handleTouchMove = (e: any) => {
+    e.evt.preventDefault()
+    const stage = stageRef.current
+    if (!stage) return
+
+    const touch1 = e.evt.touches[0]
+    const touch2 = e.evt.touches[1]
+
+    // Only handle two-finger gestures
+    if (!touch1 || !touch2) {
+      lastDist.current = 0
+      lastAngle.current = 0
+      return
+    }
+
+    const p1 = { x: touch1.clientX, y: touch1.clientY }
+    const p2 = { x: touch2.clientX, y: touch2.clientY }
+
+    const newDist = getDistance(p1, p2)
+    const newAngle = getAngle(p1, p2)
+
+    if (lastDist.current > 0) {
+      // Apply pinch-to-zoom
+      const scale = newDist / lastDist.current
+
+      // Apply rotation
+      const rotation = newAngle - lastAngle.current
+
+      // Apply to selected element
+      if (selectedTextBoxId) {
+        const textBox = textBoxes.find(tb => tb.id === selectedTextBoxId)
+        if (textBox) {
+          updateTextBox(selectedTextBoxId, {
+            fontSize: Math.max(12, Math.min(200, textBox.fontSize * scale)),
+            width: Math.max(50, (textBox.width || 300) * scale),
+            rotation: (textBox.rotation + rotation) % 360
+          })
+        }
+      } else if (selectedStickerId) {
+        const sticker = stickers.find(s => s.id === selectedStickerId)
+        if (sticker) {
+          updateSticker(selectedStickerId, {
+            size: Math.max(20, Math.min(200, sticker.size * scale)),
+            rotation: (sticker.rotation + rotation) % 360
+          })
+        }
+      } else if (isLocationSelected && selectedLocation) {
+        updateLocationTransform({
+          fontSize: Math.max(12, Math.min(100, (selectedLocation.fontSize || 24) * scale)),
+          rotation: ((selectedLocation.rotation || 0) + rotation) % 360
+        })
+      }
+    }
+
+    lastDist.current = newDist
+    lastAngle.current = newAngle
+  }
+
+  const handleTouchEnd = () => {
+    lastDist.current = 0
+    lastAngle.current = 0
+  }
+
+  return (
+    <div className="flex justify-center items-center bg-gray-100 rounded-lg p-4">
+      <Stage
+        ref={stageRef}
+        width={canvasDimensions.width}
+        height={canvasDimensions.height}
+        onClick={handleStageClick}
+        onTap={handleStageClick}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        className="bg-white shadow-lg"
+      >
+        <Layer>
+          {/* Background Image */}
+          {image && (
+            <KonvaImage
+              image={image}
+              width={canvasDimensions.width}
+              height={canvasDimensions.height}
+            />
+          )}
+
+          {/* Text Boxes */}
+          {textBoxes.map((textBox) => (
+            <EditableText
+              key={textBox.id}
+              textBox={textBox}
+              isSelected={textBox.id === selectedTextBoxId}
+              onSelect={() => selectTextBox(textBox.id)}
+              onChange={(attrs) => updateTextBox(textBox.id, attrs)}
+              onDragMove={handleDragMove}
+              onSnapDragEnd={handleSnapDragEnd}
+            />
+          ))}
+
+          {/* Stickers */}
+          {stickers.map((sticker) => (
+            <EditableSticker
+              key={sticker.id}
+              sticker={sticker}
+              isSelected={sticker.id === selectedStickerId}
+              onSelect={() => selectSticker(sticker.id)}
+              onChange={(attrs) => updateSticker(sticker.id, attrs)}
+              onDragMove={handleDragMove}
+              onSnapDragEnd={handleSnapDragEnd}
+            />
+          ))}
+
+          {/* Location - draggable and resizable when addToMeme is checked */}
+          {selectedLocation && selectedLocation.addToMeme && (
+            <EditableLocation
+              location={{
+                ...selectedLocation,
+                x: selectedLocation.x || canvasDimensions.width / 2 - 100,
+                y: selectedLocation.y || canvasDimensions.height - 60
+              }}
+              isSelected={isLocationSelected}
+              onSelect={() => selectLocation(true)}
+              onChange={(attrs) => updateLocationTransform(attrs)}
+              onDragMove={handleDragMove}
+              onSnapDragEnd={handleSnapDragEnd}
+            />
+          )}
+
+          {/* Snap Guides */}
+          {guides.vertical !== null && (
+            <Line
+              points={[guides.vertical, 0, guides.vertical, canvasDimensions.height]}
+              stroke="#4ECDC4"
+              strokeWidth={2}
+              dash={[4, 6]}
+              listening={false}
+            />
+          )}
+          {guides.horizontal !== null && (
+            <Line
+              points={[0, guides.horizontal, canvasDimensions.width, guides.horizontal]}
+              stroke="#4ECDC4"
+              strokeWidth={2}
+              dash={[4, 6]}
+              listening={false}
+            />
+          )}
+        </Layer>
+      </Stage>
+    </div>
+  )
+})
+
+CanvasEditor.displayName = 'CanvasEditor'
+
+export default CanvasEditor

@@ -1,0 +1,52 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'iddonaim@gmail.com';
+    }
+
+    // Memes collection
+    match /memes/{memeId} {
+      // Anyone can read memes
+      allow read: if true;
+
+      // Anyone can create memes (anonymous users)
+      allow create: if true;
+
+      // Anyone can update ONLY the likes field; admin can update anything
+      allow update: if isAdmin() ||
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes']));
+
+      // Only admin can delete memes
+      allow delete: if isAdmin();
+    }
+
+    // Templates collection (future use)
+    match /templates/{templateId} {
+      // Anyone can read templates
+      allow read: if true;
+
+      // Only admin can create/update/delete templates
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Analytics collection (future use)
+    match /analytics/{docId} {
+      // Only admin can read/write analytics
+      allow read, write: if isAdmin();
+    }
+
+    // Contact messages collection
+    match /contact_messages/{messageId} {
+      // Anyone can create contact messages (anonymous users)
+      allow create: if true;
+
+      // Only admin can read/update/delete messages
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

@@ -1,0 +1,34 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'iddonaim@gmail.com';
+    }
+
+    // Meme images
+    match /memes/{imageId} {
+      // Anyone can read images
+      allow read: if true;
+
+      // Anyone can upload images with restrictions
+      allow create: if request.resource.size < 20 * 1024 * 1024  // 20MB limit
+        && request.resource.contentType.matches('image/.*');      // Only images
+
+      // Only admin can update/delete images
+      allow update, delete: if isAdmin();
+    }
+
+    // Template images
+    match /templates/{imageId} {
+      // Anyone can read template images
+      allow read: if true;
+
+      // Only admin can create/update/delete templates
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}
