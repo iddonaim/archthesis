@@ -39,21 +39,9 @@ src/
 └── App.tsx          # Main app with routing
 ```
 
-## 🎯 Current Status
+## About
 
-**Completed:**
-- ✅ Week 1: Foundation, Firebase setup, Design system
-- ✅ Week 2 Day 8-10: Gallery page with real-time Firebase
-
-**In Progress:**
-- 🔄 Week 2 Day 11-14: Homepage enhancements & lazy loading
-
-**Upcoming:**
-- Week 3-4: Canvas editor with Konva.js
-- Week 5: Admin panel & testing
-- Week 6: Deploy to production
-
-See `SESSION_NOTES.md` for detailed progress.
+**מכונת הגיחוך וההגחה** (The Meme Machine) is a live participatory meme platform built as part of an architecture thesis exploring collective humour, spatial politics, and Hebrew internet culture. Anyone can create and publish memes using the canvas editor, browse the community gallery, and react to submissions in real time. The project is fully deployed and actively used — visit it at [memes.iddonaim.com](https://memes.iddonaim.com).
 
 ## 🔥 Firebase Configuration
 
@@ -89,8 +77,8 @@ Custom Tailwind theme:
 
 - `/` - Homepage (hero, features, CTA)
 - `/gallery` - Meme gallery with real-time updates
-- `/create` - Meme editor (Week 3-4)
-- `/admin` - Admin panel (Week 5)
+- `/create` - Meme editor
+- `/admin` - Admin panel
 
 ## 📄 License
 
