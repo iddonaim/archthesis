@@ -58,7 +58,6 @@ See `SESSION_NOTES.md` for detailed progress.
 ## 🔥 Firebase Configuration
 
 Uses the same Firebase project as the original site:
-- Project ID: `adaptivememeticarchitect-2776f`
 - Collections: `memes`
 - Storage bucket: User-uploaded images
 - **No data migration needed** - existing memes will work
@@ -85,7 +84,6 @@ Custom Tailwind theme:
 ## 📚 Documentation
 
 - `SESSION_NOTES.md` - Detailed session progress and next steps
-- Migration plan: `/Users/kageyoshiki/.claude/plans/sequential-purring-moon.md`
 
 ## 🌐 Routes
 

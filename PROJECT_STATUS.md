@@ -434,7 +434,6 @@ npm run lint         # Run ESLint
 
 ### External Resources
 - [Live Application](https://adaptivememeticarchitect-2776f.web.app)
-- [Firebase Console](https://console.firebase.google.com/project/adaptivememeticarchitect-2776f)
 - [React Documentation](https://react.dev/)
 - [Firebase Documentation](https://firebase.google.com/docs)
 - [Konva.js Documentation](https://konvajs.org/docs/)

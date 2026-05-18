@@ -7,7 +7,7 @@ This guide will help you set up Firebase Authentication and deploy security rule
 ## Prerequisites
 
 - Firebase account
-- Firebase project: `adaptivememeticarchitect-2776f`
+- Firebase project: `<your-project-id>`
 - Firebase CLI installed (or we'll install it now)
 
 ---
@@ -38,7 +38,7 @@ This will open a browser window. Sign in with your Google account.
 ## Step 3: Initialize Firebase (One-Time Setup)
 
 ```bash
-cd /Users/kageyoshiki/downloads/archthesis/archthesis-react
+cd your-project-directory
 firebase init
 ```
 
@@ -50,7 +50,7 @@ When prompted:
    - ✓ Hosting (optional, for deployment)
 
 2. **Select a project:**
-   - Choose existing project: `adaptivememeticarchitect-2776f`
+   - Choose existing project: `<your-project-id>`
 
 3. **Firestore rules file:**
    - Use default: `firestore.rules` (already exists)
@@ -77,7 +77,7 @@ When prompted:
 ### Via Firebase Console (Recommended)
 
 1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Select project: `adaptivememeticarchitect-2776f`
+2. Select project: `<your-project-id>`
 3. Click **Authentication** in left sidebar
 4. Click **Get Started** (if first time)
 5. Go to **Users** tab
@@ -122,7 +122,7 @@ Expected output:
 ```
 ✔ Deploy complete!
 
-Project Console: https://console.firebase.google.com/project/adaptivememeticarchitect-2776f/overview
+Project Console: https://console.firebase.google.com/project/<your-project-id>/overview
 ```
 
 ---
@@ -273,7 +273,7 @@ If using different Firebase project for production:
 | Deploy hosting | `firebase deploy --only hosting` |
 | Deploy all | `firebase deploy` |
 | View projects | `firebase projects:list` |
-| Use project | `firebase use adaptivememeticarchitect-2776f` |
+| Use project | `firebase use <your-project-id>` |
 
 ---
 
@@ -281,7 +281,7 @@ If using different Firebase project for production:
 
 - Firebase Docs: https://firebase.google.com/docs
 - Firebase Console: https://console.firebase.google.com
-- Project Console: https://console.firebase.google.com/project/adaptivememeticarchitect-2776f
+- Project Console: https://console.firebase.google.com/project/<your-project-id>
 
 ---
 
