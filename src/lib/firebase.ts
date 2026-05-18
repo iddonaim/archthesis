@@ -17,13 +17,22 @@ const firebaseConfig: FirebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
 
-// Initialize App Check with reCAPTCHA v3
-// This provides bot protection for Firestore, Storage, and other Firebase services
-// Currently in monitoring mode - collects data but doesn't block requests
+// Initialize App Check with reCAPTCHA v3.
+// Currently in MONITORING MODE — collects data but does not block requests.
+//
+// To switch to ENFORCEMENT MODE (blocks unauthenticated API calls):
+//   1. Confirm VITE_RECAPTCHA_SITE_KEY is set in your .env file.
+//      The reCAPTCHA site key is public by design — safe to expose in frontend code.
+//   2. Go to Firebase Console → App Check → Apps → archthesis (web)
+//      and click "Enforce" for Firestore and Storage.
+//   3. No code change needed here — enforcement is toggled in the Firebase Console only.
+//
+// Do NOT enforce before verifying the site key is working (check the App Check
+// monitoring dashboard for successful token requests from real users first).
 if (typeof window !== 'undefined') {
   initializeAppCheck(app, {
     provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),
-    isTokenAutoRefreshEnabled: true // Automatically refresh tokens
+    isTokenAutoRefreshEnabled: true
   })
 }
 

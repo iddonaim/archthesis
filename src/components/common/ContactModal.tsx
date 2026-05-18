@@ -69,6 +69,7 @@ export default function ContactModal({ isOpen, onClose, source = 'unknown' }: Co
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="השאר ריק לאנונימיות"
+            maxLength={100}
             disabled={isSubmitting}
           />
         </div>
@@ -83,6 +84,7 @@ export default function ContactModal({ isOpen, onClose, source = 'unknown' }: Co
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="אם תרצה תשובה"
+            maxLength={200}
             disabled={isSubmitting}
           />
         </div>
@@ -98,6 +100,7 @@ export default function ContactModal({ isOpen, onClose, source = 'unknown' }: Co
             placeholder="שאלה, הצעה, או כל דבר אחר..."
             rows={5}
             required
+            maxLength={5000}
             disabled={isSubmitting}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-right disabled:bg-gray-100 disabled:cursor-not-allowed"
           />
