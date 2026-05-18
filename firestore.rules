@@ -3,10 +3,13 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to check if user is admin
+    // Helper function to check if user is admin.
+    // Admin status is granted via a Firebase Custom Claim (admin: true) set
+    // through the Firebase Admin SDK — never hardcoded here.
+    // To grant admin: admin.auth().setCustomUserClaims(uid, { admin: true })
     function isAdmin() {
       return request.auth != null
-        && request.auth.token.email == 'REDACTED_ADMIN_EMAIL';
+        && request.auth.token.admin == true;
     }
 
     // Memes collection
