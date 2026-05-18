@@ -375,9 +375,6 @@ Major content restructure of Privacy Policy and Terms of Service. Implemented us
 6. **✅ Creator Footer** (simple credits)
 
 ### 3. Source Document
-**File Referenced:**
-- `/users/kageyoshiki/downloads/tos_privacy_updates_030126.mkd`
-
 **Content Structure:**
 - Lines 1-18: TL;DR section ("כמה מילים לפני שמתחילים")
 - Lines 21-104: Full legal section (9 numbered parts)
@@ -1304,7 +1301,6 @@ Completed Week 5 (Admin Console, PWA, Optimization, Testing) and Week 6 (Securit
 **Live URLs:**
 - Production: `https://adaptivememeticarchitect-2776f.web.app`
 - Alternative: `https://adaptivememeticarchitect-2776f.firebaseapp.com`
-- Console: `https://console.firebase.google.com/project/adaptivememeticarchitect-2776f`
 
 ---
 

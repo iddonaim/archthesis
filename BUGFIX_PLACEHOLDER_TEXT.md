@@ -329,7 +329,7 @@ if (newText === '' || PLACEHOLDER_TEXTS.includes(newText)) {
 
 ## Contributors
 
-- **Issue Reported**: Project owner (kageyoshiki)
+- **Issue Reported**: Project owner
 - **Analysis & Implementation**: Claude Code (Anthropic)
 - **Testing**: Automated build + Manual validation
 - **Deployment**: Firebase Hosting
@@ -340,7 +340,6 @@ if (newText === '' || PLACEHOLDER_TEXTS.includes(newText)) {
 
 - [Project Status](./PROJECT_STATUS.md)
 - [Changelog](./CHANGELOG.md)
-- [Firebase Console](https://console.firebase.google.com/project/adaptivememeticarchitect-2776f)
 - [Live Application](https://adaptivememeticarchitect-2776f.web.app)
 
 ---
