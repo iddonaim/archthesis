@@ -11,18 +11,29 @@ interface MemeGridProps {
   memes: Meme[]
   isLoading?: boolean
   initialMemeId?: string | null
+  selectedTags?: string[]
+  searchQuery?: string
+  sortBy?: string
 }
 
-export default function MemeGrid({ memes, isLoading = false, initialMemeId }: MemeGridProps) {
+export default function MemeGrid({
+  memes,
+  isLoading = false,
+  initialMemeId,
+  selectedTags,
+  searchQuery,
+  sortBy
+}: MemeGridProps) {
   const [lightboxMeme, setLightboxMeme] = useState<Meme | null>(null)
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [hasAutoOpened, setHasAutoOpened] = useState(false)
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
-  // Reset visible count when the memes list changes (e.g. filter/sort applied)
+  // Reset visible count only when the active filter or sort order changes
+  const serializedTags = selectedTags ? selectedTags.join(',') : ''
   useEffect(() => {
     setVisibleCount(PAGE_SIZE)
-  }, [memes])
+  }, [serializedTags, searchQuery, sortBy])
 
   // Auto-open lightbox if initialMemeId is provided (from shared link)
   useEffect(() => {

@@ -241,7 +241,13 @@ export default function GalleryPage() {
         </div>
 
         {/* Meme Grid */}
-        <MemeGrid memes={filteredAndSortedMemes} initialMemeId={initialMemeId} />
+        <MemeGrid
+          memes={filteredAndSortedMemes}
+          initialMemeId={initialMemeId}
+          selectedTags={selectedTags}
+          searchQuery={searchQuery}
+          sortBy={sortBy}
+        />
       </div>
     </Layout>
   )
