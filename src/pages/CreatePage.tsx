@@ -34,7 +34,9 @@ export default function CreatePage() {
     username,
     description
   } = useEditorStore()
-  const { scene, undo, redo, canUndo, canRedo, reset: resetScene } = useSceneStore()
+  const { scene, undo, redo, reset: resetScene } = useSceneStore()
+  const past = useSceneStore((state) => state.past)
+  const future = useSceneStore((state) => state.future)
   const [activeTab, setActiveTab] = useState<EditorTab>('text')
   const [isExpanded, setIsExpanded] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
@@ -324,7 +326,7 @@ export default function CreatePage() {
               <Button
                 variant="outline"
                 onClick={undo}
-                disabled={!canUndo()}
+                disabled={past.length === 0}
                 className="flex-1 sm:flex-initial flex items-center justify-center p-2 min-w-[44px]"
                 title="ביטול פעולה אחרונה"
               >
@@ -333,7 +335,7 @@ export default function CreatePage() {
               <Button
                 variant="outline"
                 onClick={redo}
-                disabled={!canRedo()}
+                disabled={future.length === 0}
                 className="flex-1 sm:flex-initial flex items-center justify-center p-2 min-w-[44px]"
                 title="ביצוע שוב של הפעולה"
               >

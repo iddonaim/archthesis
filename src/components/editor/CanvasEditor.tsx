@@ -25,7 +25,8 @@ function EditableText({
   onChange,
   onDragStart,
   onDragMove,
-  onSnapDragEnd
+  onSnapDragEnd,
+  onTransformEnd
 }: {
   textBox: any
   isSelected: boolean
@@ -34,6 +35,7 @@ function EditableText({
   onDragStart?: () => void
   onDragMove?: (e: any) => void
   onSnapDragEnd?: (e: any, onChange: (attrs: any) => void) => void
+  onTransformEnd?: () => void
 }) {
   const textRef = useRef<Konva.Text>(null)
   const transformerRef = useRef<Konva.Transformer>(null)
@@ -265,6 +267,10 @@ function EditableText({
             fontSize: newFontSize,
             rotation: node.rotation()
           })
+
+          if (onTransformEnd) {
+            onTransformEnd()
+          }
         }}
       />
       {isSelected && (
@@ -302,7 +308,8 @@ function EditableSticker({
   onChange,
   onDragStart,
   onDragMove,
-  onSnapDragEnd
+  onSnapDragEnd,
+  onTransformEnd
 }: {
   sticker: Sticker
   isSelected: boolean
@@ -311,6 +318,7 @@ function EditableSticker({
   onDragStart?: () => void
   onDragMove?: (e: any) => void
   onSnapDragEnd?: (e: any, onChange: (attrs: any) => void) => void
+  onTransformEnd?: () => void
 }) {
   const stickerRef = useRef<Konva.Text>(null)
   const transformerRef = useRef<Konva.Transformer>(null)
@@ -366,6 +374,10 @@ function EditableSticker({
             size: Math.max(20, sticker.size * scaleX),
             rotation: node.rotation()
           })
+
+          if (onTransformEnd) {
+            onTransformEnd()
+          }
         }}
       />
       {isSelected && (
@@ -400,7 +412,8 @@ function EditableLocation({
   onChange,
   onDragStart,
   onDragMove,
-  onSnapDragEnd
+  onSnapDragEnd,
+  onTransformEnd
 }: {
   location: Location
   isSelected: boolean
@@ -409,6 +422,7 @@ function EditableLocation({
   onDragStart?: () => void
   onDragMove?: (e: any) => void
   onSnapDragEnd?: (e: any, onChange: (attrs: any) => void) => void
+  onTransformEnd?: () => void
 }) {
   const locationRef = useRef<Konva.Text>(null)
   const transformerRef = useRef<Konva.Transformer>(null)
@@ -484,6 +498,10 @@ function EditableLocation({
             fontSize: newFontSize,
             rotation: node.rotation()
           })
+
+          if (onTransformEnd) {
+            onTransformEnd()
+          }
         }}
       />
       {isSelected && (
@@ -627,6 +645,9 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
       x: e.target.x(),
       y: e.target.y()
     })
+
+    // Commit drag transaction
+    commitTransaction()
   }
 
   // Two-finger gesture tracking
@@ -741,6 +762,7 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
                   onDragStart={() => beginTransaction()}
                   onDragMove={handleDragMove}
                   onSnapDragEnd={handleSnapDragEnd}
+                  onTransformEnd={() => commitTransaction()}
                 />
               )
             } else if (element.type === 'emoji') {
@@ -768,6 +790,7 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
                   onDragStart={() => beginTransaction()}
                   onDragMove={handleDragMove}
                   onSnapDragEnd={handleSnapDragEnd}
+                  onTransformEnd={() => commitTransaction()}
                 />
               )
             } else if (element.type === 'location') {
@@ -797,6 +820,7 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
                   onDragStart={() => beginTransaction()}
                   onDragMove={handleDragMove}
                   onSnapDragEnd={handleSnapDragEnd}
+                  onTransformEnd={() => commitTransaction()}
                 />
               )
             }
