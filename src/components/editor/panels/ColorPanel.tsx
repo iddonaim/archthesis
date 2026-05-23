@@ -1,5 +1,6 @@
 import { Palette, X } from 'lucide-react'
-import { useEditorStore } from '@/stores/useEditorStore'
+import { useSceneStore } from '@/stores/useSceneStore'
+import type { TextElement } from '@/types/scene'
 
 const PRESET_COLORS = [
   '#FFFFFF', // White
@@ -15,15 +16,14 @@ const PRESET_COLORS = [
 ]
 
 export default function ColorPanel() {
-  const {
-    textBoxes,
-    selectedTextBoxId,
-    updateTextBox
-  } = useEditorStore()
+  const { scene, updateElement } = useSceneStore()
 
-  const selectedTextBox = textBoxes.find(tb => tb.id === selectedTextBoxId)
+  const selectedId = scene.selection[0]
+  const selectedTextBox = scene.elements.find(
+    (el): el is TextElement => el.id === selectedId && el.type === 'text'
+  )
 
-  if (!selectedTextBox) {
+  if (!selectedTextBox || !selectedId) {
     return (
       <div className="text-center py-8 text-gray-500 text-sm">
         בחרו טקסט כדי לשנות צבעים
@@ -32,11 +32,11 @@ export default function ColorPanel() {
   }
 
   const handleColorChange = (color: string) => {
-    updateTextBox(selectedTextBoxId!, { color })
+    updateElement(selectedId, { color })
   }
 
   const handleStrokeChange = (stroke: string) => {
-    updateTextBox(selectedTextBoxId!, { stroke })
+    updateElement(selectedId, { stroke })
   }
 
   return (
@@ -112,7 +112,7 @@ export default function ColorPanel() {
           min="0"
           max="10"
           value={selectedTextBox.strokeWidth || 0}
-          onChange={(e) => updateTextBox(selectedTextBoxId!, {
+          onChange={(e) => updateElement(selectedId, {
             strokeWidth: Number(e.target.value)
           })}
           className="w-full"
@@ -127,7 +127,7 @@ export default function ColorPanel() {
         <div className="grid grid-cols-6 gap-2 mb-3">
           {/* Transparent option */}
           <button
-            onClick={() => updateTextBox(selectedTextBoxId!, { backgroundColor: undefined })}
+            onClick={() => updateElement(selectedId, { backgroundColor: undefined })}
             className={`w-full aspect-square rounded-lg border-2 transition-all flex items-center justify-center ${
               !selectedTextBox.backgroundColor
                 ? 'border-primary bg-gray-50'
@@ -142,7 +142,7 @@ export default function ColorPanel() {
           {['#FFFFFF', '#000000', '#FFFF00', '#FF6B6B', '#4ECDC4'].map((color) => (
             <button
               key={`bg-${color}`}
-              onClick={() => updateTextBox(selectedTextBoxId!, { backgroundColor: color })}
+              onClick={() => updateElement(selectedId, { backgroundColor: color })}
               className={`w-full aspect-square rounded-lg border-2 transition-all ${
                 selectedTextBox.backgroundColor === color
                   ? 'border-primary scale-110'
@@ -157,7 +157,7 @@ export default function ColorPanel() {
           <input
             type="color"
             value={selectedTextBox.backgroundColor}
-            onChange={(e) => updateTextBox(selectedTextBoxId!, { backgroundColor: e.target.value })}
+            onChange={(e) => updateElement(selectedId, { backgroundColor: e.target.value })}
             className="w-full h-10 rounded cursor-pointer"
           />
         )}

@@ -1,6 +1,8 @@
 import { useRef, useEffect, useState, forwardRef, useImperativeHandle } from 'react'
 import { Stage, Layer, Image as KonvaImage, Text, Transformer, Line, Rect, Group } from 'react-konva'
 import { useEditorStore } from '@/stores/useEditorStore'
+import { useSceneStore } from '@/stores/useSceneStore'
+import type { TextElement, EmojiElement, LocationElement } from '@/types/scene'
 import { getContrastColor } from '@/lib/utils'
 import useImage from 'use-image'
 import Konva from 'konva'
@@ -21,6 +23,7 @@ function EditableText({
   isSelected,
   onSelect,
   onChange,
+  onDragStart,
   onDragMove,
   onSnapDragEnd
 }: {
@@ -28,6 +31,7 @@ function EditableText({
   isSelected: boolean
   onSelect: () => void
   onChange: (attrs: any) => void
+  onDragStart?: () => void
   onDragMove?: (e: any) => void
   onSnapDragEnd?: (e: any, onChange: (attrs: any) => void) => void
 }) {
@@ -209,6 +213,8 @@ function EditableText({
         wrap="word"
         opacity={textBox.isPlaceholder ? 0.85 : 1}
         draggable
+        onDragStart={onDragStart}
+        onTransformStart={onDragStart}
         visible={!isEditing}
         onClick={() => {
           if (isSelected) {
@@ -294,6 +300,7 @@ function EditableSticker({
   isSelected,
   onSelect,
   onChange,
+  onDragStart,
   onDragMove,
   onSnapDragEnd
 }: {
@@ -301,6 +308,7 @@ function EditableSticker({
   isSelected: boolean
   onSelect: () => void
   onChange: (attrs: any) => void
+  onDragStart?: () => void
   onDragMove?: (e: any) => void
   onSnapDragEnd?: (e: any, onChange: (attrs: any) => void) => void
 }) {
@@ -327,6 +335,8 @@ function EditableSticker({
         fontSize={sticker.size}
         rotation={sticker.rotation}
         draggable
+        onDragStart={onDragStart}
+        onTransformStart={onDragStart}
         onClick={onSelect}
         onTap={onSelect}
         onDragMove={onDragMove}
@@ -388,6 +398,7 @@ function EditableLocation({
   isSelected,
   onSelect,
   onChange,
+  onDragStart,
   onDragMove,
   onSnapDragEnd
 }: {
@@ -395,6 +406,7 @@ function EditableLocation({
   isSelected: boolean
   onSelect: () => void
   onChange: (attrs: Partial<Location>) => void
+  onDragStart?: () => void
   onDragMove?: (e: any) => void
   onSnapDragEnd?: (e: any, onChange: (attrs: any) => void) => void
 }) {
@@ -437,6 +449,8 @@ function EditableLocation({
         verticalAlign="top"
         wrap="word"
         draggable
+        onDragStart={onDragStart}
+        onTransformStart={onDragStart}
         onClick={onSelect}
         onTap={onSelect}
         onDragMove={onDragMove}
@@ -502,20 +516,17 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
   ({ width = 800, height = 600 }, ref) => {
     const {
       currentImageUrl,
-      textBoxes,
-      stickers,
       selectedLocation,
-      isLocationSelected,
-      selectedTextBoxId,
-      selectedStickerId,
-      selectTextBox,
-      updateTextBox,
-      selectSticker,
-      updateSticker,
-      selectLocation,
-      updateLocationTransform,
       setCanvasDimensions
     } = useEditorStore()
+
+    const {
+      scene,
+      selectOne,
+      updateElement,
+      beginTransaction,
+      commitTransaction
+    } = useSceneStore()
 
     const [image] = useImage(currentImageUrl || '', 'anonymous')
     const stageRef = useRef<Konva.Stage>(null)
@@ -567,9 +578,7 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
     const clickedOnImage = e.target.className === 'Image'
 
     if (clickedOnEmpty || clickedOnImage) {
-      selectTextBox(null)
-      selectSticker(null)
-      selectLocation(false)
+      selectOne(null)
     }
   }
 
@@ -661,28 +670,29 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
       const rotation = newAngle - lastAngle.current
 
       // Apply to selected element
-      if (selectedTextBoxId) {
-        const textBox = textBoxes.find(tb => tb.id === selectedTextBoxId)
-        if (textBox) {
-          updateTextBox(selectedTextBoxId, {
-            fontSize: Math.max(12, Math.min(200, textBox.fontSize * scale)),
-            width: Math.max(50, (textBox.width || 300) * scale),
-            rotation: (textBox.rotation + rotation) % 360
-          })
+      const selectedId = scene.selection[0]
+      if (selectedId) {
+        const selectedEl = scene.elements.find((el) => el.id === selectedId)
+        if (selectedEl) {
+          beginTransaction()
+          if (selectedEl.type === 'text') {
+            updateElement(selectedId, {
+              fontSize: Math.max(12, Math.min(200, selectedEl.fontSize * scale)),
+              width: Math.max(50, (selectedEl.width || 300) * scale),
+              rotation: (selectedEl.rotation + rotation) % 360
+            })
+          } else if (selectedEl.type === 'emoji') {
+            updateElement(selectedId, {
+              size: Math.max(20, Math.min(200, selectedEl.size * scale)),
+              rotation: (selectedEl.rotation + rotation) % 360
+            })
+          } else if (selectedEl.type === 'location') {
+            updateElement(selectedId, {
+              fontSize: Math.max(12, Math.min(100, (selectedEl.fontSize || 24) * scale)),
+              rotation: ((selectedEl.rotation || 0) + rotation) % 360
+            })
+          }
         }
-      } else if (selectedStickerId) {
-        const sticker = stickers.find(s => s.id === selectedStickerId)
-        if (sticker) {
-          updateSticker(selectedStickerId, {
-            size: Math.max(20, Math.min(200, sticker.size * scale)),
-            rotation: (sticker.rotation + rotation) % 360
-          })
-        }
-      } else if (isLocationSelected && selectedLocation) {
-        updateLocationTransform({
-          fontSize: Math.max(12, Math.min(100, (selectedLocation.fontSize || 24) * scale)),
-          rotation: ((selectedLocation.rotation || 0) + rotation) % 360
-        })
       }
     }
 
@@ -693,6 +703,7 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
   const handleTouchEnd = () => {
     lastDist.current = 0
     lastAngle.current = 0
+    commitTransaction()
   }
 
   return (
@@ -717,47 +728,80 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
             />
           )}
 
-          {/* Text Boxes */}
-          {textBoxes.map((textBox) => (
-            <EditableText
-              key={textBox.id}
-              textBox={textBox}
-              isSelected={textBox.id === selectedTextBoxId}
-              onSelect={() => selectTextBox(textBox.id)}
-              onChange={(attrs) => updateTextBox(textBox.id, attrs)}
-              onDragMove={handleDragMove}
-              onSnapDragEnd={handleSnapDragEnd}
-            />
-          ))}
-
-          {/* Stickers */}
-          {stickers.map((sticker) => (
-            <EditableSticker
-              key={sticker.id}
-              sticker={sticker}
-              isSelected={sticker.id === selectedStickerId}
-              onSelect={() => selectSticker(sticker.id)}
-              onChange={(attrs) => updateSticker(sticker.id, attrs)}
-              onDragMove={handleDragMove}
-              onSnapDragEnd={handleSnapDragEnd}
-            />
-          ))}
-
-          {/* Location - draggable and resizable when addToMeme is checked */}
-          {selectedLocation && selectedLocation.addToMeme && (
-            <EditableLocation
-              location={{
-                ...selectedLocation,
-                x: selectedLocation.x || canvasDimensions.width / 2 - 100,
-                y: selectedLocation.y || canvasDimensions.height - 60
-              }}
-              isSelected={isLocationSelected}
-              onSelect={() => selectLocation(true)}
-              onChange={(attrs) => updateLocationTransform(attrs)}
-              onDragMove={handleDragMove}
-              onSnapDragEnd={handleSnapDragEnd}
-            />
-          )}
+          {/* Render Elements in Z-Order */}
+          {scene.elements.map((element) => {
+            if (element.type === 'text') {
+              return (
+                <EditableText
+                  key={element.id}
+                  textBox={element}
+                  isSelected={scene.selection.includes(element.id)}
+                  onSelect={() => selectOne(element.id)}
+                  onChange={(attrs) => updateElement(element.id, attrs)}
+                  onDragStart={() => beginTransaction()}
+                  onDragMove={handleDragMove}
+                  onSnapDragEnd={handleSnapDragEnd}
+                />
+              )
+            } else if (element.type === 'emoji') {
+              return (
+                <EditableSticker
+                  key={element.id}
+                  sticker={{
+                    id: element.id,
+                    emoji: element.glyph,
+                    x: element.x,
+                    y: element.y,
+                    size: element.size,
+                    rotation: element.rotation
+                  }}
+                  isSelected={scene.selection.includes(element.id)}
+                  onSelect={() => selectOne(element.id)}
+                  onChange={(attrs) => {
+                    const updates: any = {}
+                    if (attrs.x !== undefined) updates.x = attrs.x
+                    if (attrs.y !== undefined) updates.y = attrs.y
+                    if (attrs.size !== undefined) updates.size = attrs.size
+                    if (attrs.rotation !== undefined) updates.rotation = attrs.rotation
+                    updateElement(element.id, updates)
+                  }}
+                  onDragStart={() => beginTransaction()}
+                  onDragMove={handleDragMove}
+                  onSnapDragEnd={handleSnapDragEnd}
+                />
+              )
+            } else if (element.type === 'location') {
+              return (
+                <EditableLocation
+                  key={element.id}
+                  location={{
+                    display_name: element.display_name,
+                    latitude: element.latitude,
+                    longitude: element.longitude,
+                    x: element.x || canvasDimensions.width / 2 - 100,
+                    y: element.y || canvasDimensions.height - 60,
+                    fontSize: element.fontSize,
+                    color: element.color,
+                    rotation: element.rotation
+                  }}
+                  isSelected={scene.selection.includes(element.id)}
+                  onSelect={() => selectOne(element.id)}
+                  onChange={(attrs) => {
+                    const updates: any = {}
+                    if (attrs.x !== undefined) updates.x = attrs.x
+                    if (attrs.y !== undefined) updates.y = attrs.y
+                    if (attrs.fontSize !== undefined) updates.fontSize = attrs.fontSize
+                    if (attrs.rotation !== undefined) updates.rotation = attrs.rotation
+                    updateElement(element.id, updates)
+                  }}
+                  onDragStart={() => beginTransaction()}
+                  onDragMove={handleDragMove}
+                  onSnapDragEnd={handleSnapDragEnd}
+                />
+              )
+            }
+            return null
+          })}
 
           {/* Snap Guides */}
           {guides.vertical !== null && (

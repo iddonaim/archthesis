@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react'
 import { useEditorStore } from '@/stores/useEditorStore'
+import { useSceneStore } from '@/stores/useSceneStore'
 import Button from '@/components/common/Button'
 import ColorPanel from './ColorPanel'
 
@@ -7,10 +8,12 @@ export default function TextPanel() {
   const {
     canvasDimensions,
     description,
-    selectedTextBoxId,
-    addTextBox,
     setDescription
   } = useEditorStore()
+  const { scene, addElement } = useSceneStore()
+
+  const selectedElement = scene.elements.find(el => scene.selection.includes(el.id))
+  const isTextSelected = selectedElement?.type === 'text'
 
   const handleQuickAddText = () => {
     // Use actual canvas dimensions to center text box, fallback to defaults
@@ -22,7 +25,8 @@ export default function TextPanel() {
       ? Math.max(200, Math.min(400, canvasDimensions.width * 0.45))
       : 300
 
-    addTextBox({
+    addElement({
+      type: 'text',
       text: 'כתוב כאן...',
       x: centerX,
       y: centerY,
@@ -80,7 +84,7 @@ export default function TextPanel() {
       </p>
 
       {/* Color Controls - only show when text is selected */}
-      {selectedTextBoxId && (
+      {isTextSelected && (
         <>
           <div className="border-t border-gray-200 pt-4 mt-4">
             <ColorPanel />

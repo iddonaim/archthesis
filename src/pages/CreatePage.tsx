@@ -14,8 +14,9 @@ import SuccessModal from '@/components/common/SuccessModal'
 import ConsentModal from '@/components/common/ConsentModal'
 import Spinner from '@/components/common/Spinner'
 import { useEditorStore } from '@/stores/useEditorStore'
+import { useSceneStore } from '@/stores/useSceneStore'
 import { usePublishMeme } from '@/hooks/usePublishMeme'
-import { ArrowRight, Type, Smile, Tag, MapPin, RotateCcw, Sparkles, Upload } from 'lucide-react'
+import { ArrowRight, Type, Smile, Tag, MapPin, RotateCcw, Sparkles, Upload, Undo2, Redo2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type EditorTab = 'text' | 'emoji' | 'tags' | 'location'
@@ -28,14 +29,12 @@ export default function CreatePage() {
     setCurrentImage,
     setSelectedTags,
     setSelectedLocation,
-    selectedTextBoxId,
-    textBoxes,
-    stickers,
     selectedLocation,
     selectedTags,
     username,
     description
   } = useEditorStore()
+  const { scene, undo, redo, canUndo, canRedo, reset: resetScene } = useSceneStore()
   const [activeTab, setActiveTab] = useState<EditorTab>('text')
   const [isExpanded, setIsExpanded] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
@@ -148,6 +147,7 @@ export default function CreatePage() {
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false)
     resetEditor()
+    resetScene()
   }
 
   // Warn before leaving page with unsaved work
@@ -170,6 +170,7 @@ export default function CreatePage() {
       const result = await publishMeme({ current: stage })
       if (result.success) {
         resetEditor()
+        resetScene()
         setShowNavigationDialog(false)
         if (pendingNavigation) {
           navigate(pendingNavigation)
@@ -180,6 +181,7 @@ export default function CreatePage() {
 
   const handleDiscardAndNavigate = () => {
     resetEditor()
+    resetScene()
     setShowNavigationDialog(false)
     if (pendingNavigation) {
       navigate(pendingNavigation)
@@ -194,25 +196,25 @@ export default function CreatePage() {
   // Template switching handlers
   const handleSwitchTemplateClick = () => {
     // Check if there's any work to save
-    if (textBoxes.length > 0 || stickers.length > 0) {
+    if (scene.elements.length > 0) {
       setShowTemplateSwitchModal(true)
     } else {
       // No work to save, just reset
       resetEditor()
+      resetScene()
     }
   }
 
   const handleSaveAndSwitchTemplate = () => {
     // Save current editor state to sessionStorage
     const editorState = {
-      textBoxes,
-      stickers,
       selectedTags,
       selectedLocation,
       username,
       description
     }
     sessionStorage.setItem('pendingEditorState', JSON.stringify(editorState))
+    sessionStorage.setItem('pendingSceneElements', JSON.stringify(scene.elements))
 
     // Reset only the image (keep other state temporarily)
     setCurrentImage(null, null, null)
@@ -221,13 +223,14 @@ export default function CreatePage() {
 
   const handleDiscardAndSwitchTemplate = () => {
     resetEditor()
+    resetScene()
     setShowTemplateSwitchModal(false)
   }
 
   // Custom image upload handlers
   const handleChangeCustomImageClick = () => {
     // Check if there's any work to save
-    if (textBoxes.length > 0 || stickers.length > 0) {
+    if (scene.elements.length > 0) {
       setShowImageUploadModal(true)
     } else {
       // No work to save, just open file picker
@@ -238,14 +241,13 @@ export default function CreatePage() {
   const handleSaveAndUploadImage = () => {
     // Save current editor state to sessionStorage
     const editorState = {
-      textBoxes,
-      stickers,
       selectedTags,
       selectedLocation,
       username,
       description
     }
     sessionStorage.setItem('pendingEditorState', JSON.stringify(editorState))
+    sessionStorage.setItem('pendingSceneElements', JSON.stringify(scene.elements))
     setShowImageUploadModal(false)
 
     // Trigger file picker
@@ -254,6 +256,7 @@ export default function CreatePage() {
 
   const handleDiscardAndUploadImage = () => {
     resetEditor()
+    resetScene()
     setShowImageUploadModal(false)
     fileInputRef.current?.click()
   }
@@ -315,7 +318,29 @@ export default function CreatePage() {
       <div className="container mx-auto px-2 md:px-4 py-4 md:py-8 pb-24 lg:pb-8">
         <div className="mb-4 md:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">עורך הגיחוכים</h1>
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-stretch sm:items-center">
+            {/* Undo/Redo Controls */}
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Button
+                variant="outline"
+                onClick={undo}
+                disabled={!canUndo()}
+                className="flex-1 sm:flex-initial flex items-center justify-center p-2 min-w-[44px]"
+                title="ביטול פעולה אחרונה"
+              >
+                <Undo2 size={18} />
+              </Button>
+              <Button
+                variant="outline"
+                onClick={redo}
+                disabled={!canRedo()}
+                className="flex-1 sm:flex-initial flex items-center justify-center p-2 min-w-[44px]"
+                title="ביצוע שוב של הפעולה"
+              >
+                <Redo2 size={18} />
+              </Button>
+            </div>
+
             {/* Upload Different Image - Only for custom uploads */}
             {currentTemplateId === null && (
               <Button
@@ -341,6 +366,7 @@ export default function CreatePage() {
               onClick={() => {
                 if (confirm('האם אתה בטוח? כל השינויים יימחקו')) {
                   resetEditor()
+                  resetScene()
                 }
               }}
               className="text-sm md:text-base w-full sm:w-auto flex items-center justify-center gap-2"
@@ -378,6 +404,7 @@ export default function CreatePage() {
               const imageUrl = event.target?.result as string
               if (!sessionStorage.getItem('pendingEditorState')) {
                 resetEditor()
+                resetScene()
               }
 
               const img = new Image()

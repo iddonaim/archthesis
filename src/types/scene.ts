@@ -32,6 +32,7 @@ export interface TextElement extends BaseElement {
   backgroundColor?: string
   backgroundPadding?: number
   isPlaceholder: boolean
+  isEditing?: boolean
 }
 
 export interface EmojiElement extends BaseElement {

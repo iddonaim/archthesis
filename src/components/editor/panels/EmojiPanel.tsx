@@ -1,5 +1,5 @@
 import { Smile } from 'lucide-react'
-import { useEditorStore } from '@/stores/useEditorStore'
+import { useSceneStore } from '@/stores/useSceneStore'
 
 const EMOJI_CATEGORIES = {
   'פרצופים': ['😀', '😃', '😄', '😁', '😅', '😂', '🤣', '😊', '😇', '🙂', '😉', '😍', '🥰', '😘', '😗', '😚', '😋', '😛', '😝', '😜'],
@@ -11,11 +11,12 @@ const EMOJI_CATEGORIES = {
 }
 
 export default function EmojiPanel() {
-  const { addSticker } = useEditorStore()
+  const { addElement } = useSceneStore()
 
   const handleEmojiClick = (emoji: string) => {
-    addSticker({
-      emoji,
+    addElement({
+      type: 'emoji',
+      glyph: emoji,
       x: 200,
       y: 200,
       size: 64,

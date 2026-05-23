@@ -4,6 +4,8 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { storage, db } from '@/lib/firebase'
 import { useEditorStore } from '@/stores/useEditorStore'
+import { useSceneStore } from '@/stores/useSceneStore'
+import type { TextElement } from '@/types/scene'
 import type Konva from 'konva'
 
 interface PublishResult {
@@ -20,12 +22,9 @@ export function usePublishMeme() {
     selectedLocation,
     username,
     description,
-    textBoxes,
-    selectTextBox,
-    selectSticker,
-    selectLocation: setLocationSelected,
     resetEditor
   } = useEditorStore()
+  const { scene, clearSelection } = useSceneStore()
 
   const publishMeme = async (
     stageRef: React.RefObject<Konva.Stage>
@@ -37,9 +36,7 @@ export function usePublishMeme() {
 
     try {
       // 1. Deselect all elements to avoid rendering selection boxes
-      selectTextBox(null)
-      selectSticker(null)
-      setLocationSelected(false)
+      clearSelection()
 
       // Wait for React to re-render without selections
       await new Promise(resolve => setTimeout(resolve, 100))
@@ -57,7 +54,9 @@ export function usePublishMeme() {
       // in CanvasEditor). Matching by id rather than by text content prevents two
       // boxes with identical text from both being hidden during export.
       const placeholderIds = new Set(
-        textBoxes.filter(tb => tb.isPlaceholder).map(tb => tb.id)
+        scene.elements
+          .filter((el): el is TextElement => el.type === 'text' && el.isPlaceholder)
+          .map(el => el.id)
       )
 
       const setPlaceholderVisibility = (visible: boolean) => {
@@ -109,7 +108,8 @@ export function usePublishMeme() {
       const imageUrl = await getDownloadURL(storageRef)
 
       // 7. Collect text content for search (exclude unedited placeholders)
-      const memeText = textBoxes
+      const memeText = scene.elements
+        .filter((el): el is TextElement => el.type === 'text')
         .filter(tb => !tb.isPlaceholder && tb.text && tb.text.trim())
         .map(tb => tb.text.trim())
         .join(' ')
