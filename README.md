@@ -13,7 +13,7 @@ Open http://localhost:5173/
 
 ## 📦 Tech Stack
 
-- **React 18.2** - UI framework
+- **React 19** - UI framework
 - **TypeScript 5.3** - Type safety
 - **Vite 7.3** - Build tool & dev server
 - **Tailwind CSS 3.4** - Styling

@@ -53,29 +53,27 @@ export function usePublishMeme() {
         throw new Error('Canvas not found')
       }
 
-      // Collect text content of all placeholder text boxes
-      const placeholderTexts = textBoxes
-        .filter(tb => tb.isPlaceholder)
-        .map(tb => tb.text.trim())
+      // Look up Konva nodes by the text-box id (set on the Text via id={textBox.id}
+      // in CanvasEditor). Matching by id rather than by text content prevents two
+      // boxes with identical text from both being hidden during export.
+      const placeholderIds = new Set(
+        textBoxes.filter(tb => tb.isPlaceholder).map(tb => tb.id)
+      )
 
-      // Hide placeholder text nodes in Konva (bypass React)
-      const layer = stage.getLayers()[0]
+      const setPlaceholderVisibility = (visible: boolean) => {
+        if (placeholderIds.size === 0) return
+        stage.find('Text').forEach((node) => {
+          if (placeholderIds.has(node.id())) {
+            node.visible(visible)
+          }
+        })
+        stage.batchDraw()
+      }
+
       let dataUrl: string
 
       try {
-        if (layer && placeholderTexts.length > 0) {
-          layer.getChildren().forEach((node) => {
-            if (node.getClassName() === 'Text') {
-              const konvaText = node as Konva.Text
-              const textContent = konvaText.text()
-              // Hide if this text box is marked as a placeholder in state
-              if (placeholderTexts.includes(textContent.trim())) {
-                konvaText.visible(false)
-              }
-            }
-          })
-          layer.batchDraw()
-        }
+        setPlaceholderVisibility(false)
 
         // Wait a bit for the layer to re-render
         await new Promise(resolve => setTimeout(resolve, 50))
@@ -88,18 +86,7 @@ export function usePublishMeme() {
         })
       } finally {
         // Always restore visibility of placeholder text nodes
-        if (layer && placeholderTexts.length > 0) {
-          layer.getChildren().forEach((node) => {
-            if (node.getClassName() === 'Text') {
-              const konvaText = node as Konva.Text
-              const textContent = konvaText.text()
-              if (placeholderTexts.includes(textContent.trim())) {
-                konvaText.visible(true)
-              }
-            }
-          })
-          layer.batchDraw()
-        }
+        setPlaceholderVisibility(true)
       }
 
       // Convert data URL to Blob
