@@ -152,8 +152,20 @@ export const useSceneStore = create<SceneStore>((set, get) => {
       set((state) => {
         if (state.past.length === 0) return state
         const previous = state.past[state.past.length - 1]
+        
+        // Preserve isPlaceholder: false on elements that have transitioned to false
+        const elements = previous.elements.map((el) => {
+          if (el.type === 'text') {
+            const currentEl = state.scene.elements.find((curr) => curr.id === el.id)
+            if (currentEl && currentEl.type === 'text' && !currentEl.isPlaceholder) {
+              return { ...el, isPlaceholder: false }
+            }
+          }
+          return el
+        })
+
         return {
-          scene: previous,
+          scene: { ...previous, elements },
           past: state.past.slice(0, -1),
           future: [state.scene, ...state.future],
         }
@@ -165,8 +177,20 @@ export const useSceneStore = create<SceneStore>((set, get) => {
       set((state) => {
         if (state.future.length === 0) return state
         const [next, ...rest] = state.future
+
+        // Preserve isPlaceholder: false on elements that have transitioned to false
+        const elements = next.elements.map((el) => {
+          if (el.type === 'text') {
+            const currentEl = state.scene.elements.find((curr) => curr.id === el.id)
+            if (currentEl && currentEl.type === 'text' && !currentEl.isPlaceholder) {
+              return { ...el, isPlaceholder: false }
+            }
+          }
+          return el
+        })
+
         return {
-          scene: next,
+          scene: { ...next, elements },
           past: pushHistory(state.past, state.scene),
           future: rest,
         }

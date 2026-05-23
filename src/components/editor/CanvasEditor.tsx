@@ -80,6 +80,7 @@ function EditableText({
     // Set editing state
     setIsEditing(true)
     onSelect()
+    onChange({ isPlaceholder: false })
 
     // Directly clear the Konva text node (bypasses React)
     textNode.text('')
