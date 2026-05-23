@@ -191,6 +191,7 @@ function EditableText({
 
       <Text
         ref={textRef}
+        id={textBox.id}
         text={textBox.text}
         x={textBox.x}
         y={textBox.y}
