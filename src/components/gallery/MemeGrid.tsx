@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import MemeCard from './MemeCard'
 import MemeCardSkeleton from './MemeCardSkeleton'
@@ -34,6 +34,39 @@ export default function MemeGrid({
   useEffect(() => {
     setVisibleCount(PAGE_SIZE)
   }, [serializedTags, searchQuery, sortBy])
+
+  const [columnsCount, setColumnsCount] = useState(4)
+
+  // Calculate dynamic columns based on window viewport width
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth
+      if (width < 640) {
+        setColumnsCount(1)
+      } else if (width < 1024) {
+        setColumnsCount(2)
+      } else if (width < 1280) {
+        setColumnsCount(3)
+      } else {
+        setColumnsCount(4)
+      }
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const visibleMemes = memes.slice(0, visibleCount)
+
+  // Distribute visible memes sequentially left-to-right to preserve chronological order
+  const distributedColumns = useMemo(() => {
+    const cols: Meme[][] = Array.from({ length: columnsCount }, () => [])
+    visibleMemes.forEach((meme, index) => {
+      cols[index % columnsCount].push(meme)
+    })
+    return cols
+  }, [visibleMemes, columnsCount])
 
   // Auto-open lightbox if initialMemeId is provided (from shared link)
   useEffect(() => {
@@ -80,9 +113,13 @@ export default function MemeGrid({
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {[...Array(8)].map((_, i) => (
-          <MemeCardSkeleton key={i} />
+      <div className="flex gap-6 items-start">
+        {Array.from({ length: columnsCount }).map((_, colIdx) => (
+          <div key={colIdx} className="flex flex-col gap-6 flex-1">
+            {[...Array(2)].map((_, i) => (
+              <MemeCardSkeleton key={i} />
+            ))}
+          </div>
         ))}
       </div>
     )
@@ -102,13 +139,12 @@ export default function MemeGrid({
     )
   }
 
-  const visibleMemes = memes.slice(0, visibleCount)
   const hasMore = visibleCount < memes.length
 
   return (
     <>
       <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        className="flex gap-6 items-start"
         initial="hidden"
         animate="visible"
         variants={{
@@ -121,12 +157,16 @@ export default function MemeGrid({
           }
         }}
       >
-        {visibleMemes.map((meme) => (
-          <MemeCard
-            key={meme.id}
-            meme={meme}
-            onImageClick={() => openLightbox(meme)}
-          />
+        {distributedColumns.map((columnMemes, colIdx) => (
+          <div key={colIdx} className="flex flex-col gap-6 flex-1 min-w-0">
+            {columnMemes.map((meme) => (
+              <MemeCard
+                key={meme.id}
+                meme={meme}
+                onImageClick={() => openLightbox(meme)}
+              />
+            ))}
+          </div>
         ))}
       </motion.div>
 

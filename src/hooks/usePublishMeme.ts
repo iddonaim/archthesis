@@ -134,7 +134,7 @@ export function usePublishMeme() {
         originSource: localStorage.getItem('user_origin') || 'link' // QR code origin tracking
       }
 
-      await addDoc(collection(db, 'memes'), memeData)
+      const docRef = await addDoc(collection(db, 'memes'), memeData)
 
       setIsPublishing(false)
 
@@ -143,7 +143,7 @@ export function usePublishMeme() {
 
       return {
         success: true,
-        memeId,
+        memeId: docRef.id,
         imageUrl
       }
     } catch (error) {

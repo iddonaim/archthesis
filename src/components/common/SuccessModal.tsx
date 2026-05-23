@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import Modal from './Modal'
 import Button from './Button'
 import { Share2, Download, Image as ImageIcon, Plus } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 interface SuccessModalProps {
   isOpen: boolean
@@ -14,26 +15,30 @@ export default function SuccessModal({ isOpen, onClose, imageUrl, memeId }: Succ
   const navigate = useNavigate()
 
   const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/gallery?meme=${memeId}`
     const shareData = {
       title: 'הגיחוך שלי',
       text: 'צפו בגיחוך שיצרתי!',
-      url: window.location.origin + '/gallery'
+      url: shareUrl
     }
 
     if (navigator.share) {
       try {
         await navigator.share(shareData)
+        toast.success('הגיחוך שותף בהצלחה!')
       } catch (error) {
-        // User cancelled or share failed
+        if (error instanceof Error && error.name !== 'AbortError') {
+          toast.error('שגיאה בשיתוף הגיחוך')
+        }
         console.log('Share cancelled or failed:', error)
       }
     } else {
       // Fallback: Copy link to clipboard
       try {
-        await navigator.clipboard.writeText(window.location.origin + '/gallery')
-        alert('הקישור הועתק ללוח!')
+        await navigator.clipboard.writeText(shareUrl)
+        toast.success('הקישור הועתק ללוח!')
       } catch (error) {
-        alert('אין אפשרות לשתף במכשיר זה')
+        toast.error('אין אפשרות לשתף במכשיר זה')
       }
     }
   }

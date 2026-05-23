@@ -62,4 +62,11 @@
   body {
     overscroll-behavior-y: contain;
   }
+
+  /* Mobile bottom sheet height dynamic viewport fallback */
+  .mobile-bottom-sheet-expanded {
+    height: 60vh;
+    height: 60dvh;
+  }
 }
+
