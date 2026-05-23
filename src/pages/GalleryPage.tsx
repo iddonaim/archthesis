@@ -226,6 +226,7 @@ export default function GalleryPage() {
                 selectedTags={selectedTags}
                 onTagToggle={handleTagToggle}
                 onClearFilters={handleClearFilters}
+                memes={memes}
               />
             </div>
 

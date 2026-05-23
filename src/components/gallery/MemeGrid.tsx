@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import MemeCard from './MemeCard'
 import MemeCardSkeleton from './MemeCardSkeleton'
 import Lightbox from './Lightbox'
 import type { Meme } from '@/types/meme'
+
+const PAGE_SIZE = 20
 
 interface MemeGridProps {
   memes: Meme[]
@@ -15,6 +17,12 @@ export default function MemeGrid({ memes, isLoading = false, initialMemeId }: Me
   const [lightboxMeme, setLightboxMeme] = useState<Meme | null>(null)
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [hasAutoOpened, setHasAutoOpened] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+
+  // Reset visible count when the memes list changes (e.g. filter/sort applied)
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE)
+  }, [memes])
 
   // Auto-open lightbox if initialMemeId is provided (from shared link)
   useEffect(() => {
@@ -55,6 +63,10 @@ export default function MemeGrid({ memes, isLoading = false, initialMemeId }: Me
     }
   }
 
+  const loadMore = useCallback(() => {
+    setVisibleCount(prev => Math.min(prev + PAGE_SIZE, memes.length))
+  }, [memes.length])
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -79,6 +91,9 @@ export default function MemeGrid({ memes, isLoading = false, initialMemeId }: Me
     )
   }
 
+  const visibleMemes = memes.slice(0, visibleCount)
+  const hasMore = visibleCount < memes.length
+
   return (
     <>
       <motion.div
@@ -95,7 +110,7 @@ export default function MemeGrid({ memes, isLoading = false, initialMemeId }: Me
           }
         }}
       >
-        {memes.map((meme) => (
+        {visibleMemes.map((meme) => (
           <MemeCard
             key={meme.id}
             meme={meme}
@@ -103,6 +118,17 @@ export default function MemeGrid({ memes, isLoading = false, initialMemeId }: Me
           />
         ))}
       </motion.div>
+
+      {hasMore && (
+        <div className="text-center mt-8">
+          <button
+            onClick={loadMore}
+            className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
+          >
+            טען עוד ({memes.length - visibleCount} נותרו)
+          </button>
+        </div>
+      )}
 
       {lightboxMeme && (
         <Lightbox

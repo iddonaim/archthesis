@@ -156,6 +156,8 @@ export default function MemeCard({ meme, onImageClick }: MemeCardProps) {
             src={meme.imageUrl}
             alt={`${meme.topText} ${meme.bottomText}`}
             className="w-full h-auto object-cover"
+            loading="lazy"
+            decoding="async"
           />
           {/* Hover overlay */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-200" />
