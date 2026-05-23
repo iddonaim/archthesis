@@ -148,7 +148,7 @@ export default function Lightbox({
   // Defensive date formatting supporting Firestore Timestamp, Javascript Date, and createdAt fallback
   const formattedDate = (() => {
     let date: Date | null = null
-    const ts = meme.timestamp || (meme as any).createdAt
+    const ts = (meme.timestamp as any) || (meme as any).createdAt
 
     if (ts) {
       if (typeof ts.toDate === 'function') {

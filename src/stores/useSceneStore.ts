@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { ElementId, Scene, SceneElement } from '@/types/scene'
+import type { ElementId, Scene, SceneElement, TextElement, EmojiElement, ImageElement, LocationElement } from '@/types/scene'
 import { emptyScene } from '@/types/scene'
 
 const HISTORY_LIMIT = 50
@@ -12,7 +12,13 @@ interface SceneStore {
   future: Scene[]
 
   // Mutations (record history unless inside a transaction)
-  addElement: (element: Omit<SceneElement, 'id'>) => ElementId
+  addElement: (
+    element:
+      | Omit<TextElement, 'id'>
+      | Omit<EmojiElement, 'id'>
+      | Omit<ImageElement, 'id'>
+      | Omit<LocationElement, 'id'>
+  ) => ElementId
   updateElement: (id: ElementId, updates: Partial<SceneElement>) => void
   deleteElement: (id: ElementId) => void
   /** Move an element to a new z-order index. 0 = bottom. */
