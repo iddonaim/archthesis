@@ -244,6 +244,7 @@ function EditableText({
               x: e.target.x(),
               y: e.target.y()
             })
+            useSceneStore.getState().commitTransaction()
           }
         }}
         onTransformEnd={() => {
@@ -271,6 +272,8 @@ function EditableText({
 
           if (onTransformEnd) {
             onTransformEnd()
+          } else {
+            useSceneStore.getState().commitTransaction()
           }
         }}
       />
@@ -357,6 +360,7 @@ function EditableSticker({
               x: e.target.x(),
               y: e.target.y()
             })
+            useSceneStore.getState().commitTransaction()
           }
         }}
         onTransformEnd={() => {
@@ -378,6 +382,8 @@ function EditableSticker({
 
           if (onTransformEnd) {
             onTransformEnd()
+          } else {
+            useSceneStore.getState().commitTransaction()
           }
         }}
       />
@@ -477,6 +483,7 @@ function EditableLocation({
               x: e.target.x(),
               y: e.target.y()
             })
+            useSceneStore.getState().commitTransaction()
           }
         }}
         onTransformEnd={() => {
@@ -502,6 +509,8 @@ function EditableLocation({
 
           if (onTransformEnd) {
             onTransformEnd()
+          } else {
+            useSceneStore.getState().commitTransaction()
           }
         }}
       />
