@@ -14,8 +14,10 @@ import SuccessModal from '@/components/common/SuccessModal'
 import ConsentModal from '@/components/common/ConsentModal'
 import Spinner from '@/components/common/Spinner'
 import { useEditorStore } from '@/stores/useEditorStore'
+import { useSceneStore } from '@/stores/useSceneStore'
 import { usePublishMeme } from '@/hooks/usePublishMeme'
-import { ArrowRight, Type, Smile, Tag, MapPin, RotateCcw, Sparkles, Upload } from 'lucide-react'
+import { ArrowRight, Type, Smile, Tag, MapPin, RotateCcw, Sparkles, Upload, Undo2, Redo2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type EditorTab = 'text' | 'emoji' | 'tags' | 'location'
 
@@ -27,16 +29,18 @@ export default function CreatePage() {
     setCurrentImage,
     setSelectedTags,
     setSelectedLocation,
-    selectedTextBoxId,
-    textBoxes,
-    stickers,
     selectedLocation,
     selectedTags,
     username,
     description
   } = useEditorStore()
+  const { scene, undo, redo, reset: resetScene } = useSceneStore()
+  const past = useSceneStore((state) => state.past)
+  const future = useSceneStore((state) => state.future)
   const [activeTab, setActiveTab] = useState<EditorTab>('text')
+  const [isExpanded, setIsExpanded] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
+
   const [publishedMeme, setPublishedMeme] = useState<{ imageUrl: string; memeId: string } | null>(null)
   const [showNavigationDialog, setShowNavigationDialog] = useState(false)
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null)
@@ -145,6 +149,7 @@ export default function CreatePage() {
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false)
     resetEditor()
+    resetScene()
   }
 
   // Warn before leaving page with unsaved work
@@ -167,6 +172,7 @@ export default function CreatePage() {
       const result = await publishMeme({ current: stage })
       if (result.success) {
         resetEditor()
+        resetScene()
         setShowNavigationDialog(false)
         if (pendingNavigation) {
           navigate(pendingNavigation)
@@ -177,6 +183,7 @@ export default function CreatePage() {
 
   const handleDiscardAndNavigate = () => {
     resetEditor()
+    resetScene()
     setShowNavigationDialog(false)
     if (pendingNavigation) {
       navigate(pendingNavigation)
@@ -191,25 +198,25 @@ export default function CreatePage() {
   // Template switching handlers
   const handleSwitchTemplateClick = () => {
     // Check if there's any work to save
-    if (textBoxes.length > 0 || stickers.length > 0) {
+    if (scene.elements.length > 0) {
       setShowTemplateSwitchModal(true)
     } else {
       // No work to save, just reset
       resetEditor()
+      resetScene()
     }
   }
 
   const handleSaveAndSwitchTemplate = () => {
     // Save current editor state to sessionStorage
     const editorState = {
-      textBoxes,
-      stickers,
       selectedTags,
       selectedLocation,
       username,
       description
     }
     sessionStorage.setItem('pendingEditorState', JSON.stringify(editorState))
+    sessionStorage.setItem('pendingSceneElements', JSON.stringify(scene.elements))
 
     // Reset only the image (keep other state temporarily)
     setCurrentImage(null, null, null)
@@ -218,13 +225,14 @@ export default function CreatePage() {
 
   const handleDiscardAndSwitchTemplate = () => {
     resetEditor()
+    resetScene()
     setShowTemplateSwitchModal(false)
   }
 
   // Custom image upload handlers
   const handleChangeCustomImageClick = () => {
     // Check if there's any work to save
-    if (textBoxes.length > 0 || stickers.length > 0) {
+    if (scene.elements.length > 0) {
       setShowImageUploadModal(true)
     } else {
       // No work to save, just open file picker
@@ -235,14 +243,13 @@ export default function CreatePage() {
   const handleSaveAndUploadImage = () => {
     // Save current editor state to sessionStorage
     const editorState = {
-      textBoxes,
-      stickers,
       selectedTags,
       selectedLocation,
       username,
       description
     }
     sessionStorage.setItem('pendingEditorState', JSON.stringify(editorState))
+    sessionStorage.setItem('pendingSceneElements', JSON.stringify(scene.elements))
     setShowImageUploadModal(false)
 
     // Trigger file picker
@@ -251,6 +258,7 @@ export default function CreatePage() {
 
   const handleDiscardAndUploadImage = () => {
     resetEditor()
+    resetScene()
     setShowImageUploadModal(false)
     fileInputRef.current?.click()
   }
@@ -309,10 +317,32 @@ export default function CreatePage() {
   // Show editor when image is selected
   return (
     <Layout>
-      <div className="container mx-auto px-2 md:px-4 py-4 md:py-8">
+      <div className="container mx-auto px-2 md:px-4 py-4 md:py-8 pb-24 lg:pb-8">
         <div className="mb-4 md:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">עורך הגיחוכים</h1>
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-stretch sm:items-center">
+            {/* Undo/Redo Controls */}
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Button
+                variant="outline"
+                onClick={undo}
+                disabled={past.length === 0}
+                className="flex-1 sm:flex-initial flex items-center justify-center p-2 min-w-[44px]"
+                title="ביטול פעולה אחרונה"
+              >
+                <Undo2 size={18} />
+              </Button>
+              <Button
+                variant="outline"
+                onClick={redo}
+                disabled={future.length === 0}
+                className="flex-1 sm:flex-initial flex items-center justify-center p-2 min-w-[44px]"
+                title="ביצוע שוב של הפעולה"
+              >
+                <Redo2 size={18} />
+              </Button>
+            </div>
+
             {/* Upload Different Image - Only for custom uploads */}
             {currentTemplateId === null && (
               <Button
@@ -338,6 +368,7 @@ export default function CreatePage() {
               onClick={() => {
                 if (confirm('האם אתה בטוח? כל השינויים יימחקו')) {
                   resetEditor()
+                  resetScene()
                 }
               }}
               className="text-sm md:text-base w-full sm:w-auto flex items-center justify-center gap-2"
@@ -375,6 +406,7 @@ export default function CreatePage() {
               const imageUrl = event.target?.result as string
               if (!sessionStorage.getItem('pendingEditorState')) {
                 resetEditor()
+                resetScene()
               }
 
               const img = new Image()
@@ -399,62 +431,81 @@ export default function CreatePage() {
             </div>
           </div>
 
-          {/* Right: Editor Tools */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden sticky top-4">
-              {/* Tab Headers */}
-              <div className="grid grid-cols-4 border-b">
-                {[
-                  { id: 'text' as EditorTab, icon: Type, label: 'טקסט' },
-                  { id: 'emoji' as EditorTab, icon: Smile, label: 'אמוג׳י' },
-                  { id: 'location' as EditorTab, icon: MapPin, label: 'מיקום' },
-                  { id: 'tags' as EditorTab, icon: Tag, label: 'תגיות' },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex flex-col items-center gap-1 py-2 md:py-3 transition-colors ${
-                      activeTab === tab.id
-                        ? 'bg-primary text-white'
-                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-                    }`}
-                  >
-                    <tab.icon size={18} className="md:w-5 md:h-5" />
-                    <span className="text-[10px] md:text-xs font-medium">{tab.label}</span>
-                  </button>
-                ))}
-              </div>
+          {/* Right: Editor Tools & Mobile Bottom Sheet */}
+          <div
+            className={cn(
+              "bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-gray-100 rounded-t-2xl transition-all duration-300 flex flex-col z-30",
+              "lg:col-span-1 lg:rounded-xl lg:static lg:shadow-lg lg:border-none lg:h-auto lg:z-auto", // Desktop resets
+              "fixed bottom-0 left-0 right-0", // Mobile layout positioning
+              isExpanded ? "mobile-bottom-sheet-expanded lg:h-auto" : "h-[74px] lg:h-auto" // Mobile heights with dvh fallback class
+            )}
+          >
+            {/* Drag handle pill for mobile viewports */}
+            <div
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="lg:hidden flex items-center justify-center py-2.5 cursor-pointer border-b border-gray-50 flex-shrink-0"
+            >
+              <div className="w-12 h-1 bg-gray-300 rounded-full hover:bg-gray-400 transition-colors" />
+            </div>
 
-              {/* Tab Content */}
-              <div className="p-3 md:p-6 max-h-[calc(100vh-300px)] md:max-h-[calc(100vh-300px)] overflow-y-auto scrollbar-thin">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {activeTab === 'text' && <TextPanel />}
-                    {activeTab === 'emoji' && <EmojiPanel />}
-                    {activeTab === 'location' && <LocationPanel />}
-                    {activeTab === 'tags' && <TagsPanel />}
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              {/* Publish Button */}
-              <div className="border-t p-3 md:p-4">
-                <Button
-                  variant="primary"
-                  className="w-full flex items-center justify-center gap-2 text-sm md:text-base py-3"
-                  onClick={handlePublish}
-                  disabled={isPublishing}
+            {/* Tab Headers */}
+            <div className="grid grid-cols-4 border-b flex-shrink-0">
+              {[
+                { id: 'text' as EditorTab, icon: Type, label: 'טקסט' },
+                { id: 'emoji' as EditorTab, icon: Smile, label: 'אמוג׳י' },
+                { id: 'location' as EditorTab, icon: MapPin, label: 'מיקום' },
+                { id: 'tags' as EditorTab, icon: Tag, label: 'תגיות' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id)
+                    setIsExpanded(true) // Auto-expand bottom sheet when tab clicked on mobile
+                  }}
+                  className={`flex flex-col items-center gap-1 py-2 md:py-3 transition-colors ${
+                    activeTab === tab.id
+                      ? 'bg-primary text-white'
+                      : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                  }`}
                 >
-                  <Sparkles className="h-5 w-5" />
-                  <span>{isPublishing ? 'מפרסם...' : 'פרסם גיחוך'}</span>
-                </Button>
-              </div>
+                  <tab.icon size={18} className="md:w-5 md:h-5" />
+                  <span className="text-[10px] md:text-xs font-medium">{tab.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Tab Content area - scrollable when height shrunken by software keyboard */}
+            <div className={cn(
+              "p-3 md:p-6 overflow-y-auto scrollbar-thin flex-1 min-h-0",
+              "lg:max-h-[calc(100vh-300px)]"
+            )}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {activeTab === 'text' && <TextPanel />}
+                  {activeTab === 'emoji' && <EmojiPanel />}
+                  {activeTab === 'location' && <LocationPanel />}
+                  {activeTab === 'tags' && <TagsPanel />}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Publish Button Footer */}
+            <div className="border-t p-3 md:p-4 flex-shrink-0">
+              <Button
+                variant="primary"
+                className="w-full flex items-center justify-center gap-2 text-sm md:text-base py-3"
+                onClick={handlePublish}
+                disabled={isPublishing}
+              >
+                <Sparkles className="h-5 w-5" />
+                <span>{isPublishing ? 'מפרסם...' : 'פרסם גיחוך'}</span>
+              </Button>
             </div>
           </div>
         </div>
@@ -465,6 +516,7 @@ export default function CreatePage() {
         <SuccessModal
           isOpen={showSuccessModal}
           onClose={handleCloseSuccessModal}
+
           imageUrl={publishedMeme.imageUrl}
           memeId={publishedMeme.memeId}
         />

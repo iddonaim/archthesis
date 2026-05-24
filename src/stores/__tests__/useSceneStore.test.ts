@@ -197,6 +197,25 @@ describe('useSceneStore', () => {
       expect(result.current.canRedo()).toBe(true)
     })
 
+    it('undo does not restore isPlaceholder: true on a text element that was edited (one-way transition)', () => {
+      const { result } = renderHook(() => useSceneStore())
+      let id = ''
+      act(() => {
+        id = result.current.addElement(textElement({ isPlaceholder: true }))
+      })
+      act(() => {
+        result.current.updateElement(id, { isPlaceholder: false, text: 'typed' })
+      })
+      expect((result.current.scene.elements[0] as TextElement).isPlaceholder).toBe(false)
+      expect((result.current.scene.elements[0] as TextElement).text).toBe('typed')
+      act(() => {
+        result.current.undo()
+      })
+      const el = result.current.scene.elements[0] as TextElement
+      expect(el.text).toBe('hello')
+      expect(el.isPlaceholder).toBe(false)
+    })
+
     it('caps history at the configured limit', () => {
       const { result } = renderHook(() => useSceneStore())
       act(() => {

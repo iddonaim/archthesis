@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { ElementId, Scene, SceneElement } from '@/types/scene'
+import type { ElementId, Scene, SceneElement, TextElement, EmojiElement, ImageElement, LocationElement } from '@/types/scene'
 import { emptyScene } from '@/types/scene'
 
 const HISTORY_LIMIT = 50
@@ -12,7 +12,13 @@ interface SceneStore {
   future: Scene[]
 
   // Mutations (record history unless inside a transaction)
-  addElement: (element: Omit<SceneElement, 'id'>) => ElementId
+  addElement: (
+    element:
+      | Omit<TextElement, 'id'>
+      | Omit<EmojiElement, 'id'>
+      | Omit<ImageElement, 'id'>
+      | Omit<LocationElement, 'id'>
+  ) => ElementId
   updateElement: (id: ElementId, updates: Partial<SceneElement>) => void
   deleteElement: (id: ElementId) => void
   /** Move an element to a new z-order index. 0 = bottom. */
@@ -146,8 +152,20 @@ export const useSceneStore = create<SceneStore>((set, get) => {
       set((state) => {
         if (state.past.length === 0) return state
         const previous = state.past[state.past.length - 1]
+        
+        // Preserve isPlaceholder: false on elements that have transitioned to false
+        const elements = previous.elements.map((el) => {
+          if (el.type === 'text') {
+            const currentEl = state.scene.elements.find((curr) => curr.id === el.id)
+            if (currentEl && currentEl.type === 'text' && !currentEl.isPlaceholder) {
+              return { ...el, isPlaceholder: false }
+            }
+          }
+          return el
+        })
+
         return {
-          scene: previous,
+          scene: { ...previous, elements },
           past: state.past.slice(0, -1),
           future: [state.scene, ...state.future],
         }
@@ -159,8 +177,20 @@ export const useSceneStore = create<SceneStore>((set, get) => {
       set((state) => {
         if (state.future.length === 0) return state
         const [next, ...rest] = state.future
+
+        // Preserve isPlaceholder: false on elements that have transitioned to false
+        const elements = next.elements.map((el) => {
+          if (el.type === 'text') {
+            const currentEl = state.scene.elements.find((curr) => curr.id === el.id)
+            if (currentEl && currentEl.type === 'text' && !currentEl.isPlaceholder) {
+              return { ...el, isPlaceholder: false }
+            }
+          }
+          return el
+        })
+
         return {
-          scene: next,
+          scene: { ...next, elements },
           past: pushHistory(state.past, state.scene),
           future: rest,
         }

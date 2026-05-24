@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useEditorStore } from '@/stores/useEditorStore'
+import { useSceneStore } from '@/stores/useSceneStore'
 import Button from '@/components/common/Button'
 import { MapPin, Loader2, X } from 'lucide-react'
 import type { Location } from '@/types/editor'
@@ -12,6 +13,7 @@ interface LocationResult {
 
 export default function LocationPanel() {
   const { selectedLocation, setSelectedLocation, username, setUsername } = useEditorStore()
+  const { scene, addElement, deleteElement, updateElement } = useSceneStore()
   const [searchQuery, setSearchQuery] = useState('')
   const [results, setResults] = useState<LocationResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
@@ -62,16 +64,34 @@ export default function LocationPanel() {
       addToMeme: true,
       showInGallery: true,
       hideFromGallery: false,
-      x: 400,
-      y: 500,
-      fontSize: 24,
-      color: '#FFFFFF',
-      rotation: 0
     }
 
     setSelectedLocation(location)
     setSearchQuery('')
     setResults([])
+
+    // Add to scene store if addToMeme is true
+    const existing = scene.elements.find((el) => el.type === 'location')
+    if (!existing) {
+      addElement({
+        type: 'location',
+        display_name: location.display_name,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        x: 400,
+        y: 500,
+        width: 300,
+        fontSize: 24,
+        color: '#FFFFFF',
+        rotation: 0,
+      })
+    } else {
+      updateElement(existing.id, {
+        display_name: location.display_name,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      })
+    }
   }
 
   const handleCurrentLocation = async () => {
@@ -98,12 +118,29 @@ export default function LocationPanel() {
             addToMeme: true,
             showInGallery: true,
             hideFromGallery: false,
-            x: 400,
-            y: 500,
-            fontSize: 24,
-            color: '#FFFFFF',
-            rotation: 0
           })
+
+          const existing = scene.elements.find((el) => el.type === 'location')
+          if (!existing) {
+            addElement({
+              type: 'location',
+              display_name: data.display_name,
+              latitude,
+              longitude,
+              x: 400,
+              y: 500,
+              width: 300,
+              fontSize: 24,
+              color: '#FFFFFF',
+              rotation: 0,
+            })
+          } else {
+            updateElement(existing.id, {
+              display_name: data.display_name,
+              latitude,
+              longitude,
+            })
+          }
         } catch (error) {
           console.error('Geolocation error:', error)
           alert('שגיאה באיתור המיקום')
@@ -124,6 +161,11 @@ export default function LocationPanel() {
     setSearchQuery('')
     setResults([])
     setCustomLocationText('')
+
+    const existing = scene.elements.find((el) => el.type === 'location')
+    if (existing) {
+      deleteElement(existing.id)
+    }
   }
 
   const handleCustomLocation = () => {
@@ -136,15 +178,32 @@ export default function LocationPanel() {
       addToMeme: true,
       showInGallery: true,
       hideFromGallery: false,
-      x: 400,
-      y: 500,
-      fontSize: 24,
-      color: '#FFFFFF',
-      rotation: 0
     }
 
     setSelectedLocation(location)
     setCustomLocationText('')
+
+    const existing = scene.elements.find((el) => el.type === 'location')
+    if (!existing) {
+      addElement({
+        type: 'location',
+        display_name: location.display_name,
+        latitude: 0,
+        longitude: 0,
+        x: 400,
+        y: 500,
+        width: 300,
+        fontSize: 24,
+        color: '#FFFFFF',
+        rotation: 0,
+      })
+    } else {
+      updateElement(existing.id, {
+        display_name: location.display_name,
+        latitude: 0,
+        longitude: 0,
+      })
+    }
   }
 
   // Get simplified location name (street + city)
@@ -176,7 +235,30 @@ export default function LocationPanel() {
       updates.hideFromGallery = false
     }
 
-    setSelectedLocation({ ...selectedLocation, ...updates })
+    const updatedLocation = { ...selectedLocation, ...updates }
+    setSelectedLocation(updatedLocation)
+
+    const existing = scene.elements.find((el) => el.type === 'location')
+    if (updatedLocation.addToMeme) {
+      if (!existing) {
+        addElement({
+          type: 'location',
+          display_name: updatedLocation.display_name,
+          latitude: updatedLocation.latitude,
+          longitude: updatedLocation.longitude,
+          x: 400,
+          y: 500,
+          width: 300,
+          fontSize: 24,
+          color: '#FFFFFF',
+          rotation: 0,
+        })
+      }
+    } else {
+      if (existing) {
+        deleteElement(existing.id)
+      }
+    }
   }
 
   return (

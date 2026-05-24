@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Upload } from 'lucide-react'
 import { useEditorStore } from '@/stores/useEditorStore'
+import { useSceneStore } from '@/stores/useSceneStore'
 import { TEMPLATES, getTemplatesList } from '@/lib/templates'
 import { preloadImages } from '@/lib/cache'
 // import Button from '@/components/common/Button'
@@ -14,14 +15,13 @@ interface TemplateSelectorProps {
 export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650 }: TemplateSelectorProps = {}) {
   const {
     setCurrentImage,
-    addTextBox,
-    addSticker,
     setSelectedTags,
     setSelectedLocation,
     setUsername,
     setDescription,
     resetEditor
   } = useEditorStore()
+  const { addElement, reset: resetScene } = useSceneStore()
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -37,6 +37,7 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
 
   const handleTemplateSelect = (templateId: string) => {
     resetEditor()
+    resetScene()
     setSelectedTemplate(templateId)
 
     const template = TEMPLATES[templateId]
@@ -73,34 +74,32 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
       const textBoxWidth = Math.max(200, Math.min(400, scaledWidth * 0.45))
 
       // Check for pending editor state from template switch
+      const savedElementsJson = sessionStorage.getItem('pendingSceneElements')
       const savedStateJson = sessionStorage.getItem('pendingEditorState')
 
-      if (savedStateJson) {
-        // Restore saved state instead of adding default text boxes
-        const savedState = JSON.parse(savedStateJson)
-
-        // Restore text boxes
-        savedState.textBoxes?.forEach((textBox: any) => {
-          addTextBox(textBox)
+      if (savedElementsJson) {
+        // Restore saved scene elements
+        const savedElements = JSON.parse(savedElementsJson)
+        savedElements.forEach((el: any) => {
+          const { id, ...elWithoutId } = el
+          addElement(elWithoutId)
         })
-
-        // Restore stickers
-        savedState.stickers?.forEach((sticker: any) => {
-          addSticker(sticker)
-        })
+        sessionStorage.removeItem('pendingSceneElements')
 
         // Restore metadata
-        if (savedState.selectedTags) setSelectedTags(savedState.selectedTags)
-        if (savedState.selectedLocation) setSelectedLocation(savedState.selectedLocation)
-        if (savedState.username) setUsername(savedState.username)
-        if (savedState.description) setDescription(savedState.description)
-
-        // Clear saved state
+        if (savedStateJson) {
+          const savedState = JSON.parse(savedStateJson)
+          if (savedState.selectedTags) setSelectedTags(savedState.selectedTags)
+          if (savedState.selectedLocation) setSelectedLocation(savedState.selectedLocation)
+          if (savedState.username) setUsername(savedState.username)
+          if (savedState.description) setDescription(savedState.description)
+        }
         sessionStorage.removeItem('pendingEditorState')
       } else {
         // No saved state - add default text boxes with scaled positions
         template.defaultTextBoxes.forEach((defaultBox) => {
-          addTextBox({
+          addElement({
+            type: 'text',
             text: defaultBox.text,
             x: defaultBox.xPercent * scaledWidth,  // Use scaled canvas width
             y: defaultBox.yPercent * scaledHeight, // Use scaled canvas height
@@ -148,6 +147,7 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
     reader.onload = (event) => {
       const imageUrl = event.target?.result as string
       resetEditor()
+      resetScene()
       setSelectedTemplate('custom')
 
       // Load image to calculate canvas dimensions
@@ -177,33 +177,31 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
         const textBoxWidth = Math.max(200, Math.min(400, scaledWidth * 0.45))
 
         // Check for pending editor state from template switch
+        const savedElementsJson = sessionStorage.getItem('pendingSceneElements')
         const savedStateJson = sessionStorage.getItem('pendingEditorState')
 
-        if (savedStateJson) {
-          // Restore saved state instead of adding default text boxes
-          const savedState = JSON.parse(savedStateJson)
-
-          // Restore text boxes
-          savedState.textBoxes?.forEach((textBox: any) => {
-            addTextBox(textBox)
+        if (savedElementsJson) {
+          // Restore saved scene elements
+          const savedElements = JSON.parse(savedElementsJson)
+          savedElements.forEach((el: any) => {
+            const { id, ...elWithoutId } = el
+            addElement(elWithoutId)
           })
-
-          // Restore stickers
-          savedState.stickers?.forEach((sticker: any) => {
-            addSticker(sticker)
-          })
+          sessionStorage.removeItem('pendingSceneElements')
 
           // Restore metadata
-          if (savedState.selectedTags) setSelectedTags(savedState.selectedTags)
-          if (savedState.selectedLocation) setSelectedLocation(savedState.selectedLocation)
-          if (savedState.username) setUsername(savedState.username)
-          if (savedState.description) setDescription(savedState.description)
-
-          // Clear saved state
+          if (savedStateJson) {
+            const savedState = JSON.parse(savedStateJson)
+            if (savedState.selectedTags) setSelectedTags(savedState.selectedTags)
+            if (savedState.selectedLocation) setSelectedLocation(savedState.selectedLocation)
+            if (savedState.username) setUsername(savedState.username)
+            if (savedState.description) setDescription(savedState.description)
+          }
           sessionStorage.removeItem('pendingEditorState')
         } else {
           // No saved state - add default text boxes for custom image at top and bottom
-          addTextBox({
+          addElement({
+            type: 'text',
             text: 'כתבו כאן...',
             x: scaledWidth / 2,
             y: scaledHeight * 0.1,
@@ -218,7 +216,8 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
             isPlaceholder: true  // Gray placeholder styling from initial load
           })
 
-          addTextBox({
+          addElement({
+            type: 'text',
             text: 'כתבו כאן...',
             x: scaledWidth / 2,
             y: scaledHeight * 0.85,
