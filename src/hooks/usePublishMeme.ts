@@ -129,6 +129,7 @@ export function usePublishMeme() {
         } : null,
         username: username || null,
         likes: 0,
+        hidden: false,
         timestamp: serverTimestamp(),
         createdAt: new Date().toISOString(),
         originSource: localStorage.getItem('user_origin') || 'link' // QR code origin tracking

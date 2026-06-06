@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { collection, query, orderBy, where, onSnapshot, Timestamp } from 'firebase/firestore'
+import { collection, query, orderBy, onSnapshot, Timestamp } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { useMemeStore } from '@/stores/useMemeStore'
 import Layout from '@/components/layout/Layout'
@@ -28,7 +28,6 @@ export default function GalleryPage() {
   useEffect(() => {
     const q = query(
       collection(db, 'memes'),
-      where('hidden', '==', false),
       orderBy('createdAt', 'desc')
     )
 
@@ -71,7 +70,7 @@ export default function GalleryPage() {
 
   // Filter and sort memes
   const filteredAndSortedMemes = useMemo(() => {
-    let filtered = memes
+    let filtered = memes.filter((meme) => !meme.hidden)
 
     // Filter by tags
     if (selectedTags.length > 0) {
