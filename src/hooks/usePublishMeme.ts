@@ -117,8 +117,8 @@ export function usePublishMeme() {
       // 8. Save metadata to Firestore
       const memeData = {
         imageUrl,
-        memeText: memeText || null, // Searchable text content from all text boxes
-        description: description || null,
+        memeText: memeText || '', // Searchable text content from all text boxes
+        description: description || '',
         tags: selectedTags,
         location: selectedLocation ? {
           latitude: selectedLocation.latitude,
@@ -127,7 +127,7 @@ export function usePublishMeme() {
           showInGallery: selectedLocation.showInGallery || false,
           hideFromGallery: selectedLocation.hideFromGallery || false
         } : null,
-        username: username || null,
+        username: username || '',
         likes: 0,
         hidden: false,
         timestamp: serverTimestamp(),
