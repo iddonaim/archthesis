@@ -780,22 +780,46 @@ Each section requires careful legal translation. Key sections include:
 - [ ] Variable placeholders preserved
 - [ ] RTL/LTR considerations noted
 
-### Phase 2: Implementation ⬜
-- [ ] Create `src/locales/he.json`
-- [ ] Create `src/locales/en.json`
+### Phase 2: Implementation 🔄
+- [x] Install i18n library (`i18next`, `react-i18next`, `i18next-browser-languagedetector`)
+- [x] Create i18n config + RTL/LTR direction handling (`src/i18n/index.ts`)
+- [x] Create `common` namespace locale files (`src/i18n/locales/{he,en}/common.json`)
+- [x] Create `home` namespace locale files (`src/i18n/locales/{he,en}/home.json`)
+- [x] Add language toggle component (`src/components/common/LanguageToggle.tsx`)
+- [ ] Create remaining namespace locale files (gallery, editor, admin, modals, privacy)
 - [ ] Create `src/data/privacyContent_en.json`
-- [ ] Install i18n library (react-i18next)
-- [ ] Create language context/provider
-- [ ] Add language toggle component
 
-### Phase 3: Component Updates ⬜
-- [ ] Replace all hardcoded strings with `t()` function
-- [ ] Update all page components
-- [ ] Update all common components
-- [ ] Update all editor components
-- [ ] Update all gallery components
-- [ ] Update all admin components
-- [ ] Update all layout components
+### Phase 3: Component Updates 🔄
+- [x] Update layout components (Header, Footer) + language toggle in nav
+- [x] Update HomePage (pilot page — establishes the conversion pattern)
+- [ ] Update remaining page components (Gallery, Create, Admin, Privacy, 404)
+- [ ] Update all common components (modals, error boundary, update notification)
+- [ ] Update all editor components (panels, template selector, canvas)
+- [ ] Update all gallery components (MemeCard, Lightbox, FilterBar, carousel)
+- [ ] Update all admin components (analytics, meme management, contact messages)
+
+---
+
+## IMPLEMENTATION PATTERN (Established in Pilot)
+
+The infrastructure is live. Default language is **Hebrew** (RTL); English is opt-in via
+the header toggle and persisted to `localStorage` under the `language` key. Document
+`dir`/`lang` are switched automatically by `applyDirection()` in `src/i18n/index.ts`.
+
+To convert a component:
+
+1. Pick/extend a **namespace** under `src/i18n/locales/{he,en}/`. Group by feature area
+   (e.g. `gallery.json`, `editor.json`, `admin.json`). Register new namespaces in the
+   `ns` array in `src/i18n/index.ts` and the `resources` map.
+2. Add the Hebrew string (copied verbatim from the existing JSX) and its English
+   counterpart (from this document) under matching nested keys.
+3. In the component: `const { t } = useTranslation('namespace')` then replace the
+   hardcoded text with `{t('key')}`. Use the default `common` namespace for shared
+   strings (`t('nav.home')`, `t('footer.contact')`, …).
+4. **Interpolation:** `t('footer.copyright', { year })` ↔ `"© {{year}} …"`. Preserve all
+   `{{var}}` placeholders in both languages.
+5. **Direction-aware spacing:** replace physical `ml-*`/`mr-*`/`text-right` with logical
+   `me-*`/`ms-*`/`text-start` so layouts flip correctly between RTL and LTR.
 
 ### Phase 4: Testing ⬜
 - [ ] Test all pages in Hebrew

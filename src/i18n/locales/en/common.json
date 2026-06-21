@@ -1,0 +1,30 @@
+{
+  "brand": {
+    "name": "The Gigglechitecture Machine",
+    "short": "Gigglechitecture"
+  },
+  "nav": {
+    "home": "Home",
+    "gallery": "Gallery",
+    "create": "Create Meme",
+    "admin": "Admin"
+  },
+  "footer": {
+    "description": "Platform for architectural critique through meme creation. Turn observations into memes, and memes into real change!",
+    "navigation": "Navigation",
+    "legal": "Legal",
+    "details": "Details",
+    "privacy": "Privacy",
+    "terms": "Terms of Service",
+    "contact": "Contact",
+    "thesisProject": "Architecture Thesis Project",
+    "university": "Tel Aviv University",
+    "creator": "Created by: Ido Naim",
+    "builtWith": "Built with Claude (Anthropic) - Sonnet 4.5",
+    "copyright": "© {{year}} The Gigglechitecture Machine. All rights reserved."
+  },
+  "language": {
+    "switchTo": "עברית",
+    "label": "Language"
+  }
+}

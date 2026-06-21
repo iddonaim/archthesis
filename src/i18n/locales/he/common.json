@@ -1,0 +1,30 @@
+{
+  "brand": {
+    "name": "מכונת הגיחוך וההגחה",
+    "short": "גיחוך והגחה"
+  },
+  "nav": {
+    "home": "דף הבית",
+    "gallery": "גלריה",
+    "create": "צור גיחוך",
+    "admin": "ניהול"
+  },
+  "footer": {
+    "description": "פלטפורמה לביקורת אדריכלית דרך יצירת ממים. הפכו תצפיות לממים, וממים לשינוי אמיתי!",
+    "navigation": "ניווט",
+    "legal": "משפטי",
+    "details": "פרטים",
+    "privacy": "פרטיות",
+    "terms": "תנאי שימוש",
+    "contact": "יצירת קשר",
+    "thesisProject": "פרויקט גמר באדריכלות",
+    "university": "אוניברסיטת תל אביב",
+    "creator": "יוצר: עידו נעים",
+    "builtWith": "נבנה עם Claude (Anthropic) - Sonnet 4.5",
+    "copyright": "© {{year}} מכונת הגיחוך וההגחה. כל הזכויות שמורות."
+  },
+  "language": {
+    "switchTo": "English",
+    "label": "שפה"
+  }
+}

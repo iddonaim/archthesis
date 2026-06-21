@@ -1,17 +1,20 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Home, Image, Plus, Shield } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
+import LanguageToggle from '@/components/common/LanguageToggle'
 
 export default function Header() {
   const location = useLocation()
+  const { t } = useTranslation()
 
   const isActive = (path: string) => location.pathname === path
 
   const navLinks = [
-    { path: '/', label: 'דף הבית', icon: Home },
-    { path: '/gallery', label: 'גלריה', icon: Image },
-    { path: '/create', label: 'צור גיחוך', icon: Plus },
-    { path: '/admin', label: 'ניהול', icon: Shield }
+    { path: '/', label: t('nav.home'), icon: Home },
+    { path: '/gallery', label: t('nav.gallery'), icon: Image },
+    { path: '/create', label: t('nav.create'), icon: Plus },
+    { path: '/admin', label: t('nav.admin'), icon: Shield }
   ]
 
   const handleNavClick = (e: React.MouseEvent, path: string) => {
@@ -34,11 +37,11 @@ export default function Header() {
             onClick={(e) => handleNavClick(e, '/')}
             className="text-2xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent hover:scale-105 transition-transform"
           >
-            גיחוך והגחה
+            {t('brand.short')}
           </Link>
 
           {/* Navigation */}
-          <nav className="flex gap-2">
+          <nav className="flex items-center gap-2">
             {navLinks.map(({ path, label, icon: Icon }) => (
               <Link
                 key={path}
@@ -55,6 +58,7 @@ export default function Header() {
                 <span className="hidden md:inline">{label}</span>
               </Link>
             ))}
+            <LanguageToggle />
           </nav>
         </div>
       </div>
