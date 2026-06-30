@@ -1,7 +1,7 @@
 {
   "brand": {
-    "name": "The Gigglechitecture Machine",
-    "short": "Gigglechitecture"
+    "name": "The Giggletecture Machine",
+    "short": "Giggletecture"
   },
   "nav": {
     "home": "Home",
@@ -19,9 +19,9 @@
     "contact": "Contact",
     "thesisProject": "Architecture Thesis Project",
     "university": "Tel Aviv University",
-    "creator": "Created by: Ido Naim",
+    "creator": "Created by: Iddo Naim",
     "builtWith": "Built with Claude (Anthropic) - Sonnet 4.5",
-    "copyright": "© {{year}} The Gigglechitecture Machine. All rights reserved."
+    "copyright": "© {{year}} The Giggletecture Machine. All rights reserved."
   },
   "language": {
     "switchTo": "עברית",
