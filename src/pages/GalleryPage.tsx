@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 import { collection, query, orderBy, onSnapshot, Timestamp } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
@@ -13,6 +14,7 @@ import { Search, X } from 'lucide-react'
 import type { Meme } from '@/types/meme'
 
 export default function GalleryPage() {
+  const { t } = useTranslation('gallery')
   const [searchParams] = useSearchParams()
   const { memes, setMemes } = useMemeStore()
   const [isLoading, setIsLoading] = useState(true)
@@ -60,7 +62,7 @@ export default function GalleryPage() {
       },
       (err) => {
         console.error('Error fetching memes:', err)
-        setError('שגיאה בטעינת הגיחוכים. נסו לרענן את הדף.')
+        setError('load-error')
         setIsLoading(false)
       }
     )
@@ -141,7 +143,7 @@ export default function GalleryPage() {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-8">
-          <LoadingState message="טוען גיחוכים..." />
+          <LoadingState message={t('loading')} />
         </div>
       </Layout>
     )
@@ -154,14 +156,14 @@ export default function GalleryPage() {
           <div className="text-center py-16">
             <div className="text-6xl mb-4">😢</div>
             <h2 className="text-2xl font-bold text-gray-700 mb-2">
-              אופס! משהו השתבש
+              {t('error.title')}
             </h2>
-            <p className="text-gray-500 mb-6">{error}</p>
+            <p className="text-gray-500 mb-6">{t('error.message')}</p>
             <button
               onClick={() => window.location.reload()}
               className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
             >
-              רענן את הדף
+              {t('error.refresh')}
             </button>
           </div>
         </div>
@@ -175,10 +177,10 @@ export default function GalleryPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-2">
-            גלריית הגיחוכים
+            {t('title')}
           </h1>
           <p className="text-lg text-gray-600">
-            {filteredAndSortedMemes.length} מתוך {memes.length} גיחוכים
+            {t('resultsCount', { filtered: filteredAndSortedMemes.length, total: memes.length })}
           </p>
         </div>
 
@@ -188,25 +190,25 @@ export default function GalleryPage() {
             {/* Unified Search */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                <Search className="inline ml-2 h-5 w-5" />
-                חיפוש בגלריה
+                <Search className="inline me-2 h-5 w-5" />
+                {t('search.label')}
               </label>
               <p className="text-xs text-gray-500 mb-3">
-                חפשו לפי טקסט על הממ, תיאור, תגיות, מיקום או שם משתמש
+                {t('search.hint')}
               </p>
               <div className="relative">
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="חיפוש..."
-                  className="w-full pr-10 pl-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder={t('search.placeholder')}
+                  className="w-full ps-10 pe-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute end-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -214,7 +216,7 @@ export default function GalleryPage() {
               </div>
               {searchQuery && (
                 <p className="text-sm text-gray-600 mt-2">
-                  נמצאו {filteredAndSortedMemes.length} תוצאות
+                  {t('search.resultsFound', { count: filteredAndSortedMemes.length })}
                 </p>
               )}
             </div>

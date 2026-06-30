@@ -785,17 +785,19 @@ Each section requires careful legal translation. Key sections include:
 - [x] Create i18n config + RTL/LTR direction handling (`src/i18n/index.ts`)
 - [x] Create `common` namespace locale files (`src/i18n/locales/{he,en}/common.json`)
 - [x] Create `home` namespace locale files (`src/i18n/locales/{he,en}/home.json`)
+- [x] Create `gallery` namespace locale files (`src/i18n/locales/{he,en}/gallery.json`)
 - [x] Add language toggle component (`src/components/common/LanguageToggle.tsx`)
-- [ ] Create remaining namespace locale files (gallery, editor, admin, modals, privacy)
+- [ ] Create remaining namespace locale files (editor, admin, modals, privacy)
 - [ ] Create `src/data/privacyContent_en.json`
 
 ### Phase 3: Component Updates 🔄
 - [x] Update layout components (Header, Footer) + language toggle in nav
 - [x] Update HomePage (pilot page — establishes the conversion pattern)
-- [ ] Update remaining page components (Gallery, Create, Admin, Privacy, 404)
+- [x] Update GalleryPage + gallery components (MemeCard, Lightbox, FilterBar, SortControls, MemeGrid)
+- [ ] Update remaining page components (Create, Admin, Privacy, 404)
 - [ ] Update all common components (modals, error boundary, update notification)
 - [ ] Update all editor components (panels, template selector, canvas)
-- [ ] Update all gallery components (MemeCard, Lightbox, FilterBar, carousel)
+- [ ] Update FeaturedCarousel (homepage) + TopMemesSection
 - [ ] Update all admin components (analytics, meme management, contact messages)
 
 ---

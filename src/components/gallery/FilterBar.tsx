@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import Badge from '@/components/common/Badge'
 
 interface FilterBarProps {
@@ -14,6 +15,7 @@ export default function FilterBar({
   onClearFilters,
   memes
 }: FilterBarProps) {
+  const { t } = useTranslation('gallery')
   const availableTags = useMemo(() => {
     const tagsSet = new Set<string>()
     for (const meme of memes) {
@@ -33,13 +35,13 @@ export default function FilterBar({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-700">סינון לפי תגיות:</h3>
+        <h3 className="text-sm font-semibold text-gray-700">{t('filter.byTags')}</h3>
         {selectedTags.length > 0 && (
           <button
             onClick={onClearFilters}
             className="text-sm text-primary hover:underline"
           >
-            נקה הכל ({selectedTags.length})
+            {t('filter.clearAll', { count: selectedTags.length })}
           </button>
         )}
       </div>

@@ -4,8 +4,10 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 
 import heCommon from './locales/he/common.json'
 import heHome from './locales/he/home.json'
+import heGallery from './locales/he/gallery.json'
 import enCommon from './locales/en/common.json'
 import enHome from './locales/en/home.json'
+import enGallery from './locales/en/gallery.json'
 
 export const SUPPORTED_LANGUAGES = ['he', 'en'] as const
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number]
@@ -13,8 +15,8 @@ export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number]
 export const DEFAULT_LANGUAGE: SupportedLanguage = 'he'
 
 export const resources = {
-  he: { common: heCommon, home: heHome },
-  en: { common: enCommon, home: enHome },
+  he: { common: heCommon, home: heHome, gallery: heGallery },
+  en: { common: enCommon, home: enHome, gallery: enGallery },
 } as const
 
 /**
@@ -45,7 +47,7 @@ i18n
       caches: ['localStorage'],
       lookupLocalStorage: 'language',
     },
-    ns: ['common', 'home'],
+    ns: ['common', 'home', 'gallery'],
     defaultNS: 'common',
     interpolation: {
       // React already escapes values, so i18next escaping is unnecessary.

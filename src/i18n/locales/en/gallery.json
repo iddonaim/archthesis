@@ -1,0 +1,67 @@
+{
+  "title": "Meme Gallery",
+  "resultsCount": "{{filtered}} of {{total}} memes",
+  "search": {
+    "label": "Search Gallery",
+    "hint": "Search by text on meme, description, tags, location or username",
+    "placeholder": "Search...",
+    "resultsFound": "Found {{count}} results"
+  },
+  "filter": {
+    "byTags": "Filter by Tags:",
+    "clearAll": "Clear All ({{count}})"
+  },
+  "sort": {
+    "label": "Sort:",
+    "recent": "Most Recent",
+    "popular": "Most Popular",
+    "oldest": "Oldest"
+  },
+  "loading": "Loading memes...",
+  "error": {
+    "title": "Oops! Something went wrong",
+    "message": "Error loading memes. Try refreshing the page.",
+    "refresh": "Refresh Page"
+  },
+  "empty": {
+    "title": "No memes found",
+    "message": "Try removing some filters or create a new meme!"
+  },
+  "loadMore": "Load more ({{count}} remaining)",
+  "card": {
+    "remix": "Remix",
+    "download": "Download",
+    "share": "Share"
+  },
+  "toast": {
+    "downloadSuccess": "Meme downloaded successfully!",
+    "downloadError": "Error downloading meme: {{error}}",
+    "shareSuccess": "Meme shared successfully!",
+    "shareError": "Error sharing meme",
+    "linkCopied": "Link copied to clipboard!",
+    "shareUnavailable": "Cannot share on this device",
+    "unknownError": "Unknown"
+  },
+  "like": {
+    "error": "Error updating like",
+    "errorPermission": "Error: No permission to update like",
+    "errorNotFound": "Meme was deleted",
+    "errorNetwork": "Network error. Try again"
+  },
+  "share": {
+    "title": "Cool meme!"
+  },
+  "lightbox": {
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next",
+    "creator": "Created by:",
+    "anonymous": "Anonymous",
+    "createdAt": "Created on:",
+    "description": "Description",
+    "tags": "Tags",
+    "location": "Location",
+    "mapTitle": "Location map",
+    "openInMap": "Can't see the map? Open in OpenStreetMap"
+  }
+}
