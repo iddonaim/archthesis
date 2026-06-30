@@ -16,9 +16,9 @@
 ### Special Terminology
 - **גיחוך (Gichuch):** Portmanteau of גיחוך (laugh) + אדריכלות (architecture)
   - Context-dependent translation needed
-  - Suggestions: "Meme", "Gigglechitecture", "ArchMeme", "Architectural Critique"
+  - Suggestions: "Meme", "Giggletecture", "ArchMeme", "Architectural Critique"
 
-- **מכונת הגיחוך וההגחה:** "The Gigglechitecture Machine" or similar playful brand name
+- **מכונת הגיחוך וההגחה:** "The Giggletecture Machine" or similar playful brand name
 
 ### Critical Preservation Rules
 1. **Variables:** Keep all `{variable}` and `${variable}` placeholders EXACTLY as shown
