@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Heart, Download, Share2, Shuffle, MapPin, User } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
@@ -18,6 +19,7 @@ interface MemeCardProps {
 }
 
 export default function MemeCard({ meme, onImageClick }: MemeCardProps) {
+  const { t } = useTranslation('gallery')
   const navigate = useNavigate()
   const { likedMemes, toggleLike } = useMemeStore()
   const [isLiking, setIsLiking] = useState(false)
@@ -48,13 +50,13 @@ export default function MemeCard({ meme, onImageClick }: MemeCardProps) {
       toggleLike(meme.id)
 
       // Enhanced error handling with specific error codes
-      let errorMessage = 'שגיאה בעדכון הלייק'
+      let errorMessage = t('like.error')
       if (error.code === 'permission-denied') {
-        errorMessage = 'שגיאה: אין הרשאה לעדכן לייק'
+        errorMessage = t('like.errorPermission')
       } else if (error.code === 'not-found') {
-        errorMessage = 'הגיחוך נמחק'
+        errorMessage = t('like.errorNotFound')
       } else if (error.code === 'unavailable') {
-        errorMessage = 'שגיאת רשת. נסה שוב'
+        errorMessage = t('like.errorNetwork')
       }
 
       toast.error(errorMessage)
@@ -98,7 +100,7 @@ export default function MemeCard({ meme, onImageClick }: MemeCardProps) {
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
 
-      toast.success('הגיחוך הורד בהצלחה!')
+      toast.success(t('toast.downloadSuccess'))
     } catch (error: any) {
       console.error('Download error details:', {
         error,
@@ -107,7 +109,7 @@ export default function MemeCard({ meme, onImageClick }: MemeCardProps) {
         memeId: meme.id,
         imageUrl: meme.imageUrl
       })
-      toast.error(`שגיאה בהורדת הגיחוך: ${error?.message || 'לא ידוע'}`)
+      toast.error(t('toast.downloadError', { error: error?.message || t('toast.unknownError') }))
     }
   }
 
@@ -117,20 +119,20 @@ export default function MemeCard({ meme, onImageClick }: MemeCardProps) {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'גיחוך מגניב!',
+          title: t('share.title'),
           text: `${meme.topText} ${meme.bottomText}`,
           url: shareUrl
         })
-        toast.success('הגיחוך שותף בהצלחה!')
+        toast.success(t('toast.shareSuccess'))
       } catch (error) {
         if (error instanceof Error && error.name !== 'AbortError') {
-          toast.error('שגיאה בשיתוף הגיחוך')
+          toast.error(t('toast.shareError'))
         }
       }
     } else {
       // Fallback: copy link to clipboard
       navigator.clipboard.writeText(shareUrl)
-      toast.success('הקישור הועתק ללוח!')
+      toast.success(t('toast.linkCopied'))
     }
   }
 
@@ -236,7 +238,7 @@ export default function MemeCard({ meme, onImageClick }: MemeCardProps) {
                 variant="outline"
                 size="sm"
                 onClick={handleRemix}
-                title="רמיקס"
+                title={t('card.remix')}
                 className="flex items-center justify-center"
               >
                 <Shuffle size={18} />
@@ -246,7 +248,7 @@ export default function MemeCard({ meme, onImageClick }: MemeCardProps) {
                 variant="outline"
                 size="sm"
                 onClick={handleDownload}
-                title="הורד"
+                title={t('card.download')}
                 className="flex items-center justify-center"
               >
                 <Download size={18} />
@@ -256,7 +258,7 @@ export default function MemeCard({ meme, onImageClick }: MemeCardProps) {
                 variant="outline"
                 size="sm"
                 onClick={handleShare}
-                title="שתף"
+                title={t('card.share')}
                 className="flex items-center justify-center"
               >
                 <Share2 size={18} />

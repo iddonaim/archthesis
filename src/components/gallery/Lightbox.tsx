@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { X, ChevronLeft, ChevronRight, Download, Heart, Share2, User, Clock, MapPin, ExternalLink, Shuffle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { doc, updateDoc, increment } from 'firebase/firestore'
 import { ref, getBlob } from 'firebase/storage'
@@ -26,6 +27,7 @@ export default function Lightbox({
   onNext,
   onPrevious
 }: LightboxProps) {
+  const { t, i18n } = useTranslation('gallery')
   const navigate = useNavigate()
   const { likedMemes, toggleLike } = useMemeStore()
   const [isLiking, setIsLiking] = useState(false)
@@ -90,7 +92,7 @@ export default function Lightbox({
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
 
-      toast.success('הגיחוך הורד בהצלחה!')
+      toast.success(t('toast.downloadSuccess'))
     } catch (error: any) {
       console.error('Lightbox download error details:', {
         error,
@@ -99,7 +101,7 @@ export default function Lightbox({
         memeId: meme.id,
         imageUrl: meme.imageUrl
       })
-      toast.error(`שגיאה בהורדת גיחוך: ${error?.message || 'לא ידוע'}`)
+      toast.error(t('toast.downloadError', { error: error?.message || t('toast.unknownError') }))
     }
   }
 
@@ -108,23 +110,23 @@ export default function Lightbox({
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'גיחוך מגניב!',
+          title: t('share.title'),
           text: `${meme.topText} ${meme.bottomText}`,
           url: shareUrl
         })
-        toast.success('הגיחוך שותף בהצלחה!')
+        toast.success(t('toast.shareSuccess'))
       } catch (error) {
         if (error instanceof Error && error.name !== 'AbortError') {
-          toast.error('שגיאה בשיתוף הגיחוך')
+          toast.error(t('toast.shareError'))
         }
         console.error('Error sharing:', error)
       }
     } else {
       try {
         await navigator.clipboard.writeText(shareUrl)
-        toast.success('הקישור הועתק ללוח!')
+        toast.success(t('toast.linkCopied'))
       } catch (error) {
-        toast.error('אין אפשרות לשתף במכשיר זה')
+        toast.error(t('toast.shareUnavailable'))
       }
     }
   }
@@ -160,15 +162,16 @@ export default function Lightbox({
       }
     }
 
+    const locale = i18n.language === 'he' ? 'he-IL' : 'en-US'
     if (date && !isNaN(date.getTime())) {
       try {
-        return new Intl.DateTimeFormat('he-IL', {
+        return new Intl.DateTimeFormat(locale, {
           dateStyle: 'medium',
           timeStyle: 'short'
         }).format(date)
       } catch (e) {
         console.error('Error formatting date:', e)
-        return date.toLocaleDateString('he-IL')
+        return date.toLocaleDateString(locale)
       }
     }
     return null
@@ -236,7 +239,7 @@ export default function Lightbox({
                 <button
                   onClick={onClose}
                   className="absolute top-0 right-0 -mt-12 p-2 text-white hover:text-gray-300 transition-colors z-10"
-                  aria-label="סגור"
+                  aria-label={t('lightbox.close')}
                 >
                   <X size={32} />
                 </button>
@@ -246,7 +249,7 @@ export default function Lightbox({
                   <button
                     onClick={onPrevious}
                     className="absolute right-0 top-1/2 -translate-y-1/2 -mr-16 p-3 text-white hover:text-gray-300 transition-colors bg-black/30 rounded-full hover:bg-black/50"
-                    aria-label="הקודם"
+                    aria-label={t('lightbox.previous')}
                   >
                     <ChevronRight size={32} />
                   </button>
@@ -257,14 +260,14 @@ export default function Lightbox({
                   <button
                     onClick={onNext}
                     className="absolute left-0 top-1/2 -translate-y-1/2 -ml-16 p-3 text-white hover:text-gray-300 transition-colors bg-black/30 rounded-full hover:bg-black/50"
-                    aria-label="הבא"
+                    aria-label={t('lightbox.next')}
                   >
                     <ChevronLeft size={32} />
                   </button>
                 )}
 
                 {/* Main responsive grid layout */}
-                <div className="bg-white rounded-lg overflow-hidden shadow-xl grid grid-cols-1 md:grid-cols-3 text-right">
+                <div className="bg-white rounded-lg overflow-hidden shadow-xl grid grid-cols-1 md:grid-cols-3 text-start">
                   {/* Left Section: Centered Image */}
                   <div className="md:col-span-2 bg-black flex items-center justify-center p-4 min-h-[50vh] md:min-h-[70vh]">
                     <img
@@ -281,13 +284,13 @@ export default function Lightbox({
                       <div className="flex flex-col gap-2 border-b border-gray-100 pb-4">
                         <div className="flex items-center gap-2 text-gray-700 font-semibold text-sm">
                           <User size={16} className="text-gray-400" />
-                          <span>יוצר/ת:</span>
-                          <span className="text-gray-900 font-bold">{meme.username || 'אנונימי/ת'}</span>
+                          <span>{t('lightbox.creator')}</span>
+                          <span className="text-gray-900 font-bold">{meme.username || t('lightbox.anonymous')}</span>
                         </div>
                         {formattedDate && (
                           <div className="flex items-center gap-2 text-gray-500 text-xs">
                             <Clock size={14} className="text-gray-400" />
-                            <span>נוצר ב:</span>
+                            <span>{t('lightbox.createdAt')}</span>
                             <span>{formattedDate}</span>
                           </div>
                         )}
@@ -296,7 +299,7 @@ export default function Lightbox({
                       {/* Meme Description Paragraph */}
                       {meme.description && (
                         <div className="space-y-2">
-                          <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">תיאור</h4>
+                          <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">{t('lightbox.description')}</h4>
                           <p className="text-sm text-gray-800 leading-relaxed bg-gray-50 p-3 rounded-lg border border-gray-100">
                             {meme.description}
                           </p>
@@ -306,7 +309,7 @@ export default function Lightbox({
                       {/* Associated Tags badges */}
                       {meme.tags && meme.tags.length > 0 && (
                         <div className="space-y-2">
-                          <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">תגיות</h4>
+                          <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">{t('lightbox.tags')}</h4>
                           <div className="flex flex-wrap gap-2">
                             {meme.tags.map((tag) => (
                               <Badge key={tag} variant="secondary">
@@ -320,7 +323,7 @@ export default function Lightbox({
                       {/* Tagged Location and OpenStreetMap iframe Preview */}
                       {meme.location && (
                         <div className="space-y-3">
-                          <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">מיקום</h4>
+                          <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">{t('lightbox.location')}</h4>
                           <div className="flex items-start gap-2 text-gray-700 text-sm">
                             <MapPin size={16} className="text-primary mt-0.5" />
                             <span>
@@ -334,7 +337,7 @@ export default function Lightbox({
                             <div className="space-y-2 pt-1">
                               <div className="border border-gray-200 rounded-lg overflow-hidden h-48 bg-gray-50 relative shadow-sm">
                                 <iframe
-                                  title="מפת מיקום"
+                                  title={t('lightbox.mapTitle')}
                                   width="100%"
                                   height="100%"
                                   src={mapIframeUrl}
@@ -348,7 +351,7 @@ export default function Lightbox({
                                 rel="noopener noreferrer"
                                 className="text-xs text-primary hover:underline flex items-center gap-1 mt-1 justify-end font-semibold transition-colors"
                               >
-                                <span>לא רואה את המפה? פתח ב-OpenStreetMap</span>
+                                <span>{t('lightbox.openInMap')}</span>
                                 <ExternalLink size={12} />
                               </a>
                             </div>
@@ -377,31 +380,31 @@ export default function Lightbox({
                           <Button
                             variant="outline"
                             onClick={handleRemix}
-                            title="רמיקס"
+                            title={t('card.remix')}
                             className="flex items-center justify-center p-2"
                           >
                             <Shuffle size={20} />
-                            <span className="hidden sm:inline mr-1 text-sm">רמיקס</span>
+                            <span className="hidden sm:inline ms-1 text-sm">{t('card.remix')}</span>
                           </Button>
 
                           <Button
                             variant="outline"
                             onClick={handleDownload}
-                            title="הורד"
+                            title={t('card.download')}
                             className="flex items-center justify-center p-2"
                           >
                             <Download size={20} />
-                            <span className="hidden sm:inline mr-1 text-sm">הורד</span>
+                            <span className="hidden sm:inline ms-1 text-sm">{t('card.download')}</span>
                           </Button>
 
                           <Button
                             variant="outline"
                             onClick={handleShare}
-                            title="שתף"
+                            title={t('card.share')}
                             className="flex items-center justify-center p-2"
                           >
                             <Share2 size={20} />
-                            <span className="hidden sm:inline mr-1 text-sm">שתף</span>
+                            <span className="hidden sm:inline ms-1 text-sm">{t('card.share')}</span>
                           </Button>
                         </div>
                       </div>

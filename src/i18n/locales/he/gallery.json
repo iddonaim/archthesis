@@ -1,0 +1,67 @@
+{
+  "title": "גלריית הגיחוכים",
+  "resultsCount": "{{filtered}} מתוך {{total}} גיחוכים",
+  "search": {
+    "label": "חיפוש בגלריה",
+    "hint": "חפשו לפי טקסט על הממ, תיאור, תגיות, מיקום או שם משתמש",
+    "placeholder": "חיפוש...",
+    "resultsFound": "נמצאו {{count}} תוצאות"
+  },
+  "filter": {
+    "byTags": "סינון לפי תגיות:",
+    "clearAll": "נקה הכל ({{count}})"
+  },
+  "sort": {
+    "label": "מיון:",
+    "recent": "חדשים ביותר",
+    "popular": "פופולריים ביותר",
+    "oldest": "ישנים ביותר"
+  },
+  "loading": "טוען גיחוכים...",
+  "error": {
+    "title": "אופס! משהו השתבש",
+    "message": "שגיאה בטעינת הגיחוכים. נסו לרענן את הדף.",
+    "refresh": "רענן את הדף"
+  },
+  "empty": {
+    "title": "לא נמצאו גיחוכים",
+    "message": "נסו להסיר כמה מהפילטרים או צרו גיחוך חדש!"
+  },
+  "loadMore": "טען עוד ({{count}} נותרו)",
+  "card": {
+    "remix": "רמיקס",
+    "download": "הורד",
+    "share": "שתף"
+  },
+  "toast": {
+    "downloadSuccess": "הגיחוך הורד בהצלחה!",
+    "downloadError": "שגיאה בהורדת הגיחוך: {{error}}",
+    "shareSuccess": "הגיחוך שותף בהצלחה!",
+    "shareError": "שגיאה בשיתוף הגיחוך",
+    "linkCopied": "הקישור הועתק ללוח!",
+    "shareUnavailable": "אין אפשרות לשתף במכשיר זה",
+    "unknownError": "לא ידוע"
+  },
+  "like": {
+    "error": "שגיאה בעדכון הלייק",
+    "errorPermission": "שגיאה: אין הרשאה לעדכן לייק",
+    "errorNotFound": "הגיחוך נמחק",
+    "errorNetwork": "שגיאת רשת. נסה שוב"
+  },
+  "share": {
+    "title": "גיחוך מגניב!"
+  },
+  "lightbox": {
+    "close": "סגור",
+    "previous": "הקודם",
+    "next": "הבא",
+    "creator": "יוצר/ת:",
+    "anonymous": "אנונימי/ת",
+    "createdAt": "נוצר ב:",
+    "description": "תיאור",
+    "tags": "תגיות",
+    "location": "מיקום",
+    "mapTitle": "מפת מיקום",
+    "openInMap": "לא רואה את המפה? פתח ב-OpenStreetMap"
+  }
+}

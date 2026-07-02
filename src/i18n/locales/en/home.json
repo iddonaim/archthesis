@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "title": "Giggling at the City",
+    "subtitle1": "Create memes and influence the urban space",
+    "subtitle2": "If we can laugh at the space we live in, we can also talk about it, critique it, and maybe even change it!",
+    "ctaCreate": "Create a New Meme",
+    "ctaGallery": "To Meme Gallery",
+    "ctaInfo": "What's Going On Here?"
+  },
+  "steps": {
+    "step1Title": "Look Around",
+    "step1Body": "Upload a photo you took in the city, or choose a meme template from the collection",
+    "step2Title": "Say Something",
+    "step2Body": "Add your statement with text, emoji, description, tags and location",
+    "step3Title": "Share, Influence and Make a Difference!",
+    "step3Body": "Made a meme? Share it - this time your sharing can influence the space!"
+  },
+  "latest": "Latest Memes from the Community",
+  "whatsHappening": {
+    "title": "What's Going On Here?",
+    "intro": "This website was born from the idea that memes aren't just jokes — they're tools for communication, critique, distribution and participation. Here we're trying to use them to talk about space, about architecture, and how it looks, feels and functions in real life.",
+    "academicNote": "*Architecture thesis project, Tel Aviv University"
+  },
+  "cards": {
+    "whatTitle": "So What Do We Do?",
+    "whatBody": "Create a meme about a space or with it - upload a photo or choose a template, add text, emojis and tags (hashtags), and of course... share!",
+    "whoTitle": "Everyone is Invited to Participate!",
+    "whoBody": "Everyone, really! Anyone who feels they have something to say about the city can contribute. No prior knowledge needed - just a sharp eye, and a bit of humor!",
+    "whyTitle": "Why Does It Matter?",
+    "whyBody": "The built environment affects us all, but most of the time discourse about it is closed to experts. The project examines how memes can open this discourse — and enable accessible, direct, and participatory critique.",
+    "dataTitle": "What Happens with the Data?",
+    "dataBody": "This is academic research. All information is collected anonymously for research purposes only. For full details see ",
+    "dataPrivacyLink": "Privacy Policy"
+  },
+  "contactCta": "Have Questions? Contact Us",
+  "finalCta": {
+    "title": "Ready to Start?",
+    "button": "Create Your First Meme"
+  }
+}

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import MemeCard from './MemeCard'
 import MemeCardSkeleton from './MemeCardSkeleton'
@@ -24,6 +25,7 @@ export default function MemeGrid({
   searchQuery,
   sortBy
 }: MemeGridProps) {
+  const { t } = useTranslation('gallery')
   const [lightboxMeme, setLightboxMeme] = useState<Meme | null>(null)
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [hasAutoOpened, setHasAutoOpened] = useState(false)
@@ -130,10 +132,10 @@ export default function MemeGrid({
       <div className="text-center py-16">
         <div className="text-6xl mb-4">🤷‍♂️</div>
         <h3 className="text-2xl font-bold text-gray-700 mb-2">
-          לא נמצאו גיחוכים
+          {t('empty.title')}
         </h3>
         <p className="text-gray-500">
-          נסו להסיר כמה מהפילטרים או צרו גיחוך חדש!
+          {t('empty.message')}
         </p>
       </div>
     )
@@ -176,7 +178,7 @@ export default function MemeGrid({
             onClick={loadMore}
             className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
           >
-            טען עוד ({memes.length - visibleCount} נותרו)
+            {t('loadMore', { count: memes.length - visibleCount })}
           </button>
         </div>
       )}

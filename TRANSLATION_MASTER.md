@@ -12,10 +12,10 @@
 - **English (Target):** Maintain playful academic tone, keep humor, preserve cultural nuance
 
 ### Special Terminology
-- **גיחוך (Gichuch)** = "Laugh" / "Meme" / "Gigglechitecture" (portmanteau)
+- **גיחוך (Gichuch)** = "Laugh" / "Meme" / "Giggletecture" (portmanteau)
   - Suggested translations depend on context:
-    - Button/Action: "Create Meme" (simple, clear)
-    - Brand/Title: "Gigglechitecture" or "ArchMeme" (playful)
+    - Button/Action: "Create a Meme" (simple, clear)
+    - Brand/Title: "Giggletecture" or "ArchMeme" (playful)
     - Gallery: "Memes" (standard)
 
 ### Key Principles
@@ -31,12 +31,12 @@
 
 | Category | Hebrew | English Translation | Notes |
 |----------|--------|---------------------|-------|
-| **Brand Name** | מכונת הגיחוך וההגחה | The Gigglechitecture Machine | Portmanteau: Gichuch (laugh) + Architecture |
+| **Brand Name** | מכונת הגיחוך וההגחה | The Giggletecture Machine | Portmanteau: Gichuch (laugh) + Architecture |
 | **Tagline (short)** | גחך על העיר | Laugh at the City | Hero section |
 | **Tagline (long)** | פלטפורמה ליצירת ממים על המרחב הבנוי | Platform for Creating Memes About the Built Environment | Homepage subtitle |
 | **Project Type** | פרויקט גמר באדריכלות | Architecture Thesis Project | Academic context |
 | **Institution** | אוניברסיטת תל אביב | Tel Aviv University | - |
-| **Creator** | עידו נעים | Ido Naim | - |
+| **Creator** | עידו נעים | Iddo Naim | - |
 
 ---
 
@@ -47,13 +47,13 @@
 |--------|---------|------|------|
 | דף הבית | Home | / | Home |
 | גלריה | Gallery | /gallery | Image |
-| צור גיחוך | Create Meme | /create | Plus |
+| צור גיחוך | Create a Meme | /create | Plus |
 | ניהול | Admin | /admin | Shield |
 
 ### Footer Sections
 | Hebrew | English | Context |
 |--------|---------|---------|
-| **גיחוך והגחה** | **Gigglechitecture** | Brand heading |
+| **גיחוך והגחה** | **Giggletecture** | Brand heading |
 | פלטפורמה לביקורת אדריכלית דרך יצירת ממים | Platform for architectural critique through meme creation | Brand description |
 | הפכו תצפיות לממים, וממים לשינוי אמיתי! | Turn observations into memes, and memes into real change! | Call to action |
 | **ניווט** | **Navigation** | Section heading |
@@ -63,7 +63,7 @@
 | תנאי שימוש | Terms of Service | Link |
 | יצירת קשר | Contact | Button |
 | פרויקט גמר באדריכלות | Architecture Thesis Project | Footer info |
-| יוצר: עידו נעים | Created by: Ido Naim | Footer credit |
+| יוצר: עידו נעים | Created by: Iddo Naim | Footer credit |
 | נבנה עם Claude (Anthropic) - Sonnet 4.5 | Built with Claude (Anthropic) - Sonnet 4.5 | Tech credit |
 | כל הזכויות שמורות | All rights reserved | Copyright |
 | גרסה {version} • {date} | Version {version} • {date} | Version display |
@@ -470,7 +470,7 @@
 |--------|---------|---------|
 | **חזרה לדף הבית** | **Back to Home** | Top button |
 | **כניסה לפאנל הניהול** | **Admin Panel Login** | Page heading |
-| מכונת הגיחוך וההגחה | The Gigglechitecture Machine | Subtitle |
+| מכונת הגיחוך וההגחה | The Giggletecture Machine | Subtitle |
 | **אימייל** | **Email** | Label |
 | **סיסמה** | **Password** | Label |
 | מתחבר... | Logging in... | Button loading |
@@ -780,22 +780,48 @@ Each section requires careful legal translation. Key sections include:
 - [ ] Variable placeholders preserved
 - [ ] RTL/LTR considerations noted
 
-### Phase 2: Implementation ⬜
-- [ ] Create `src/locales/he.json`
-- [ ] Create `src/locales/en.json`
+### Phase 2: Implementation 🔄
+- [x] Install i18n library (`i18next`, `react-i18next`, `i18next-browser-languagedetector`)
+- [x] Create i18n config + RTL/LTR direction handling (`src/i18n/index.ts`)
+- [x] Create `common` namespace locale files (`src/i18n/locales/{he,en}/common.json`)
+- [x] Create `home` namespace locale files (`src/i18n/locales/{he,en}/home.json`)
+- [x] Create `gallery` namespace locale files (`src/i18n/locales/{he,en}/gallery.json`)
+- [x] Add language toggle component (`src/components/common/LanguageToggle.tsx`)
+- [ ] Create remaining namespace locale files (editor, admin, modals, privacy)
 - [ ] Create `src/data/privacyContent_en.json`
-- [ ] Install i18n library (react-i18next)
-- [ ] Create language context/provider
-- [ ] Add language toggle component
 
-### Phase 3: Component Updates ⬜
-- [ ] Replace all hardcoded strings with `t()` function
-- [ ] Update all page components
-- [ ] Update all common components
-- [ ] Update all editor components
-- [ ] Update all gallery components
-- [ ] Update all admin components
-- [ ] Update all layout components
+### Phase 3: Component Updates 🔄
+- [x] Update layout components (Header, Footer) + language toggle in nav
+- [x] Update HomePage (pilot page — establishes the conversion pattern)
+- [x] Update GalleryPage + gallery components (MemeCard, Lightbox, FilterBar, SortControls, MemeGrid)
+- [ ] Update remaining page components (Create, Admin, Privacy, 404)
+- [ ] Update all common components (modals, error boundary, update notification)
+- [ ] Update all editor components (panels, template selector, canvas)
+- [ ] Update FeaturedCarousel (homepage) + TopMemesSection
+- [ ] Update all admin components (analytics, meme management, contact messages)
+
+---
+
+## IMPLEMENTATION PATTERN (Established in Pilot)
+
+The infrastructure is live. Default language is **Hebrew** (RTL); English is opt-in via
+the header toggle and persisted to `localStorage` under the `language` key. Document
+`dir`/`lang` are switched automatically by `applyDirection()` in `src/i18n/index.ts`.
+
+To convert a component:
+
+1. Pick/extend a **namespace** under `src/i18n/locales/{he,en}/`. Group by feature area
+   (e.g. `gallery.json`, `editor.json`, `admin.json`). Register new namespaces in the
+   `ns` array in `src/i18n/index.ts` and the `resources` map.
+2. Add the Hebrew string (copied verbatim from the existing JSX) and its English
+   counterpart (from this document) under matching nested keys.
+3. In the component: `const { t } = useTranslation('namespace')` then replace the
+   hardcoded text with `{t('key')}`. Use the default `common` namespace for shared
+   strings (`t('nav.home')`, `t('footer.contact')`, …).
+4. **Interpolation:** `t('footer.copyright', { year })` ↔ `"© {{year}} …"`. Preserve all
+   `{{var}}` placeholders in both languages.
+5. **Direction-aware spacing:** replace physical `ml-*`/`mr-*`/`text-right` with logical
+   `me-*`/`ms-*`/`text-start` so layouts flip correctly between RTL and LTR.
 
 ### Phase 4: Testing ⬜
 - [ ] Test all pages in Hebrew
@@ -818,7 +844,7 @@ Each section requires careful legal translation. Key sections include:
 
 1. **"גיחוך" (Gichuch)** is a portmanteau of Hebrew words meaning "laugh" and "architecture". For English, we suggest:
    - Formal contexts: "Meme" or "Architectural Meme"
-   - Brand/Title: "Gigglechitecture" (preserves wordplay)
+   - Brand/Title: "Giggletecture" (preserves wordplay)
    - Casual contexts: "Laugh", "ArchMeme"
 
 2. **Cultural Nuances:**

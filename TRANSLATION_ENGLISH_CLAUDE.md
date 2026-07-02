@@ -10,20 +10,20 @@
 
 ### Philosophy
 - **Playful Academic Tone:** Maintained the lighthearted yet scholarly voice
-- **"Gigglechitecture":** Created portmanteau combining "giggle" + "architecture" to mirror Hebrew "גיחוך"
+- **"Giggletecture":** Created portmanteau combining "giggle" + "architecture" to mirror Hebrew "גיחוך"
 - **Cultural Adaptation:** Adjusted idioms and cultural references for English-speaking audience
 - **Formality Balance:** Casual for UI, formal for legal/academic sections
 - **Clarity First:** Prioritized understanding over literal translation
 
 ### Key Decisions
 1. **גיחוך → Context-dependent:**
-   - Brand/Title: "Gigglechitecture" or "The Gigglechitecture Machine"
-   - Buttons/Actions: "Meme" (e.g., "Create Meme")
+   - Brand/Title: "Giggletecture" or "The Giggletecture Machine"
+   - Buttons/Actions: "Meme" (e.g., "Create a Meme")
    - Gallery: "Memes"
 
 2. **Academic Language:** Preserved scholarly credibility for thesis context
 3. **Accessibility:** Simplified complex Hebrew academic phrasing for broader English audience
-4. **Hebrew Names:** Kept as transliteration (Ido Naim, Tel Aviv University)
+4. **Hebrew Names:** Kept as transliteration (Iddo Naim, Tel Aviv University)
 
 ---
 
@@ -31,7 +31,7 @@
 
 ### Brand Identity
 ```
-The Gigglechitecture Machine
+The Giggletecture Machine
 ```
 
 ```
@@ -51,7 +51,7 @@ Tel Aviv University
 ```
 
 ```
-Ido Naim
+Iddo Naim
 ```
 
 ---
@@ -68,7 +68,7 @@ Gallery
 ```
 
 ```
-Create Meme
+Create a Meme
 ```
 
 ```
@@ -77,7 +77,7 @@ Admin
 
 ### Footer - Brand Section
 ```
-Gigglechitecture
+Giggletecture
 ```
 
 ```
@@ -116,7 +116,7 @@ Architecture Thesis Project
 ```
 
 ```
-Created by: Ido Naim
+Created by: Iddo Naim
 ```
 
 ```
@@ -124,7 +124,7 @@ Built with Claude (Anthropic) - Sonnet 4.5
 ```
 
 ```
-© {currentYear} The Gigglechitecture Machine. All rights reserved.
+© {currentYear} The Giggletecture Machine. All rights reserved.
 ```
 
 ```
@@ -1051,7 +1051,7 @@ Admin Panel Login
 ```
 
 ```
-The Gigglechitecture Machine
+The Giggletecture Machine
 ```
 
 ```
@@ -1599,7 +1599,7 @@ Introduction and Academic Background
 
 **Content:**
 ```
-Welcome to "The Gigglechitecture Machine". This document defines the terms of use and privacy policy of the platform. The site was established and is operated by Ido Naim, researcher-student (5th year), as a research and applied tool as part of a graduation project at the David Azrieli School of Architecture, Tel Aviv University.
+Welcome to "The Giggletecture Machine". This document defines the terms of use and privacy policy of the platform. The site was established and is operated by Iddo Naim, researcher-student (5th year), as a research and applied tool as part of a graduation project at the David Azrieli School of Architecture, Tel Aviv University.
 ```
 
 **Note Label:**
@@ -1857,7 +1857,7 @@ For questions regarding research, privacy, or removal requests, you can contact:
 
 **Contact Info - Name:**
 ```
-Ido Naim
+Iddo Naim
 ```
 
 **Contact Info - Institution:**
@@ -1867,13 +1867,13 @@ School of Architecture, Tel Aviv University
 
 ### Final Consent Statement
 ```
-By using "The Gigglechitecture Machine" platform, you confirm that you have read the terms, you are over 16 years old, and you consent to the research and public use of the content you create.
+By using "The Giggletecture Machine" platform, you confirm that you have read the terms, you are over 16 years old, and you consent to the research and public use of the content you create.
 ```
 
 ### Creator Info
 **Name:**
 ```
-Ido Naim
+Iddo Naim
 ```
 
 **Title:**
@@ -1903,7 +1903,7 @@ Full Privacy Policy →
 ### Terminology Choices
 
 1. **"גיחוך" Translation Strategy:**
-   - **Brand/Title Context:** "Gigglechitecture" - Maintains wordplay and playfulness
+   - **Brand/Title Context:** "Giggletecture" - Maintains wordplay and playfulness
    - **Action Context:** "Meme" - Clear and universally understood
    - **Gallery Context:** "Memes" - Standard terminology
    - **Academic Context:** "Memetic" - Scholarly terminology
@@ -1915,7 +1915,7 @@ Full Privacy Policy →
    - Privacy Policy Legal: Formal, third-person, legally precise
 
 3. **Cultural Adaptations:**
-   - "גיחוך והגחה" → "Gigglechitecture" (playful portmanteau preserved)
+   - "גיחוך והגחה" → "Giggletecture" (playful portmanteau preserved)
    - Hebrew informality → English friendliness (maintaining warmth)
    - Academic Hebrew formality → Academic English clarity
 
@@ -1929,7 +1929,7 @@ Full Privacy Policy →
 
 **Challenge 1: "גיחוך" Wordplay**
 - **Issue:** No direct English equivalent
-- **Solution:** Created "Gigglechitecture" to maintain playfulness while signaling architecture
+- **Solution:** Created "Giggletecture" to maintain playfulness while signaling architecture
 
 **Challenge 2: Hebrew Academic Language**
 - **Issue:** Hebrew academic writing tends to be more verbose

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import Layout from '@/components/layout/Layout'
 import Button from '@/components/common/Button'
 import Card, { CardHeader, CardTitle, CardContent } from '@/components/common/Card'
@@ -8,6 +9,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Sparkles, Image, Zap, HelpCircle, Users, MessageSquare, Database, Mail } from 'lucide-react'
 
 export default function HomePage() {
+  const { t } = useTranslation('home')
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [showContactModal, setShowContactModal] = useState(false)
@@ -34,13 +36,13 @@ export default function HomePage() {
       <section className="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 text-white py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-5xl md:text-7xl font-black mb-4 animate-fade-in">
-            מגחכים על העיר
+            {t('hero.title')}
           </h1>
           <p className="text-xl md:text-3xl font-bold mb-6 max-w-3xl mx-auto leading-relaxed">
-            יוצרים מם ומשפיעים על המרחב העירוני
+            {t('hero.subtitle1')}
           </p>
           <p className="text-xl md:text-2xl font-bold mb-6 max-w-2xl mx-auto leading-relaxed">
-            אם אפשר לצחוק על המרחב שבו אנחנו חיים, אפשר גם לדבר עליו, לבקר אותו ואולי אפילו לשנות אותו!
+            {t('hero.subtitle2')}
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button
@@ -48,8 +50,8 @@ export default function HomePage() {
               onClick={() => navigate('/create')}
               className="bg-white text-purple-600 hover:bg-gray-100"
             >
-              <Sparkles className="ml-2 h-6 w-6" />
-              צור גיחוך חדש
+              <Sparkles className="me-2 h-6 w-6" />
+              {t('hero.ctaCreate')}
             </Button>
             <Button
               size="lg"
@@ -57,8 +59,8 @@ export default function HomePage() {
               onClick={() => navigate('/gallery')}
               className="border-white text-white hover:bg-white/10"
             >
-              <Image className="ml-2 h-6 w-6" />
-              לגלריית הגיחוכים
+              <Image className="me-2 h-6 w-6" />
+              {t('hero.ctaGallery')}
             </Button>
             <Button
               size="lg"
@@ -69,8 +71,8 @@ export default function HomePage() {
               }}
               className="border-white text-white hover:bg-white/10"
             >
-              <HelpCircle className="ml-2 h-6 w-6" />
-              מה קורה כאן?
+              <HelpCircle className="me-2 h-6 w-6" />
+              {t('hero.ctaInfo')}
             </Button>
           </div>
         </div>
@@ -82,25 +84,25 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
             <div className="bg-gradient-to-br from-red-500 to-pink-600 rounded-lg p-2 text-white text-center shadow-md hover:shadow-lg transition-shadow">
               <div className="text-2xl mb-1">1️⃣</div>
-              <h4 className="font-bold mb-1 text-lg">מסתכלים מסביב</h4>
+              <h4 className="font-bold mb-1 text-lg">{t('steps.step1Title')}</h4>
               <p className="text-base leading-snug opacity-95">
-                מעלים תמונה שצילמתם בעיר, או בוחרים תבנית מם מהמאגר
+                {t('steps.step1Body')}
               </p>
             </div>
 
             <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg p-2 text-white text-center shadow-md hover:shadow-lg transition-shadow">
               <div className="text-2xl mb-1">2️⃣</div>
-              <h4 className="font-bold mb-1 text-lg">אומרים משהו</h4>
+              <h4 className="font-bold mb-1 text-lg">{t('steps.step2Title')}</h4>
               <p className="text-base leading-snug opacity-95">
-                מוסיפים את האמירה שלכם עם טקסט, אימוג'י, תיאור, תגיות ומיקום
+                {t('steps.step2Body')}
               </p>
             </div>
 
             <div className="bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg p-2 text-white text-center shadow-md hover:shadow-lg transition-shadow">
               <div className="text-2xl mb-1">3️⃣</div>
-              <h4 className="font-bold mb-1 text-lg">משתפים ומשפיעים!</h4>
+              <h4 className="font-bold mb-1 text-lg">{t('steps.step3Title')}</h4>
               <p className="text-base leading-snug opacity-95">
-                הכנתם מם? שתפו אותו - הפעם השיתוף שלכם יכול להשפיע על המרחב!
+                {t('steps.step3Body')}
               </p>
             </div>
           </div>
@@ -111,7 +113,7 @@ export default function HomePage() {
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-8">
-            גיחוכים אחרונים מהקהילה
+            {t('latest')}
           </h2>
           <div className="max-w-4xl mx-auto">
             <FeaturedCarousel />
@@ -122,15 +124,15 @@ export default function HomePage() {
       {/* What's Happening Here Section */}
       <section id="what-is-this" className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-8">מה קורה כאן?</h2>
+          <h2 className="text-4xl font-bold text-center mb-8">{t('whatsHappening.title')}</h2>
 
           {/* Intro Text */}
           <div className="max-w-3xl mx-auto mb-12 text-center">
             <p className="text-lg font-semibold leading-relaxed text-gray-800 mb-4">
-              האתר הזה נולד מתוך הרעיון שממים הם לא רק בדיחה — הם כלי תקשורת, ביקורת, הפצה והשתתפות. כאן אנחנו מנסים להשתמש בהם כדי לדבר על המרחב, על אדריכלות ועל איך היא נראית, מרגישה ומתפקדת בחיים האמתיים.
+              {t('whatsHappening.intro')}
             </p>
             <p className="text-sm text-gray-500 leading-relaxed">
-              *פרויקט גמר באדריכלות, אוניברסיטת תל־אביב
+              {t('whatsHappening.academicNote')}
             </p>
           </div>
 
@@ -144,11 +146,11 @@ export default function HomePage() {
                     <Sparkles className="h-8 w-8 text-red-600" />
                   </div>
                 </div>
-                <CardTitle className="text-center">אז מה עושים?</CardTitle>
+                <CardTitle className="text-center">{t('cards.whatTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-lg text-gray-700 leading-relaxed text-center">
-                  יוצרים מם על המרחב או בעזרתו - מעלים תמונה או בוחרים תבנית, מוסיפים טקסט, אימוג׳י ותגיות (האשטאגים), וכמובן... משתפים!
+                  {t('cards.whatBody')}
                 </p>
               </CardContent>
             </Card>
@@ -161,12 +163,11 @@ export default function HomePage() {
                     <Users className="h-8 w-8 text-blue-600" />
                   </div>
                 </div>
-                <CardTitle className="text-center">כולם מוזמנים להשתתף!</CardTitle>
+                <CardTitle className="text-center">{t('cards.whoTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-lg text-gray-700 leading-relaxed text-center">
-                  באמת כולם - כל מי שמרגיש שיש לו מה להגיד על העיר יכול לתרום.
-                  לא צריך ידע מוקדם - רק עין חדה, וקצת חוש הומור!
+                  {t('cards.whoBody')}
                 </p>
               </CardContent>
             </Card>
@@ -179,11 +180,11 @@ export default function HomePage() {
                     <MessageSquare className="h-8 w-8 text-purple-600" />
                   </div>
                 </div>
-                <CardTitle className="text-center">למה זה משנה?</CardTitle>
+                <CardTitle className="text-center">{t('cards.whyTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-lg text-gray-700 leading-relaxed text-center">
-                  המרחב הבנוי משפיע על כולנו, אבל רוב הזמן השיח עליו סגור בידי מומחים. הפרויקט בוחן כיצד ממים יכולים לפתוח את השיח הזה — ולאפשר ביקורת נגישה, ישירה ומשתתפת.
+                  {t('cards.whyBody')}
                 </p>
               </CardContent>
             </Card>
@@ -196,17 +197,16 @@ export default function HomePage() {
                     <Database className="h-8 w-8 text-green-600" />
                   </div>
                 </div>
-                <CardTitle className="text-center">מה קורה עם המידע?</CardTitle>
+                <CardTitle className="text-center">{t('cards.dataTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-lg text-gray-700 leading-relaxed text-center">
-                  זהו מחקר אקדמי. כל המידע נאסף באופן אנונימי למטרות מחקר בלבד.
-                  לפרטים מלאים ראו את{' '}
+                  {t('cards.dataBody')}
                   <button
                     onClick={() => navigate('/privacy')}
                     className="text-primary hover:underline font-semibold"
                   >
-                    מדיניות הפרטיות
+                    {t('cards.dataPrivacyLink')}
                   </button>
                   .
                 </p>
@@ -221,8 +221,8 @@ export default function HomePage() {
               onClick={() => setShowContactModal(true)}
               className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90"
             >
-              <Mail className="ml-2 h-5 w-5" />
-              יש לכם שאלות? צרו קשר
+              <Mail className="me-2 h-5 w-5" />
+              {t('contactCta')}
             </Button>
           </div>
         </div>
@@ -232,13 +232,13 @@ export default function HomePage() {
       <section className="bg-gradient-to-r from-primary to-secondary py-12">
         <div className="container mx-auto px-4 text-center text-white">
           <Zap className="h-16 w-16 mx-auto mb-6" />
-          <h2 className="text-4xl font-bold mb-4">מוכנים להתחיל?</h2>
+          <h2 className="text-4xl font-bold mb-4">{t('finalCta.title')}</h2>
           <Button
             size="lg"
             onClick={() => navigate('/create')}
             className="bg-white text-primary hover:bg-gray-100"
           >
-            צרו את הממ הראשון שלכם
+            {t('finalCta.button')}
           </Button>
         </div>
       </section>
