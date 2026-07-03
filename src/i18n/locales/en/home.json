@@ -36,5 +36,14 @@
   "finalCta": {
     "title": "Ready to Start?",
     "button": "Create Your First Meme"
+  },
+  "carousel": {
+    "error": "Error loading featured memes",
+    "empty": "No memes to display right now",
+    "createFirst": "Create the first meme!",
+    "previous": "Previous",
+    "next": "Next",
+    "goToSlide": "Go to meme {{number}}",
+    "viewAll": "View All Memes"
   }
 }

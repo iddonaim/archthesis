@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore'
 import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -9,10 +10,11 @@ import Badge from '@/components/common/Badge'
 import type { Meme } from '@/types/meme'
 
 export default function FeaturedCarousel() {
+  const { t } = useTranslation('home')
   const [memes, setMemes] = useState<Meme[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<boolean>(false)
 
   useEffect(() => {
     const fetchFeaturedMemes = async () => {
@@ -54,7 +56,7 @@ export default function FeaturedCarousel() {
         setIsLoading(false)
       } catch (err) {
         console.error('Error fetching featured memes:', err)
-        setError('שגיאה בטעינת הגיחוכים המובילים')
+        setError(true)
         setIsLoading(false)
       }
     }
@@ -104,10 +106,10 @@ export default function FeaturedCarousel() {
     return (
       <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
         <p className="text-gray-500 mb-4">
-          {error || 'אין גיחוכים להצגה כרגע'}
+          {error ? t('carousel.error') : t('carousel.empty')}
         </p>
         <Link to="/create">
-          <Button variant="primary">צור את הגיחוך הראשון!</Button>
+          <Button variant="primary">{t('carousel.createFirst')}</Button>
         </Link>
       </div>
     )
@@ -138,7 +140,7 @@ export default function FeaturedCarousel() {
           <button
             onClick={goToPrevious}
             className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
-            aria-label="הקודם"
+            aria-label={t('carousel.previous')}
           >
             <ChevronRight size={24} />
           </button>
@@ -146,7 +148,7 @@ export default function FeaturedCarousel() {
           <button
             onClick={goToNext}
             className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
-            aria-label="הבא"
+            aria-label={t('carousel.next')}
           >
             <ChevronLeft size={24} />
           </button>
@@ -162,7 +164,7 @@ export default function FeaturedCarousel() {
                     ? 'bg-white w-8'
                     : 'bg-white/50 hover:bg-white/75'
                 }`}
-                aria-label={`עבור לגיחוך ${index + 1}`}
+                aria-label={t('carousel.goToSlide', { number: index + 1 })}
               />
             ))}
           </div>
@@ -214,7 +216,7 @@ export default function FeaturedCarousel() {
               variant="outline"
               className="w-full flex items-center justify-center gap-2"
             >
-              <span>צפה בכל הגיחוכים</span>
+              <span>{t('carousel.viewAll')}</span>
               <ExternalLink size={18} />
             </Button>
           </Link>
