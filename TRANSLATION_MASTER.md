@@ -786,18 +786,20 @@ Each section requires careful legal translation. Key sections include:
 - [x] Create `common` namespace locale files (`src/i18n/locales/{he,en}/common.json`)
 - [x] Create `home` namespace locale files (`src/i18n/locales/{he,en}/home.json`)
 - [x] Create `gallery` namespace locale files (`src/i18n/locales/{he,en}/gallery.json`)
+- [x] Create `modals` namespace locale files (`src/i18n/locales/{he,en}/modals.json`)
 - [x] Add language toggle component (`src/components/common/LanguageToggle.tsx`)
-- [ ] Create remaining namespace locale files (editor, admin, modals, privacy)
+- [ ] Create remaining namespace locale files (editor, admin, privacy)
 - [ ] Create `src/data/privacyContent_en.json`
 
 ### Phase 3: Component Updates 🔄
 - [x] Update layout components (Header, Footer) + language toggle in nav
 - [x] Update HomePage (pilot page — establishes the conversion pattern)
 - [x] Update GalleryPage + gallery components (MemeCard, Lightbox, FilterBar, SortControls, MemeGrid)
+- [x] Update modals (ConsentModal, ContactModal, SuccessModal)
+- [x] Update FeaturedCarousel (homepage) — Home page now fully translated
 - [ ] Update remaining page components (Create, Admin, Privacy, 404)
-- [ ] Update all common components (modals, error boundary, update notification)
+- [ ] Update remaining common components (error boundary, update notification)
 - [ ] Update all editor components (panels, template selector, canvas)
-- [ ] Update FeaturedCarousel (homepage) + TopMemesSection
 - [ ] Update all admin components (analytics, meme management, contact messages)
 
 ---

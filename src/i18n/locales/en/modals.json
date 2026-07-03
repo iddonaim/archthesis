@@ -1,0 +1,45 @@
+{
+  "consent": {
+    "title": "Before We Start Meme-ing...",
+    "intro": "This website is part of an architecture thesis project at Tel Aviv University.",
+    "goalLine1": "The goal: to examine how memes can change the way we see the city.",
+    "goalLine2": "Your participation helps develop a new visual language for discussing space.",
+    "howTitle": "How Does It Work?",
+    "step1": "Photograph your surroundings or choose from an existing template",
+    "step2": "Add your statement with text, emoji, description, tags and location",
+    "step3": "Publish to the public gallery (visible to everyone)",
+    "checkboxLabel": "I have read and approve ",
+    "checkboxLink": "the Terms of Service and Privacy Policy",
+    "accept": "I Understand, Let's Proceed"
+  },
+  "contact": {
+    "title": "📧 Contact",
+    "nameLabel": "Name (Optional):",
+    "namePlaceholder": "Leave blank for anonymity",
+    "emailLabel": "Email (Optional):",
+    "emailPlaceholder": "If you want a response",
+    "messageLabel": "Message:",
+    "messagePlaceholder": "Question, suggestion, or anything else...",
+    "cancel": "Cancel",
+    "sending": "⏳ Sending...",
+    "send": "📤 Send",
+    "anonymous": "Anonymous",
+    "validationEmpty": "Please fill in a message",
+    "success": "✅ Message sent successfully! Thank you for contacting us.",
+    "errorSend": "Error sending message. Try again."
+  },
+  "success": {
+    "title": "🎉 Meme Published Successfully!",
+    "message": "Your meme has been added to the gallery",
+    "share": "Share",
+    "download": "Download",
+    "toGallery": "To Gallery",
+    "createMore": "Create More",
+    "shareTitle": "My Meme",
+    "shareText": "Check out the meme I created!",
+    "shareSuccess": "Meme shared successfully!",
+    "shareError": "Error sharing meme",
+    "linkCopied": "Link copied to clipboard!",
+    "shareUnavailable": "Cannot share on this device"
+  }
+}

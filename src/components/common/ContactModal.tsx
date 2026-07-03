@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import Modal from './Modal'
 import Button from './Button'
 import Input from './Input'
@@ -12,6 +13,7 @@ interface ContactModalProps {
 }
 
 export default function ContactModal({ isOpen, onClose, source = 'unknown' }: ContactModalProps) {
+  const { t } = useTranslation('modals')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
@@ -23,7 +25,7 @@ export default function ContactModal({ isOpen, onClose, source = 'unknown' }: Co
     setError('')
 
     if (!message.trim()) {
-      setError('נא למלא הודעה')
+      setError(t('contact.validationEmpty'))
       return
     }
 
@@ -31,7 +33,7 @@ export default function ContactModal({ isOpen, onClose, source = 'unknown' }: Co
 
     try {
       await addDoc(collection(db, 'contact_messages'), {
-        name: name.trim() || 'אנונימי',
+        name: name.trim() || t('contact.anonymous'),
         email: email.trim() || '',
         message: message.trim(),
         source,
@@ -41,7 +43,7 @@ export default function ContactModal({ isOpen, onClose, source = 'unknown' }: Co
       })
 
       // Success
-      alert('✅ ההודעה נשלחה בהצלחה! תודה שיצרת קשר.')
+      alert(t('contact.success'))
 
       // Reset form
       setName('')
@@ -50,64 +52,64 @@ export default function ContactModal({ isOpen, onClose, source = 'unknown' }: Co
       onClose()
     } catch (err) {
       console.error('Error sending message:', err)
-      setError('שגיאה בשליחת ההודעה. נסה שוב.')
+      setError(t('contact.errorSend'))
     } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="📧 יצירת קשר" size="md">
+    <Modal isOpen={isOpen} onClose={onClose} title={t('contact.title')} size="md">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="contactName" className="block text-right font-medium mb-2">
-            שם (אופציונלי):
+          <label htmlFor="contactName" className="block text-start font-medium mb-2">
+            {t('contact.nameLabel')}
           </label>
           <Input
             id="contactName"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="השאר ריק לאנונימיות"
+            placeholder={t('contact.namePlaceholder')}
             maxLength={100}
             disabled={isSubmitting}
           />
         </div>
 
         <div>
-          <label htmlFor="contactEmail" className="block text-right font-medium mb-2">
-            אימייל (אופציונלי):
+          <label htmlFor="contactEmail" className="block text-start font-medium mb-2">
+            {t('contact.emailLabel')}
           </label>
           <Input
             id="contactEmail"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="אם תרצה תשובה"
+            placeholder={t('contact.emailPlaceholder')}
             maxLength={200}
             disabled={isSubmitting}
           />
         </div>
 
         <div>
-          <label htmlFor="contactMessage" className="block text-right font-medium mb-2">
-            הודעה: <span className="text-red-500">*</span>
+          <label htmlFor="contactMessage" className="block text-start font-medium mb-2">
+            {t('contact.messageLabel')} <span className="text-red-500">*</span>
           </label>
           <textarea
             id="contactMessage"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="שאלה, הצעה, או כל דבר אחר..."
+            placeholder={t('contact.messagePlaceholder')}
             rows={5}
             required
             maxLength={5000}
             disabled={isSubmitting}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-right disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-start disabled:bg-gray-100 disabled:cursor-not-allowed"
           />
         </div>
 
         {error && (
-          <div className="text-red-500 text-sm text-right">
+          <div className="text-red-500 text-sm text-start">
             {error}
           </div>
         )}
@@ -119,13 +121,13 @@ export default function ContactModal({ isOpen, onClose, source = 'unknown' }: Co
             onClick={onClose}
             disabled={isSubmitting}
           >
-            ביטול
+            {t('contact.cancel')}
           </Button>
           <Button
             type="submit"
             disabled={isSubmitting}
           >
-            {isSubmitting ? '⏳ שולח...' : '📤 שלח'}
+            {isSubmitting ? t('contact.sending') : t('contact.send')}
           </Button>
         </div>
       </form>

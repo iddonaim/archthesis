@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import Button from './Button'
 import { Link } from 'react-router-dom'
 
@@ -8,6 +9,7 @@ interface ConsentModalProps {
 }
 
 export default function ConsentModal({ isOpen, onAccept }: ConsentModalProps) {
+  const { t } = useTranslation('modals')
   // MODULAR: Set to false to disable checkbox requirement (just notification mode)
   const REQUIRE_CHECKBOX = false
 
@@ -36,36 +38,36 @@ export default function ConsentModal({ isOpen, onAccept }: ConsentModalProps) {
         <div className="max-w-2xl mx-auto">
         {/* Headline */}
         <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">
-          רגע לפני שמתחילים לגחך...
+          {t('consent.title')}
         </h2>
 
         {/* Body */}
-        <div className="space-y-4 mb-6 text-right">
+        <div className="space-y-4 mb-6 text-start">
           <p className="text-base md:text-lg leading-relaxed">
-            האתר הזה הוא חלק מפרויקט גמר באדריכלות באוניברסיטת תל-אביב.
+            {t('consent.intro')}
           </p>
 
           <p className="text-base md:text-lg leading-relaxed">
-            המטרה: לבדוק איך ממים יכולים לשנות את הדרך שבה אנחנו רואים את העיר.
+            {t('consent.goalLine1')}
             <br />
-            ההשתתפות שלכם עוזרת לפתח שפה ויזואלית חדשה לדיון על המרחב.
+            {t('consent.goalLine2')}
           </p>
 
           {/* How it works */}
           <div className="bg-gray-50 p-4 md:p-6 rounded-lg my-6">
-            <h3 className="font-bold text-lg md:text-xl mb-4">איך זה עובד?</h3>
+            <h3 className="font-bold text-lg md:text-xl mb-4">{t('consent.howTitle')}</h3>
             <ol className="space-y-3">
               <li className="flex items-start gap-3">
                 <span className="bg-primary text-black rounded-full w-7 h-7 flex items-center justify-center font-bold text-sm flex-shrink-0">1</span>
-                <span className="text-sm md:text-base leading-relaxed">מצלמים את המקום סביבכם או בוחרים מתוך תבנית קיימת</span>
+                <span className="text-sm md:text-base leading-relaxed">{t('consent.step1')}</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="bg-secondary text-black rounded-full w-7 h-7 flex items-center justify-center font-bold text-sm flex-shrink-0">2</span>
-                <span className="text-sm md:text-base leading-relaxed">מוסיפים את האמירה שלכם עם טקסט, אימוג'י, תיאור, תגיות ומיקום</span>
+                <span className="text-sm md:text-base leading-relaxed">{t('consent.step2')}</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="bg-accent text-black rounded-full w-7 h-7 flex items-center justify-center font-bold text-sm flex-shrink-0">3</span>
-                <span className="text-sm md:text-base leading-relaxed">מפרסמים לגלריה הציבורית (גלוי לכולם)</span>
+                <span className="text-sm md:text-base leading-relaxed">{t('consent.step3')}</span>
               </li>
             </ol>
           </div>
@@ -81,13 +83,13 @@ export default function ConsentModal({ isOpen, onAccept }: ConsentModalProps) {
                 className="mt-1 h-5 w-5 cursor-pointer flex-shrink-0"
               />
               <label htmlFor="terms-checkbox" className="cursor-pointer text-sm md:text-base leading-relaxed">
-                קראתי ואני מאשר/ת את{' '}
+                {t('consent.checkboxLabel')}
                 <Link
                   to="/privacy"
                   target="_blank"
                   className="text-primary hover:underline font-semibold"
                 >
-                  תנאי השימוש ומדיניות הפרטיות
+                  {t('consent.checkboxLink')}
                 </Link>
               </label>
             </div>
@@ -102,7 +104,7 @@ export default function ConsentModal({ isOpen, onAccept }: ConsentModalProps) {
             disabled={REQUIRE_CHECKBOX && !hasAccepted}
             className="w-full md:w-auto md:min-w-[250px]"
           >
-            הבנתי, אפשר להתקדם
+            {t('consent.accept')}
           </Button>
         </div>
       </div>

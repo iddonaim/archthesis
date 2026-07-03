@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import Modal from './Modal'
 import Button from './Button'
 import { Share2, Download, Image as ImageIcon, Plus } from 'lucide-react'
@@ -12,23 +13,24 @@ interface SuccessModalProps {
 }
 
 export default function SuccessModal({ isOpen, onClose, imageUrl, memeId }: SuccessModalProps) {
+  const { t } = useTranslation('modals')
   const navigate = useNavigate()
 
   const handleShare = async () => {
     const shareUrl = `${window.location.origin}/gallery?meme=${memeId}`
     const shareData = {
-      title: 'הגיחוך שלי',
-      text: 'צפו בגיחוך שיצרתי!',
+      title: t('success.shareTitle'),
+      text: t('success.shareText'),
       url: shareUrl
     }
 
     if (navigator.share) {
       try {
         await navigator.share(shareData)
-        toast.success('הגיחוך שותף בהצלחה!')
+        toast.success(t('success.shareSuccess'))
       } catch (error) {
         if (error instanceof Error && error.name !== 'AbortError') {
-          toast.error('שגיאה בשיתוף הגיחוך')
+          toast.error(t('success.shareError'))
         }
         console.log('Share cancelled or failed:', error)
       }
@@ -36,9 +38,9 @@ export default function SuccessModal({ isOpen, onClose, imageUrl, memeId }: Succ
       // Fallback: Copy link to clipboard
       try {
         await navigator.clipboard.writeText(shareUrl)
-        toast.success('הקישור הועתק ללוח!')
+        toast.success(t('success.linkCopied'))
       } catch (error) {
-        toast.error('אין אפשרות לשתף במכשיר זה')
+        toast.error(t('success.shareUnavailable'))
       }
     }
   }
@@ -65,11 +67,11 @@ export default function SuccessModal({ isOpen, onClose, imageUrl, memeId }: Succ
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="🎉 הגיחוך פורסם בהצלחה!">
+    <Modal isOpen={isOpen} onClose={onClose} title={t('success.title')}>
       <div className="space-y-6">
         {/* Success Message */}
         <p className="text-lg text-gray-700">
-          הממ שלך נוסף לגלריה
+          {t('success.message')}
         </p>
 
         {/* Preview Image */}
@@ -89,7 +91,7 @@ export default function SuccessModal({ isOpen, onClose, imageUrl, memeId }: Succ
             className="flex items-center justify-center gap-2"
           >
             <Share2 size={18} />
-            <span>שתף</span>
+            <span>{t('success.share')}</span>
           </Button>
 
           <Button
@@ -98,7 +100,7 @@ export default function SuccessModal({ isOpen, onClose, imageUrl, memeId }: Succ
             className="flex items-center justify-center gap-2"
           >
             <Download size={18} />
-            <span>הורד</span>
+            <span>{t('success.download')}</span>
           </Button>
 
           <Button
@@ -107,7 +109,7 @@ export default function SuccessModal({ isOpen, onClose, imageUrl, memeId }: Succ
             className="flex items-center justify-center gap-2"
           >
             <ImageIcon size={18} />
-            <span>לגלריה</span>
+            <span>{t('success.toGallery')}</span>
           </Button>
 
           <Button
@@ -116,7 +118,7 @@ export default function SuccessModal({ isOpen, onClose, imageUrl, memeId }: Succ
             className="flex items-center justify-center gap-2"
           >
             <Plus size={18} />
-            <span>צור עוד</span>
+            <span>{t('success.createMore')}</span>
           </Button>
         </div>
       </div>
