@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Layout from '@/components/layout/Layout'
 import TemplateSelector from '@/components/editor/TemplateSelector'
 import CanvasEditor, { type CanvasEditorHandle } from '@/components/editor/CanvasEditor'
+import SelectionToolbar from '@/components/editor/SelectionToolbar'
 import TextPanel from '@/components/editor/panels/TextPanel'
 import EmojiPanel from '@/components/editor/panels/EmojiPanel'
 import TagsPanel from '@/components/editor/panels/TagsPanel'
@@ -427,6 +428,7 @@ export default function CreatePage() {
           {/* Main: Canvas Editor - Takes 3 columns */}
           <div className="lg:col-span-3">
             <div className="bg-white rounded-2xl shadow-card border border-ink/5 p-3 md:p-6">
+              <SelectionToolbar />
               <CanvasEditor ref={canvasRef} width={canvasDimensions.width} height={canvasDimensions.height} />
             </div>
           </div>

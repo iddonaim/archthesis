@@ -2,6 +2,7 @@ import { useRef, useEffect, useState, forwardRef, useImperativeHandle } from 're
 import { Stage, Layer, Image as KonvaImage, Text, Transformer, Line, Rect, Group } from 'react-konva'
 import { useEditorStore } from '@/stores/useEditorStore'
 import { useSceneStore } from '@/stores/useSceneStore'
+import { useEditorKeyboard } from '@/hooks/useEditorKeyboard'
 import type { TextElement, EmojiElement, LocationElement } from '@/types/scene'
 import { getContrastColor } from '@/lib/utils'
 import useImage from 'use-image'
@@ -11,6 +12,12 @@ import type { Sticker, Location } from '@/types/editor'
 interface CanvasEditorProps {
   width?: number
   height?: number
+}
+
+/** Cursor feedback + a shared drag clamp so elements can't be lost off-canvas. */
+interface EditableCommonProps {
+  dragBoundFunc?: (pos: { x: number; y: number }) => { x: number; y: number }
+  onHoverCursor?: (cursor: string) => void
 }
 
 export interface CanvasEditorHandle {
@@ -26,7 +33,9 @@ function EditableText({
   onDragStart,
   onDragMove,
   onSnapDragEnd,
-  onTransformEnd
+  onTransformEnd,
+  dragBoundFunc,
+  onHoverCursor
 }: {
   textBox: any
   isSelected: boolean
@@ -36,7 +45,7 @@ function EditableText({
   onDragMove?: (e: any) => void
   onSnapDragEnd?: (e: any, onChange: (attrs: any) => void) => void
   onTransformEnd?: () => void
-}) {
+} & EditableCommonProps) {
   const textRef = useRef<Konva.Text>(null)
   const transformerRef = useRef<Konva.Transformer>(null)
   const [isEditing, setIsEditing] = useState(false)
@@ -98,6 +107,7 @@ function EditableText({
     document.body.appendChild(textarea)
 
     textarea.value = textBox.text
+    textarea.dir = 'auto' // Hebrew and English both align correctly while typing
     textarea.style.position = 'absolute'
     textarea.style.top = stageBox.top + textPosition.y + 'px'
     textarea.style.left = stageBox.left + textPosition.x - textWidth / 2 + 'px'
@@ -216,6 +226,9 @@ function EditableText({
         wrap="word"
         opacity={textBox.isPlaceholder ? 0.85 : 1}
         draggable
+        dragBoundFunc={dragBoundFunc}
+        onMouseEnter={() => onHoverCursor?.('move')}
+        onMouseLeave={() => onHoverCursor?.('default')}
         onDragStart={onDragStart}
         onTransformStart={onDragStart}
         visible={!isEditing}
@@ -313,7 +326,9 @@ function EditableSticker({
   onDragStart,
   onDragMove,
   onSnapDragEnd,
-  onTransformEnd
+  onTransformEnd,
+  dragBoundFunc,
+  onHoverCursor
 }: {
   sticker: Sticker
   isSelected: boolean
@@ -323,7 +338,7 @@ function EditableSticker({
   onDragMove?: (e: any) => void
   onSnapDragEnd?: (e: any, onChange: (attrs: any) => void) => void
   onTransformEnd?: () => void
-}) {
+} & EditableCommonProps) {
   const stickerRef = useRef<Konva.Text>(null)
   const transformerRef = useRef<Konva.Transformer>(null)
 
@@ -347,6 +362,9 @@ function EditableSticker({
         fontSize={sticker.size}
         rotation={sticker.rotation}
         draggable
+        dragBoundFunc={dragBoundFunc}
+        onMouseEnter={() => onHoverCursor?.('move')}
+        onMouseLeave={() => onHoverCursor?.('default')}
         onDragStart={onDragStart}
         onTransformStart={onDragStart}
         onClick={onSelect}
@@ -420,7 +438,9 @@ function EditableLocation({
   onDragStart,
   onDragMove,
   onSnapDragEnd,
-  onTransformEnd
+  onTransformEnd,
+  dragBoundFunc,
+  onHoverCursor
 }: {
   location: Location
   isSelected: boolean
@@ -430,7 +450,7 @@ function EditableLocation({
   onDragMove?: (e: any) => void
   onSnapDragEnd?: (e: any, onChange: (attrs: any) => void) => void
   onTransformEnd?: () => void
-}) {
+} & EditableCommonProps) {
   const locationRef = useRef<Konva.Text>(null)
   const transformerRef = useRef<Konva.Transformer>(null)
 
@@ -470,6 +490,9 @@ function EditableLocation({
         verticalAlign="top"
         wrap="word"
         draggable
+        dragBoundFunc={dragBoundFunc}
+        onMouseEnter={() => onHoverCursor?.('move')}
+        onMouseLeave={() => onHoverCursor?.('default')}
         onDragStart={onDragStart}
         onTransformStart={onDragStart}
         onClick={onSelect}
@@ -559,6 +582,9 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
     const [image] = useImage(currentImageUrl || '', 'anonymous')
     const stageRef = useRef<Konva.Stage>(null)
 
+    // Delete/arrows/undo shortcuts — active only while the editor is mounted
+    useEditorKeyboard()
+
     // Snapping guides state
     const [guides, setGuides] = useState<{ vertical: number | null; horizontal: number | null }>({
       vertical: null,
@@ -599,6 +625,18 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
       setCanvasDimensions(canvasDimensions)
     }
   }, [canvasDimensions.width, canvasDimensions.height, image, setCanvasDimensions])
+
+  // Keep the anchor point of every element inside the canvas while dragging,
+  // so nothing can be dragged fully off-screen and become unreachable.
+  const clampToCanvas = (pos: { x: number; y: number }) => ({
+    x: Math.max(0, Math.min(pos.x, canvasDimensions.width)),
+    y: Math.max(0, Math.min(pos.y, canvasDimensions.height))
+  })
+
+  const setCursor = (cursor: string) => {
+    const container = stageRef.current?.container()
+    if (container) container.style.cursor = cursor
+  }
 
   const handleStageClick = (e: any) => {
     // Deselect when clicking on empty area or background image
@@ -773,6 +811,8 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
                   onDragMove={handleDragMove}
                   onSnapDragEnd={handleSnapDragEnd}
                   onTransformEnd={() => commitTransaction()}
+                  dragBoundFunc={clampToCanvas}
+                  onHoverCursor={setCursor}
                 />
               )
             } else if (element.type === 'emoji') {
@@ -801,6 +841,8 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
                   onDragMove={handleDragMove}
                   onSnapDragEnd={handleSnapDragEnd}
                   onTransformEnd={() => commitTransaction()}
+                  dragBoundFunc={clampToCanvas}
+                  onHoverCursor={setCursor}
                 />
               )
             } else if (element.type === 'location') {
@@ -831,6 +873,8 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
                   onDragMove={handleDragMove}
                   onSnapDragEnd={handleSnapDragEnd}
                   onTransformEnd={() => commitTransaction()}
+                  dragBoundFunc={clampToCanvas}
+                  onHoverCursor={setCursor}
                 />
               )
             }

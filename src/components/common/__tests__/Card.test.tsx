@@ -11,8 +11,9 @@ describe('Card', () => {
 
   it('applies hover styles when hover prop is true', () => {
     render(<Card hover>Hoverable card</Card>)
-    const card = screen.getByText('Hoverable card').parentElement
-    expect(card).toHaveClass('hover:shadow-xl')
+    const card = screen.getByText('Hoverable card')
+    expect(card).toHaveClass('hover:shadow-card-hover')
+    expect(card).toHaveClass('cursor-pointer')
   })
 
   it('handles click events', async () => {
@@ -27,26 +28,26 @@ describe('Card', () => {
 
   it('applies custom className', () => {
     render(<Card className="custom-class">Card</Card>)
-    const card = screen.getByText('Card').parentElement
+    const card = screen.getByText('Card')
     expect(card).toHaveClass('custom-class')
   })
 
   it('applies different padding variants', () => {
     const { rerender } = render(<Card padding="sm">Small padding</Card>)
-    let card = screen.getByText('Small padding').parentElement
-    expect(card).toHaveClass('p-4')
+    let card = screen.getByText('Small padding')
+    expect(card).toHaveClass('p-3')
 
     rerender(<Card padding="md">Medium padding</Card>)
-    card = screen.getByText('Medium padding').parentElement
+    card = screen.getByText('Medium padding')
     expect(card).toHaveClass('p-6')
 
     rerender(<Card padding="lg">Large padding</Card>)
-    card = screen.getByText('Large padding').parentElement
+    card = screen.getByText('Large padding')
     expect(card).toHaveClass('p-8')
 
     rerender(<Card padding="none">No padding</Card>)
-    card = screen.getByText('No padding').parentElement
-    expect(card).toHaveClass('p-0')
+    card = screen.getByText('No padding')
+    expect(card.className).not.toMatch(/\bp-\d/)
   })
 })
 
@@ -59,7 +60,7 @@ describe('CardHeader', () => {
   it('applies default styles', () => {
     render(<CardHeader>Header</CardHeader>)
     const header = screen.getByText('Header')
-    expect(header).toHaveClass('font-bold')
+    expect(header).toHaveClass('mb-4')
   })
 })
 
