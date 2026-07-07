@@ -468,8 +468,8 @@ export default function CreatePage() {
                   }}
                   className={`flex flex-col items-center gap-1 py-2 md:py-3 transition-colors ${
                     activeTab === tab.id
-                      ? 'bg-primary text-white'
-                      : 'bg-paper text-ink-light hover:bg-primary-50'
+                      ? 'bg-pop-pink text-white'
+                      : 'bg-paper text-ink-light hover:bg-pastel-pink/40'
                   }`}
                 >
                   <tab.icon size={18} className="md:w-5 md:h-5" />

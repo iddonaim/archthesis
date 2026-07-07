@@ -14,10 +14,10 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toHaveClass('bg-sunset')
 
     rerender(<Button variant="secondary">Secondary</Button>)
-    expect(screen.getByRole('button')).toHaveClass('bg-secondary-500')
+    expect(screen.getByRole('button')).toHaveClass('bg-secondary-400')
 
     rerender(<Button variant="outline">Outline</Button>)
-    expect(screen.getByRole('button')).toHaveClass('border-primary-300')
+    expect(screen.getByRole('button')).toHaveClass('border-ink')
   })
 
   it('renders different sizes', () => {

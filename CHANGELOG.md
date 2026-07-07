@@ -37,11 +37,21 @@ picture as a sticker" — building on the design-refresh/canvas-upgrade branch.
 - Emojis are now added at the canvas center and pre-selected, instead of a
   fixed (200,200) point that fell near the edge on small mobile canvases.
 
-#### Design polish
-- Canvas backdrop now uses a faint light "blueprint grid" (matching the dark
-  hero grid) instead of a flat gray.
-- Editor tab bar and panels align with the ink/paper design tokens
-  (were generic Tailwind grays).
+#### Design: "Bubblegum pop" (replaces the dark/blueprint refresh)
+Per owner feedback the dark hero/blueprint direction was dropped — the site
+is a fun meme app, not a serious thesis site. Three colorful mockups were
+produced and the owner picked "Bubblegum pop":
+
+- Hero: pastel blobs (pink/teal/lilac/butter) on a blush background, big
+  purple→pink→orange gradient headline, floating emoji.
+- Step cards: white sticker-style cards — thick ink outline, hard offset
+  shadow, slight tilt that straightens on hover; pink/teal/yellow numbers.
+- Buttons site-wide are now "sticker" buttons: rounded-full, ink outline,
+  hard shadow that presses in on hover/click.
+- Footer: light blush with the gradient wordmark (was dark blueprint).
+- Header: gradient logo, pink active-tab pill.
+- Editor: pink active tabs, canvas sits on a blush surface with subtle
+  pink polka dots (blueprint grid tokens removed entirely).
 
 #### Testing
 - New `StickerPanel` component tests (3); full suite 84/84, production build

@@ -9,14 +9,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading, children, disabled, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center rounded-xl font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+    const baseStyles = 'inline-flex items-center justify-center rounded-full font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+
+    // Sticker-style buttons: ink outline + hard offset shadow that "presses in"
+    const sticker = 'border-2 border-ink shadow-[3px_3px_0_#20242E] hover:shadow-[1px_1px_0_#20242E] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px]'
 
     const variants = {
-      primary: 'bg-sunset text-white shadow-sm hover:shadow-md hover:brightness-105 active:brightness-95',
-      secondary: 'bg-secondary-500 text-white shadow-sm hover:bg-secondary-600 hover:shadow-md',
-      outline: 'border-2 border-primary-300 text-primary-700 hover:border-primary hover:bg-primary-50',
+      primary: `bg-sunset text-white ${sticker}`,
+      secondary: `bg-secondary-400 text-ink ${sticker}`,
+      outline: `bg-white text-ink hover:bg-pastel-pink/40 ${sticker}`,
       ghost: 'text-ink-light hover:bg-ink/5',
-      danger: 'bg-red-600 text-white hover:bg-red-700'
+      danger: `bg-[#FF5757] text-white ${sticker}`
     }
 
     const sizes = {

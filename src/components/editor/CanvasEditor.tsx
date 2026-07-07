@@ -911,7 +911,7 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
   }
 
   return (
-    <div className="flex justify-center items-center bg-paper bg-blueprint-light bg-grid-sm rounded-xl border border-ink/5 p-4">
+    <div className="flex justify-center items-center bg-pastel-blush bg-confetti-dots bg-dots rounded-xl border border-ink/5 p-4">
       <Stage
         ref={stageRef}
         width={canvasDimensions.width}

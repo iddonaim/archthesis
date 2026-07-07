@@ -128,7 +128,7 @@ export default function StickerPanel() {
   const packButtonClass = (isActive: boolean) =>
     cn(
       'flex flex-col items-center gap-0.5 min-w-[52px] px-2 py-1.5 rounded-xl text-[11px] font-semibold transition-colors',
-      isActive ? 'bg-primary text-white' : 'bg-paper text-ink-light hover:bg-primary-50'
+      isActive ? 'bg-pop-pink text-white' : 'bg-paper text-ink-light hover:bg-pastel-pink/40'
     )
 
   return (
