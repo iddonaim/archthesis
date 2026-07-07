@@ -185,7 +185,7 @@ export default function GalleryPage() {
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-card border border-ink/5 p-6 mb-8">
           <div className="space-y-6">
             {/* Unified Search */}
             <div>
@@ -203,7 +203,7 @@ export default function GalleryPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('search.placeholder')}
-                  className="w-full ps-10 pe-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full ps-10 pe-10 py-3 border border-gray-300 rounded-xl bg-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
                 {searchQuery && (
                   <button

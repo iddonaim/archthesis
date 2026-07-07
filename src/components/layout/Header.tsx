@@ -28,7 +28,7 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-40">
+    <header className="bg-white/85 backdrop-blur-md border-b border-ink/5 sticky top-0 z-40">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -48,10 +48,10 @@ export default function Header() {
                 to={path}
                 onClick={(e) => handleNavClick(e, path)}
                 className={cn(
-                  'flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200',
+                  'flex items-center gap-2 px-4 py-2 rounded-full font-semibold transition-all duration-200',
                   isActive(path)
-                    ? 'bg-gradient-to-r from-primary to-red-400 text-white shadow-md'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-primary-50 text-primary-700 ring-1 ring-primary-200'
+                    : 'text-ink-light hover:bg-ink/5'
                 )}
               >
                 <Icon className="h-5 w-5" />

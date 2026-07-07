@@ -24,9 +24,9 @@ export default function Card({
   return (
     <div
       className={cn(
-        'bg-white rounded-xl shadow-md overflow-hidden',
+        'bg-white rounded-2xl shadow-card border border-ink/5 overflow-hidden',
         'transition-all duration-300',
-        hover && 'hover:shadow-xl hover:-translate-y-1 cursor-pointer',
+        hover && 'hover:shadow-card-hover hover:-translate-y-1 cursor-pointer',
         paddings[padding],
         className
       )}

@@ -32,23 +32,24 @@ export default function HomePage() {
   return (
     <>
     <Layout>
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 text-white py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-7xl font-black mb-4 animate-fade-in">
+      {/* Hero Section — dark "blueprint" surface with the brand sunset gradient */}
+      <section className="relative overflow-hidden bg-ink bg-blueprint bg-grid-sm text-white py-20 md:py-24">
+        {/* Soft coral glow behind the title */}
+        <div className="pointer-events-none absolute -top-48 left-1/2 -translate-x-1/2 h-[420px] w-[820px] rounded-full bg-primary/25 blur-3xl" />
+        <div className="relative container mx-auto px-4 text-center">
+          <h1 className="text-5xl md:text-7xl font-black mb-5 animate-fade-in bg-sunset bg-clip-text text-transparent pb-2">
             {t('hero.title')}
           </h1>
-          <p className="text-xl md:text-3xl font-bold mb-6 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-3xl font-bold mb-4 max-w-3xl mx-auto leading-relaxed">
             {t('hero.subtitle1')}
           </p>
-          <p className="text-xl md:text-2xl font-bold mb-6 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto leading-relaxed">
             {t('hero.subtitle2')}
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button
               size="lg"
               onClick={() => navigate('/create')}
-              className="bg-white text-purple-600 hover:bg-gray-100"
             >
               <Sparkles className="me-2 h-6 w-6" />
               {t('hero.ctaCreate')}
@@ -57,7 +58,7 @@ export default function HomePage() {
               size="lg"
               variant="outline"
               onClick={() => navigate('/gallery')}
-              className="border-white text-white hover:bg-white/10"
+              className="border-white/40 text-white hover:border-white hover:bg-white/10"
             >
               <Image className="me-2 h-6 w-6" />
               {t('hero.ctaGallery')}
@@ -69,7 +70,7 @@ export default function HomePage() {
                 const element = document.getElementById('what-is-this')
                 element?.scrollIntoView({ behavior: 'smooth' })
               }}
-              className="border-white text-white hover:bg-white/10"
+              className="border-white/40 text-white hover:border-white hover:bg-white/10"
             >
               <HelpCircle className="me-2 h-6 w-6" />
               {t('hero.ctaInfo')}
@@ -82,35 +83,26 @@ export default function HomePage() {
       <section className="py-6 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-            <div className="bg-gradient-to-br from-red-500 to-pink-600 rounded-lg p-2 text-white text-center shadow-md hover:shadow-lg transition-shadow">
-              <div className="text-2xl mb-1">1️⃣</div>
-              <h4 className="font-bold mb-1 text-lg">{t('steps.step1Title')}</h4>
-              <p className="text-base leading-snug opacity-95">
-                {t('steps.step1Body')}
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg p-2 text-white text-center shadow-md hover:shadow-lg transition-shadow">
-              <div className="text-2xl mb-1">2️⃣</div>
-              <h4 className="font-bold mb-1 text-lg">{t('steps.step2Title')}</h4>
-              <p className="text-base leading-snug opacity-95">
-                {t('steps.step2Body')}
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg p-2 text-white text-center shadow-md hover:shadow-lg transition-shadow">
-              <div className="text-2xl mb-1">3️⃣</div>
-              <h4 className="font-bold mb-1 text-lg">{t('steps.step3Title')}</h4>
-              <p className="text-base leading-snug opacity-95">
-                {t('steps.step3Body')}
-              </p>
-            </div>
+            {([1, 2, 3] as const).map((step) => (
+              <div
+                key={step}
+                className="bg-white rounded-2xl border border-ink/5 shadow-card p-5 text-center transition-shadow hover:shadow-card-hover"
+              >
+                <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary-50 text-primary-700 ring-1 ring-primary-200 font-black text-lg">
+                  {step}
+                </div>
+                <h4 className="font-bold mb-1 text-lg text-ink">{t(`steps.step${step}Title`)}</h4>
+                <p className="text-base leading-snug text-ink-light/90">
+                  {t(`steps.step${step}Body`)}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Featured Memes Carousel */}
-      <section className="py-12 bg-gray-50">
+      <section className="py-12 bg-paper">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-8">
             {t('latest')}
@@ -142,8 +134,8 @@ export default function HomePage() {
             <Card hover>
               <CardHeader>
                 <div className="flex items-center justify-center mb-4">
-                  <div className="bg-red-100 p-4 rounded-full">
-                    <Sparkles className="h-8 w-8 text-red-600" />
+                  <div className="bg-primary-50 p-4 rounded-full ring-1 ring-primary-100">
+                    <Sparkles className="h-8 w-8 text-primary-600" />
                   </div>
                 </div>
                 <CardTitle className="text-center">{t('cards.whatTitle')}</CardTitle>
@@ -159,8 +151,8 @@ export default function HomePage() {
             <Card hover>
               <CardHeader>
                 <div className="flex items-center justify-center mb-4">
-                  <div className="bg-blue-100 p-4 rounded-full">
-                    <Users className="h-8 w-8 text-blue-600" />
+                  <div className="bg-secondary-50 p-4 rounded-full ring-1 ring-secondary-100">
+                    <Users className="h-8 w-8 text-secondary-600" />
                   </div>
                 </div>
                 <CardTitle className="text-center">{t('cards.whoTitle')}</CardTitle>
@@ -176,8 +168,8 @@ export default function HomePage() {
             <Card hover>
               <CardHeader>
                 <div className="flex items-center justify-center mb-4">
-                  <div className="bg-purple-100 p-4 rounded-full">
-                    <MessageSquare className="h-8 w-8 text-purple-600" />
+                  <div className="bg-accent-100 p-4 rounded-full ring-1 ring-accent-300/50">
+                    <MessageSquare className="h-8 w-8 text-accent-700" />
                   </div>
                 </div>
                 <CardTitle className="text-center">{t('cards.whyTitle')}</CardTitle>
@@ -193,8 +185,8 @@ export default function HomePage() {
             <Card hover>
               <CardHeader>
                 <div className="flex items-center justify-center mb-4">
-                  <div className="bg-green-100 p-4 rounded-full">
-                    <Database className="h-8 w-8 text-green-600" />
+                  <div className="bg-ink/5 p-4 rounded-full ring-1 ring-ink/10">
+                    <Database className="h-8 w-8 text-ink-light" />
                   </div>
                 </div>
                 <CardTitle className="text-center">{t('cards.dataTitle')}</CardTitle>
@@ -219,7 +211,6 @@ export default function HomePage() {
             <Button
               size="lg"
               onClick={() => setShowContactModal(true)}
-              className="bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90"
             >
               <Mail className="me-2 h-5 w-5" />
               {t('contactCta')}
@@ -229,14 +220,15 @@ export default function HomePage() {
       </section>
 
       {/* Call to Action */}
-      <section className="bg-gradient-to-r from-primary to-secondary py-12">
-        <div className="container mx-auto px-4 text-center text-white">
+      <section className="relative overflow-hidden bg-sunset py-12">
+        <div className="absolute inset-0 bg-blueprint bg-grid-sm opacity-60" />
+        <div className="relative container mx-auto px-4 text-center text-white">
           <Zap className="h-16 w-16 mx-auto mb-6" />
           <h2 className="text-4xl font-bold mb-4">{t('finalCta.title')}</h2>
           <Button
             size="lg"
             onClick={() => navigate('/create')}
-            className="bg-white text-primary hover:bg-gray-100"
+            className="bg-white bg-none text-primary-700 shadow-md hover:bg-primary-50"
           >
             {t('finalCta.button')}
           </Button>
