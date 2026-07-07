@@ -1,97 +1,107 @@
-# Archthesis React - Meme Generator Migration
+# The Giggletecture Machine (מכונת הגיחוך וההגחה)
 
-React + TypeScript rewrite of the Adaptive Memetic Architect (מכונת הגיחוך וההגחה).
+A Hebrew-first platform for creating and sharing memes about the built environment —
+an architecture thesis project by Iddo Naim (Tel Aviv University).
+
+**Live site:** https://memes.iddonaim.com/
+(Firebase hosting URL: https://adaptivememeticarchitect-2776f.web.app)
+
+**Status:** Live in production. See [CHANGELOG.md](./CHANGELOG.md) for version history.
 
 ## 🚀 Quick Start
 
 ```bash
 npm install
+cp .env.example .env   # then fill in the Firebase values (see below)
 npm run dev
 ```
 
 Open http://localhost:5173/
 
+> **Note:** a `.env` file with real Firebase credentials is required — the
+> production build intentionally fails if the `VITE_FIREBASE_*` variables are
+> missing (see `scripts/check-env.mjs`). Setup instructions live in
+> [docs/FIREBASE_SETUP_GUIDE.md](./docs/FIREBASE_SETUP_GUIDE.md).
+
 ## 📦 Tech Stack
 
-- **React 19** - UI framework
-- **TypeScript 5.3** - Type safety
-- **Vite 7.3** - Build tool & dev server
-- **Tailwind CSS 3.4** - Styling
-- **Zustand 4.4** - State management
-- **React Router 6.21** - Routing
-- **Konva.js 9.3** - Canvas manipulation
-- **Firebase 10.7** - Backend (Firestore, Storage, Auth)
-- **HeadlessUI** - Accessible components
-- **Lucide React** - Icons
+- **React 19** + **TypeScript** — UI
+- **Vite** — build tool & dev server (with PWA plugin)
+- **Tailwind CSS** — styling
+- **Zustand** — state management
+- **React Router** — routing
+- **Konva.js / react-konva** — canvas meme editor
+- **Firebase** — Firestore, Storage, Auth, Hosting, App Check
+- **i18next** — Hebrew/English internationalization (RTL-first)
+- **Vitest + Testing Library** — tests
+- **Framer Motion**, **HeadlessUI**, **Lucide React** — animation, accessible components, icons
 
 ## 📁 Project Structure
 
 ```
 src/
 ├── components/
-│   ├── common/      # Reusable UI components (Button, Modal, Card, etc.)
-│   ├── gallery/     # Gallery-specific components (MemeCard, FilterBar, etc.)
-│   └── layout/      # Layout components (Header, Footer)
-├── pages/           # Route pages (HomePage, GalleryPage, CreatePage, AdminPage)
-├── stores/          # Zustand state stores (useMemeStore, useEditorStore)
+│   ├── admin/       # Admin dashboard (analytics, meme & message management)
+│   ├── common/      # Reusable UI (Button, Modal, ConsentModal, LanguageToggle, ...)
+│   ├── editor/      # Canvas editor, template selector, tool panels
+│   ├── gallery/     # Gallery grid, cards, lightbox, filters, sorting
+│   ├── home/        # Homepage sections (featured carousel)
+│   └── layout/      # Header, Footer, Layout
+├── pages/           # Route pages (Home, Gallery, Create, Privacy, Admin)
+├── stores/          # Zustand stores (memes, editor, scene)
+├── hooks/           # usePublishMeme, useTagSuggestions
+├── contexts/        # AuthContext (admin auth)
+├── i18n/            # i18next setup + he/en locale files
+├── lib/             # Firebase config, templates, cache, utils
 ├── types/           # TypeScript type definitions
-├── lib/             # Utilities & Firebase config
-└── App.tsx          # Main app with routing
+└── App.tsx          # Routing + providers
 ```
 
-## 🎯 Current Status
+## 🌐 Routes
 
-**Completed:**
-- ✅ Week 1: Foundation, Firebase setup, Design system
-- ✅ Week 2 Day 8-10: Gallery page with real-time Firebase
-
-**In Progress:**
-- 🔄 Week 2 Day 11-14: Homepage enhancements & lazy loading
-
-**Upcoming:**
-- Week 3-4: Canvas editor with Konva.js
-- Week 5: Admin panel & testing
-- Week 6: Deploy to production
-
-See `SESSION_NOTES.md` for detailed progress.
-
-## 🔥 Firebase Configuration
-
-Uses the same Firebase project as the original site:
-- Collections: `memes`
-- Storage bucket: User-uploaded images
-- **No data migration needed** - existing memes will work
+- `/` — Homepage
+- `/gallery` — Meme gallery with real-time updates
+- `/create` — Canvas meme editor
+- `/privacy` — Privacy policy
+- `/admin` — Admin panel (protected; `/admin/login`)
 
 ## 📝 Development Commands
 
 ```bash
-npm run dev        # Start dev server (http://localhost:5173)
-npm run build      # Production build
-npm run preview    # Preview production build
-npx tsc --noEmit   # TypeScript type check
+npm run dev            # Start dev server (http://localhost:5173)
+npm run build          # Production build (env check + type check + version stamp)
+npm run build:analyze  # Build with bundle-size visualization
+npm run preview        # Preview production build
+npm run lint           # ESLint
+npm test               # Vitest (watch mode)
+npm run test:coverage  # Tests with coverage report
 ```
+
+## 🔥 Firebase
+
+- **Firestore** — `memes` and `contact_messages` collections (rules in `firestore.rules`)
+- **Storage** — user-uploaded meme images, 20MB/image limit (rules in `storage.rules`)
+- **Auth** — admin access via custom claims (no hardcoded admins)
+- **App Check** — reCAPTCHA v3 bot protection
+- **Hosting** — deploys the `dist/` build (`firebase deploy`)
 
 ## 🎨 Design System
 
 Custom Tailwind theme:
-- Primary: `#FF6B6B` (red)
-- Secondary: `#4ECDC4` (cyan)
-- Accent: `#FFE66D` (yellow)
-- Dark: `#2C3E50` (navy)
-- Font: Heebo (Hebrew support)
-- Direction: RTL (right-to-left)
+- Primary: `#FF6B6B` (red) · Secondary: `#4ECDC4` (cyan) · Accent: `#FFE66D` (yellow) · Dark: `#2C3E50` (navy)
+- Fonts: Heebo, IBM Plex Sans Hebrew
+- Direction: RTL by default, with an English (LTR) toggle
+
+Design direction for the visual-overhaul pass: [docs/design-brief.md](./docs/design-brief.md)
 
 ## 📚 Documentation
 
-- `SESSION_NOTES.md` - Detailed session progress and next steps
-
-## 🌐 Routes
-
-- `/` - Homepage (hero, features, CTA)
-- `/gallery` - Meme gallery with real-time updates
-- `/create` - Meme editor (Week 3-4)
-- `/admin` - Admin panel (Week 5)
+- [CHANGELOG.md](./CHANGELOG.md) — full development history, newest first
+- [docs/FIREBASE_SETUP_GUIDE.md](./docs/FIREBASE_SETUP_GUIDE.md) — Firebase setup & deployment
+- [docs/design-brief.md](./docs/design-brief.md) — visual design direction
+- [docs/REVIEW_2026-07.md](./docs/REVIEW_2026-07.md) — July 2026 repo review & suggestions
+- [docs/archive/](./docs/archive/) — historical session notes (kept for reference, not maintained)
 
 ## 📄 License
 
-Part of Archthesis project - Educational use.
+Part of the Archthesis project — educational use.
