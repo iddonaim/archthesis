@@ -62,6 +62,9 @@ export default {
         // Subtle blueprint grid for dark architectural surfaces
         'blueprint': `linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
                       linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px)`,
+        // The same grid for light surfaces (e.g. behind the editor canvas)
+        'blueprint-light': `linear-gradient(rgba(32,36,46,0.05) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(32,36,46,0.05) 1px, transparent 1px)`,
       },
       backgroundSize: {
         'grid-sm': '24px 24px',

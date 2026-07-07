@@ -1,4 +1,4 @@
-import { Trash2, Copy, ChevronsUp, ChevronsDown, Type, Smile, MapPin } from 'lucide-react'
+import { Trash2, Copy, ChevronsUp, ChevronsDown, Type, Smile, MapPin, Sticker } from 'lucide-react'
 import { useSceneStore } from '@/stores/useSceneStore'
 import { useEditorStore } from '@/stores/useEditorStore'
 
@@ -23,6 +23,8 @@ export default function SelectionToolbar() {
       ? { icon: Type, label: 'טקסט' }
       : selected.type === 'emoji'
       ? { icon: Smile, label: 'אימוג׳י' }
+      : selected.type === 'image'
+      ? { icon: Sticker, label: 'סטיקר' }
       : { icon: MapPin, label: 'מיקום' }
   const TypeIcon = typeInfo.icon
 

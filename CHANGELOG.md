@@ -1,5 +1,47 @@
 # Meme Editor - Development Changelog
 
+## Session: Stickers & Editor Polish (unreleased)
+**Date: 2026-07-07**
+
+### Overview
+Adds image stickers to the canvas editor — a curated pack plus "upload a
+picture as a sticker" — building on the design-refresh/canvas-upgrade branch.
+
+#### New: Sticker tab in the editor
+- New **סטיקרים** tab beside the emoji tab with two sources:
+  - **Curated pack** (13 stickers): speech/thought bubbles, אושר/נפסל stamps,
+    hard hat, blueprint, set square, Greek column, crane, וואו! burst, arrow,
+    crown, pixel sunglasses. All are inline SVG data URIs in
+    `src/data/stickers.ts` — no network fetches, no canvas tainting on export.
+  - **Upload a picture as a sticker**: any image becomes a canvas element;
+    it is downscaled client-side (max 800px, PNG keeps transparency, photos
+    become JPEG 0.85) so the scene stays light.
+- Stickers use the scene model's `ImageElement` type, which existed but was
+  never rendered. New `EditableImage` in `CanvasEditor.tsx`: center-anchored
+  (rotates around its middle), full transformer support, drag-clamped to the
+  canvas, center snapping, pinch-to-zoom on touch keeps aspect ratio.
+- Selection toolbar, duplicate, z-order, keyboard nudge/delete and undo/redo
+  all work for stickers automatically.
+
+#### Fix
+- Clicking an image sticker no longer instantly deselects it: the stage's
+  deselect handler matched *any* Konva `Image` (intended for the background);
+  the background image is now matched by name.
+- Emojis are now added at the canvas center and pre-selected, instead of a
+  fixed (200,200) point that fell near the edge on small mobile canvases.
+
+#### Design polish
+- Canvas backdrop now uses a faint light "blueprint grid" (matching the dark
+  hero grid) instead of a flat gray.
+- Editor tab bar and panels align with the ink/paper design tokens
+  (were generic Tailwind grays).
+
+#### Testing
+- New `StickerPanel` component tests (3); full suite 84/84, production build
+  compiles, editor flows verified end-to-end in a browser.
+
+---
+
 ## Session: Placeholder Text Fix (v3.3.8)
 **Date: 2026-02-02**
 

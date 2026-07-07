@@ -47,7 +47,7 @@ export default function TextPanel() {
     <div className="space-y-4">
       {/* Meme Description */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-ink-light">
           תיאור הגיחוך (אופציונלי)
         </label>
         <textarea
@@ -62,7 +62,7 @@ export default function TextPanel() {
           rows={3}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"
         />
-        <p className="text-xs text-gray-500 text-left">
+        <p className="text-xs text-ink-light/70 text-left">
           {description.length}/200
         </p>
       </div>
@@ -79,7 +79,7 @@ export default function TextPanel() {
       </Button>
 
       {/* Help text */}
-      <p className="text-xs text-gray-500 text-center">
+      <p className="text-xs text-ink-light/70 text-center">
         לחצו פעמיים על טקסט בקנבס כדי לערוך אותו
       </p>
 

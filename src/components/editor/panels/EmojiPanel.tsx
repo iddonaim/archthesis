@@ -1,5 +1,6 @@
 import { Smile } from 'lucide-react'
 import { useSceneStore } from '@/stores/useSceneStore'
+import { useEditorStore } from '@/stores/useEditorStore'
 
 const EMOJI_CATEGORIES = {
   'פרצופים': ['😀', '😃', '😄', '😁', '😅', '😂', '🤣', '😊', '😇', '🙂', '😉', '😍', '🥰', '😘', '😗', '😚', '😋', '😛', '😝', '😜'],
@@ -11,17 +12,23 @@ const EMOJI_CATEGORIES = {
 }
 
 export default function EmojiPanel() {
-  const { addElement } = useSceneStore()
+  const { addElement, selectOne } = useSceneStore()
+  const { canvasDimensions } = useEditorStore()
 
   const handleEmojiClick = (emoji: string) => {
-    addElement({
+    // Drop the emoji at the canvas center (its anchor is the top-left corner)
+    const size = 64
+    const centerX = (canvasDimensions?.width ?? 900) / 2 - size / 2
+    const centerY = (canvasDimensions?.height ?? 650) / 2 - size / 2
+    const id = addElement({
       type: 'emoji',
       glyph: emoji,
-      x: 200,
-      y: 200,
-      size: 64,
+      x: centerX,
+      y: centerY,
+      size,
       rotation: 0
     })
+    selectOne(id)
   }
 
   return (
@@ -34,7 +41,7 @@ export default function EmojiPanel() {
       <div className="space-y-4 max-h-96 overflow-y-auto">
         {Object.entries(EMOJI_CATEGORIES).map(([category, emojis]) => (
           <div key={category}>
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">
+            <h4 className="text-sm font-semibold text-ink-light mb-2">
               {category}
             </h4>
             <div className="grid grid-cols-5 gap-2">
@@ -42,7 +49,7 @@ export default function EmojiPanel() {
                 <button
                   key={emoji}
                   onClick={() => handleEmojiClick(emoji)}
-                  className="aspect-square text-2xl hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center hover:scale-110"
+                  className="aspect-square text-2xl hover:bg-primary-50 rounded-lg transition-colors flex items-center justify-center hover:scale-110"
                   title={emoji}
                 >
                   {emoji}
@@ -53,7 +60,7 @@ export default function EmojiPanel() {
         ))}
       </div>
 
-      <p className="text-xs text-gray-500 text-center border-t pt-3">
+      <p className="text-xs text-ink-light/70 text-center border-t border-ink/5 pt-3">
         לחצו על אמוג'י כדי להוסיף אותו לתמונה
       </p>
     </div>

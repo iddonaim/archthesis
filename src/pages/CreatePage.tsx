@@ -7,6 +7,7 @@ import CanvasEditor, { type CanvasEditorHandle } from '@/components/editor/Canva
 import SelectionToolbar from '@/components/editor/SelectionToolbar'
 import TextPanel from '@/components/editor/panels/TextPanel'
 import EmojiPanel from '@/components/editor/panels/EmojiPanel'
+import StickerPanel from '@/components/editor/panels/StickerPanel'
 import TagsPanel from '@/components/editor/panels/TagsPanel'
 import LocationPanel from '@/components/editor/panels/LocationPanel'
 import Button from '@/components/common/Button'
@@ -17,10 +18,10 @@ import Spinner from '@/components/common/Spinner'
 import { useEditorStore } from '@/stores/useEditorStore'
 import { useSceneStore } from '@/stores/useSceneStore'
 import { usePublishMeme } from '@/hooks/usePublishMeme'
-import { ArrowRight, Type, Smile, Tag, MapPin, RotateCcw, Sparkles, Upload, Undo2, Redo2 } from 'lucide-react'
+import { ArrowRight, Type, Smile, Sticker, Tag, MapPin, RotateCcw, Sparkles, Upload, Undo2, Redo2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-type EditorTab = 'text' | 'emoji' | 'tags' | 'location'
+type EditorTab = 'text' | 'emoji' | 'sticker' | 'tags' | 'location'
 
 export default function CreatePage() {
   const {
@@ -451,10 +452,11 @@ export default function CreatePage() {
             </div>
 
             {/* Tab Headers */}
-            <div className="grid grid-cols-4 border-b flex-shrink-0">
+            <div className="grid grid-cols-5 border-b border-ink/5 flex-shrink-0">
               {[
                 { id: 'text' as EditorTab, icon: Type, label: 'טקסט' },
                 { id: 'emoji' as EditorTab, icon: Smile, label: 'אמוג׳י' },
+                { id: 'sticker' as EditorTab, icon: Sticker, label: 'סטיקרים' },
                 { id: 'location' as EditorTab, icon: MapPin, label: 'מיקום' },
                 { id: 'tags' as EditorTab, icon: Tag, label: 'תגיות' },
               ].map((tab) => (
@@ -467,7 +469,7 @@ export default function CreatePage() {
                   className={`flex flex-col items-center gap-1 py-2 md:py-3 transition-colors ${
                     activeTab === tab.id
                       ? 'bg-primary text-white'
-                      : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                      : 'bg-paper text-ink-light hover:bg-primary-50'
                   }`}
                 >
                   <tab.icon size={18} className="md:w-5 md:h-5" />
@@ -491,6 +493,7 @@ export default function CreatePage() {
                 >
                   {activeTab === 'text' && <TextPanel />}
                   {activeTab === 'emoji' && <EmojiPanel />}
+                  {activeTab === 'sticker' && <StickerPanel />}
                   {activeTab === 'location' && <LocationPanel />}
                   {activeTab === 'tags' && <TagsPanel />}
                 </motion.div>
