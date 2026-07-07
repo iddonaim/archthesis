@@ -14,11 +14,17 @@ dist-ssr
 
 # Environment variables
 .env
-.env.local
-.env.production
+.env.*
+!.env.example
 
 # Firebase
 .firebaserc
+.firebase/
+
+# Test & analysis output
+coverage
+test-results
+playwright-report
 
 # Editor directories and files
 .vscode/*
