@@ -85,6 +85,32 @@ npm run test:coverage  # Tests with coverage report
 - **App Check** — reCAPTCHA v3 bot protection
 - **Hosting** — deploys the `dist/` build (`firebase deploy`)
 
+### Automated deploys (GitHub Actions)
+
+Every merge to `main` deploys hosting + Firestore rules + Storage rules
+(`.github/workflows/deploy.yml`), and every PR runs lint/tests/build plus a
+7-day preview URL (`.github/workflows/ci.yml`). Both skip quietly until the
+one-time setup below is done:
+
+1. **Service account key** — Firebase console → Project settings →
+   Service accounts → *Generate new private key* (downloads a JSON file).
+2. **GitHub secret** — repo Settings → Secrets and variables → Actions →
+   *Secrets* → add `FIREBASE_SERVICE_ACCOUNT` with the JSON file's contents.
+3. **GitHub variables** — same screen, *Variables* tab → add the six
+   `VITE_FIREBASE_*` values from your `.env` (they are client-side-public).
+
+With the GitHub CLI, steps 2–3 are one paste (from the repo root, with the
+downloaded key at `~/Downloads/service-account.json`):
+
+```bash
+set -a; source .env; set +a
+for v in VITE_FIREBASE_API_KEY VITE_FIREBASE_AUTH_DOMAIN VITE_FIREBASE_PROJECT_ID \
+         VITE_FIREBASE_STORAGE_BUCKET VITE_FIREBASE_MESSAGING_SENDER_ID VITE_FIREBASE_APP_ID; do
+  gh variable set "$v" --body "${!v}"
+done
+gh secret set FIREBASE_SERVICE_ACCOUNT < ~/Downloads/service-account.json
+```
+
 ## 🎨 Design System
 
 Custom Tailwind theme:
