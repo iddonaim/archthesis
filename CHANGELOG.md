@@ -8,14 +8,21 @@ Adds image stickers to the canvas editor — a curated pack plus "upload a
 picture as a sticker" — building on the design-refresh/canvas-upgrade branch.
 
 #### New: Sticker tab in the editor
-- New **סטיקרים** tab beside the emoji tab with two sources:
-  - **Curated pack** (13 stickers): speech/thought bubbles, אושר/נפסל stamps,
-    hard hat, blueprint, set square, Greek column, crane, וואו! burst, arrow,
-    crown, pixel sunglasses. All are inline SVG data URIs in
-    `src/data/stickers.ts` — no network fetches, no canvas tainting on export.
-  - **Upload a picture as a sticker**: any image becomes a canvas element;
-    it is downscaled client-side (max 800px, PNG keeps transparency, photos
-    become JPEG 0.85) so the scene stays light.
+- New **סטיקרים** tab organized like a mobile keyboard's sticker packs, with
+  a pack-switcher row:
+  - **שלי (my stickers)** — upload any picture as a sticker; it is downscaled
+    client-side (max 800px, PNG keeps transparency, photos become JPEG 0.85)
+    and saved to a personal library in localStorage (capped at 12, oldest
+    evicted, quota errors degrade gracefully) so it reappears next visit.
+  - **ממים** (20) and **אביזרים** (12) — real Twemoji artwork (💀 🗿 🔥 💯 🤡 😂,
+    sunglasses/crown/hats/boom…) vendored into `src/assets/stickers/`
+    (CC-BY 4.0, attribution in README and LICENSE.md there).
+  - **עברית** (8) — bold Hebrew text badges (וואלה, סבבה, אין מצב, די!!,
+    חבל על הזמן, כפרה, מהמם, לא נורמלי) as inline SVG.
+  - **שרטוט** — the hand-drawn drafting pack from the first pass.
+- The **emoji tab** is now a full searchable emoji keyboard
+  (`emoji-picker-react`, native glyphs, lazy-loaded as its own chunk so the
+  editor page stays small).
 - Stickers use the scene model's `ImageElement` type, which existed but was
   never rendered. New `EditableImage` in `CanvasEditor.tsx`: center-anchored
   (rotates around its middle), full transformer support, drag-clamped to the

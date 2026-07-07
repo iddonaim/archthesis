@@ -105,3 +105,8 @@ Design direction for the visual-overhaul pass: [docs/design-brief.md](./docs/des
 ## 📄 License
 
 Part of the Archthesis project — educational use.
+
+Sticker artwork in `src/assets/stickers/` is [Twemoji](https://github.com/jdecked/twemoji)
+(© Twitter, Inc. and other contributors), licensed under
+[CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/) — see
+`src/assets/stickers/LICENSE.md`.

@@ -17,6 +17,7 @@
     "@headlessui/react": "^2.2.9",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "emoji-picker-react": "^4.19.1",
     "firebase": "^12.7.0",
     "framer-motion": "^12.23.26",
     "i18next": "^26.3.1",
