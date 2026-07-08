@@ -32,18 +32,22 @@ export default function HomePage() {
   return (
     <>
     <Layout>
-      {/* Hero Section — dark "blueprint" surface with the brand sunset gradient */}
-      <section className="relative overflow-hidden bg-ink bg-blueprint bg-grid-sm text-white py-20 md:py-24">
-        {/* Soft coral glow behind the title */}
-        <div className="pointer-events-none absolute -top-48 left-1/2 -translate-x-1/2 h-[420px] w-[820px] rounded-full bg-primary/25 blur-3xl" />
+      {/* Hero Section — bubblegum pop: pastel blobs + big gradient headline */}
+      <section className="relative overflow-hidden bg-pastel-blush py-20 md:py-24">
+        <div className="pointer-events-none absolute -top-20 start-[8%] h-64 w-64 rounded-full bg-pastel-pink blur-2xl opacity-80" />
+        <div className="pointer-events-none absolute top-24 -end-20 h-72 w-72 rounded-full bg-pastel-teal blur-2xl opacity-80" />
+        <div className="pointer-events-none absolute -bottom-24 start-[30%] h-72 w-72 rounded-full bg-pastel-lilac blur-2xl opacity-80" />
+        <div className="pointer-events-none absolute bottom-8 end-[26%] h-40 w-40 rounded-full bg-pastel-butter blur-xl opacity-90" />
+        <div className="pointer-events-none absolute top-14 end-[14%] text-6xl rotate-12 select-none">😎</div>
+        <div className="pointer-events-none absolute bottom-16 start-[10%] text-6xl -rotate-12 select-none">💬</div>
         <div className="relative container mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-7xl font-black mb-5 animate-fade-in bg-sunset bg-clip-text text-transparent pb-2">
+          <h1 className="text-5xl md:text-7xl font-black mb-5 animate-fade-in bg-bubblegum bg-clip-text text-transparent pb-2">
             {t('hero.title')}
           </h1>
-          <p className="text-xl md:text-3xl font-bold mb-4 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-3xl font-bold mb-4 max-w-3xl mx-auto leading-relaxed text-ink">
             {t('hero.subtitle1')}
           </p>
-          <p className="text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-ink-light/80 mb-10 max-w-2xl mx-auto leading-relaxed">
             {t('hero.subtitle2')}
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
@@ -58,7 +62,6 @@ export default function HomePage() {
               size="lg"
               variant="outline"
               onClick={() => navigate('/gallery')}
-              className="border-white/40 text-white hover:border-white hover:bg-white/10"
             >
               <Image className="me-2 h-6 w-6" />
               {t('hero.ctaGallery')}
@@ -70,7 +73,7 @@ export default function HomePage() {
                 const element = document.getElementById('what-is-this')
                 element?.scrollIntoView({ behavior: 'smooth' })
               }}
-              className="border-white/40 text-white hover:border-white hover:bg-white/10"
+              className="hover:bg-pastel-teal/40"
             >
               <HelpCircle className="me-2 h-6 w-6" />
               {t('hero.ctaInfo')}
@@ -83,20 +86,27 @@ export default function HomePage() {
       <section className="py-6 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-            {([1, 2, 3] as const).map((step) => (
-              <div
-                key={step}
-                className="bg-white rounded-2xl border border-ink/5 shadow-card p-5 text-center transition-shadow hover:shadow-card-hover"
-              >
-                <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary-50 text-primary-700 ring-1 ring-primary-200 font-black text-lg">
-                  {step}
+            {([1, 2, 3] as const).map((step) => {
+              const tones = {
+                1: { tilt: '-rotate-1', badge: 'bg-pop-pink' },
+                2: { tilt: 'rotate-1', badge: 'bg-pop-teal' },
+                3: { tilt: '-rotate-1', badge: 'bg-pop-yellow' },
+              }[step]
+              return (
+                <div
+                  key={step}
+                  className={`bg-white rounded-2xl border-[3px] border-ink shadow-[5px_5px_0_#20242E] p-5 text-center ${tones.tilt} transition-transform hover:rotate-0 hover:-translate-y-1`}
+                >
+                  <div className={`mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full border-2 border-ink font-black text-lg text-ink ${tones.badge}`}>
+                    {step}
+                  </div>
+                  <h4 className="font-bold mb-1 text-lg text-ink">{t(`steps.step${step}Title`)}</h4>
+                  <p className="text-base leading-snug text-ink-light/90">
+                    {t(`steps.step${step}Body`)}
+                  </p>
                 </div>
-                <h4 className="font-bold mb-1 text-lg text-ink">{t(`steps.step${step}Title`)}</h4>
-                <p className="text-base leading-snug text-ink-light/90">
-                  {t(`steps.step${step}Body`)}
-                </p>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>
@@ -220,15 +230,14 @@ export default function HomePage() {
       </section>
 
       {/* Call to Action */}
-      <section className="relative overflow-hidden bg-sunset py-12">
-        <div className="absolute inset-0 bg-blueprint bg-grid-sm opacity-60" />
+      <section className="relative overflow-hidden bg-bubblegum py-12">
         <div className="relative container mx-auto px-4 text-center text-white">
           <Zap className="h-16 w-16 mx-auto mb-6" />
           <h2 className="text-4xl font-bold mb-4">{t('finalCta.title')}</h2>
           <Button
             size="lg"
+            variant="outline"
             onClick={() => navigate('/create')}
-            className="bg-white bg-none text-primary-700 shadow-md hover:bg-primary-50"
           >
             {t('finalCta.button')}
           </Button>

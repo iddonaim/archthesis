@@ -1,5 +1,64 @@
 # Meme Editor - Development Changelog
 
+## Session: Stickers, Bubblegum Design & CI (v3.4.0)
+**Date: 2026-07-07**
+
+### Overview
+Adds image stickers to the canvas editor — a curated pack plus "upload a
+picture as a sticker" — building on the design-refresh/canvas-upgrade branch.
+
+#### New: Sticker tab in the editor
+- New **סטיקרים** tab organized like a mobile keyboard's sticker packs, with
+  a pack-switcher row:
+  - **שלי (my stickers)** — upload any picture as a sticker; it is downscaled
+    client-side (max 800px, PNG keeps transparency, photos become JPEG 0.85)
+    and saved to a personal library in localStorage (capped at 12, oldest
+    evicted, quota errors degrade gracefully) so it reappears next visit.
+  - **ממים** (20) and **אביזרים** (12) — real Twemoji artwork (💀 🗿 🔥 💯 🤡 😂,
+    sunglasses/crown/hats/boom…) vendored into `src/assets/stickers/`
+    (CC-BY 4.0, attribution in README and LICENSE.md there).
+  - **עברית** (8) — bold Hebrew text badges (וואלה, סבבה, אין מצב, די!!,
+    חבל על הזמן, כפרה, מהמם, לא נורמלי) as inline SVG.
+  - **שרטוט** — the hand-drawn drafting pack from the first pass.
+- The **emoji tab** is now a full searchable emoji keyboard
+  (`emoji-picker-react`, native glyphs, lazy-loaded as its own chunk so the
+  editor page stays small).
+- Stickers use the scene model's `ImageElement` type, which existed but was
+  never rendered. New `EditableImage` in `CanvasEditor.tsx`: center-anchored
+  (rotates around its middle), full transformer support, drag-clamped to the
+  canvas, center snapping, pinch-to-zoom on touch keeps aspect ratio.
+- Selection toolbar, duplicate, z-order, keyboard nudge/delete and undo/redo
+  all work for stickers automatically.
+
+#### Fix
+- Clicking an image sticker no longer instantly deselects it: the stage's
+  deselect handler matched *any* Konva `Image` (intended for the background);
+  the background image is now matched by name.
+- Emojis are now added at the canvas center and pre-selected, instead of a
+  fixed (200,200) point that fell near the edge on small mobile canvases.
+
+#### Design: "Bubblegum pop" (replaces the dark/blueprint refresh)
+Per owner feedback the dark hero/blueprint direction was dropped — the site
+is a fun meme app, not a serious thesis site. Three colorful mockups were
+produced and the owner picked "Bubblegum pop":
+
+- Hero: pastel blobs (pink/teal/lilac/butter) on a blush background, big
+  purple→pink→orange gradient headline, floating emoji.
+- Step cards: white sticker-style cards — thick ink outline, hard offset
+  shadow, slight tilt that straightens on hover; pink/teal/yellow numbers.
+- Buttons site-wide are now "sticker" buttons: rounded-full, ink outline,
+  hard shadow that presses in on hover/click.
+- Footer: light blush with the gradient wordmark (was dark blueprint).
+- Header: gradient logo, pink active-tab pill.
+- Editor: pink active tabs, canvas sits on a blush surface with subtle
+  pink polka dots (blueprint grid tokens removed entirely).
+
+#### Testing
+- New `StickerPanel` component tests (3); full suite 84/84, production build
+  compiles, editor flows verified end-to-end in a browser.
+
+---
+
 ## Session: Placeholder Text Fix (v3.3.8)
 **Date: 2026-02-02**
 

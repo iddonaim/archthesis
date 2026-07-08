@@ -1,0 +1,89 @@
+# CI safety net (July 2026 review, suggestion #3):
+# every PR gets lint + tests + a production build, and — once the Firebase
+# secret exists — a temporary preview deployment with a clickable URL.
+#
+# The VITE_FIREBASE_* values come from repository *variables* (they are
+# client-side-public by nature). Until those are configured, the build uses
+# harmless placeholders so CI stays useful from day one.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+env:
+  VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY || 'ci-placeholder' }}
+  VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN || 'ci-placeholder.firebaseapp.com' }}
+  VITE_FIREBASE_PROJECT_ID: ${{ vars.VITE_FIREBASE_PROJECT_ID || 'ci-placeholder' }}
+  VITE_FIREBASE_STORAGE_BUCKET: ${{ vars.VITE_FIREBASE_STORAGE_BUCKET || 'ci-placeholder.appspot.com' }}
+  VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ vars.VITE_FIREBASE_MESSAGING_SENDER_ID || '000000000000' }}
+  VITE_FIREBASE_APP_ID: ${{ vars.VITE_FIREBASE_APP_ID || '1:000000000000:web:ci' }}
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # The repo has ~75 pre-existing lint errors; keep lint visible but
+      # non-blocking until that backlog is cleared, so it can't mask real
+      # test/build failures with permanent red.
+      - name: Lint (non-blocking)
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Tests
+        run: npx vitest run
+
+      - name: Production build
+        run: npm run build
+
+  # Deploys the PR to a temporary Firebase Hosting preview channel (7 days),
+  # pointing at the production database — so the gallery can be checked with
+  # real data before merging. Skips quietly until the secret is configured,
+  # and never runs for PRs from forks.
+  preview:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check configuration
+        id: config
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PROJECT: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
+        run: |
+          if [ -z "$SA" ] || [ -z "$PROJECT" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::FIREBASE_SERVICE_ACCOUNT secret / VITE_FIREBASE_* variables not set — skipping preview deploy."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.config.outputs.configured == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.config.outputs.configured == 'true'
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+        if: steps.config.outputs.configured == 'true'
+
+      - name: Deploy preview channel
+        if: steps.config.outputs.configured == 'true'
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          printf '%s' "$SA" > "$RUNNER_TEMP/firebase-sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/firebase-sa.json"
+          npx firebase-tools@14 hosting:channel:deploy "pr-${{ github.event.number }}" \
+            --project "${{ vars.VITE_FIREBASE_PROJECT_ID }}" \
+            --expires 7d --non-interactive | tee "$RUNNER_TEMP/deploy.log"
+          echo "### Preview deployed" >> "$GITHUB_STEP_SUMMARY"
+          grep -Eo 'https://[^ ]+web\.app' "$RUNNER_TEMP/deploy.log" | head -1 >> "$GITHUB_STEP_SUMMARY" || true

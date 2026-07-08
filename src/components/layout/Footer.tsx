@@ -11,15 +11,15 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="bg-ink-dark bg-blueprint bg-grid-lg text-white mt-auto">
+      <footer className="bg-pastel-blush border-t-[3px] border-ink/10 text-ink mt-auto">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-start">
             {/* About */}
             <div>
-              <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <h3 className="text-xl font-black mb-4 bg-bubblegum bg-clip-text text-transparent">
                 {t('brand.name')}
               </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
+              <p className="text-ink-light/80 text-sm leading-relaxed">
                 {t('footer.description')}
               </p>
             </div>
@@ -27,19 +27,19 @@ export default function Footer() {
             {/* Navigation Links */}
             <div>
               <h4 className="font-semibold mb-4">{t('footer.navigation')}</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
+              <ul className="space-y-2 text-ink-light/80 text-sm">
                 <li>
-                  <Link to="/" className="hover:text-primary transition-colors">
+                  <Link to="/" className="hover:text-pop-pink transition-colors">
                     {t('nav.home')}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/gallery" className="hover:text-primary transition-colors">
+                  <Link to="/gallery" className="hover:text-pop-pink transition-colors">
                     {t('nav.gallery')}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/create" className="hover:text-primary transition-colors">
+                  <Link to="/create" className="hover:text-pop-pink transition-colors">
                     {t('nav.create')}
                   </Link>
                 </li>
@@ -49,21 +49,21 @@ export default function Footer() {
             {/* Legal Links */}
             <div>
               <h4 className="font-semibold mb-4">{t('footer.legal')}</h4>
-              <ul className="space-y-2 text-gray-400 text-sm">
+              <ul className="space-y-2 text-ink-light/80 text-sm">
                 <li>
-                  <Link to="/privacy" className="hover:text-primary transition-colors">
+                  <Link to="/privacy" className="hover:text-pop-pink transition-colors">
                     {t('footer.privacy')}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/privacy" className="hover:text-primary transition-colors">
+                  <Link to="/privacy" className="hover:text-pop-pink transition-colors">
                     {t('footer.terms')}
                   </Link>
                 </li>
                 <li>
                   <button
                     onClick={() => setShowContactModal(true)}
-                    className="hover:text-primary transition-colors"
+                    className="hover:text-pop-pink transition-colors"
                   >
                     {t('footer.contact')}
                   </button>
@@ -74,7 +74,7 @@ export default function Footer() {
             {/* Credits */}
             <div>
               <h4 className="font-semibold mb-4">{t('footer.details')}</h4>
-              <div className="text-gray-400 text-sm space-y-1">
+              <div className="text-ink-light/80 text-sm space-y-1">
                 <p>{t('footer.thesisProject')}</p>
                 <p>{t('footer.university')}</p>
                 <p className="mt-3">{t('footer.creator')}</p>
@@ -83,9 +83,9 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500 text-sm space-y-2">
+          <div className="border-t border-ink/10 mt-8 pt-6 text-center text-ink-light/70 text-sm space-y-2">
             <p>{t('footer.copyright', { year: currentYear })}</p>
-            <p className="text-xs text-gray-600">
+            <p className="text-xs text-ink-light/60">
               {APP_VERSION} • {BUILD_DATE}
             </p>
           </div>

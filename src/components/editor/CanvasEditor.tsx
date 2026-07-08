@@ -3,7 +3,7 @@ import { Stage, Layer, Image as KonvaImage, Text, Transformer, Line, Rect, Group
 import { useEditorStore } from '@/stores/useEditorStore'
 import { useSceneStore } from '@/stores/useSceneStore'
 import { useEditorKeyboard } from '@/hooks/useEditorKeyboard'
-import type { TextElement, EmojiElement, LocationElement } from '@/types/scene'
+import type { TextElement, EmojiElement, LocationElement, ImageElement } from '@/types/scene'
 import { getContrastColor } from '@/lib/utils'
 import useImage from 'use-image'
 import Konva from 'konva'
@@ -429,6 +429,129 @@ function EditableSticker({
   )
 }
 
+// Image sticker component with transformer.
+// Anchored at its center (via offsetX/offsetY) so rotation pivots around the
+// middle and the drag clamp keeps the sticker's center — not a corner — on canvas.
+function EditableImage({
+  imageEl,
+  isSelected,
+  onSelect,
+  onChange,
+  onDragStart,
+  onDragMove,
+  onSnapDragEnd,
+  onTransformEnd,
+  dragBoundFunc,
+  onHoverCursor
+}: {
+  imageEl: ImageElement
+  isSelected: boolean
+  onSelect: () => void
+  onChange: (attrs: Partial<ImageElement>) => void
+  onDragStart?: () => void
+  onDragMove?: (e: Konva.KonvaEventObject<DragEvent>) => void
+  onSnapDragEnd?: (
+    e: Konva.KonvaEventObject<DragEvent>,
+    onChange: (attrs: Partial<ImageElement>) => void
+  ) => void
+  onTransformEnd?: () => void
+} & EditableCommonProps) {
+  const imageRef = useRef<Konva.Image>(null)
+  const transformerRef = useRef<Konva.Transformer>(null)
+  const [img] = useImage(imageEl.src, 'anonymous')
+
+  useEffect(() => {
+    if (isSelected && transformerRef.current && imageRef.current) {
+      transformerRef.current.nodes([imageRef.current])
+      transformerRef.current.getLayer()?.batchDraw()
+    } else if (transformerRef.current) {
+      transformerRef.current.nodes([])
+      transformerRef.current.getLayer()?.batchDraw()
+    }
+  }, [isSelected, img])
+
+  return (
+    <>
+      <KonvaImage
+        ref={imageRef}
+        image={img}
+        x={imageEl.x}
+        y={imageEl.y}
+        width={imageEl.width}
+        height={imageEl.height}
+        offsetX={imageEl.width / 2}
+        offsetY={imageEl.height / 2}
+        rotation={imageEl.rotation}
+        draggable
+        dragBoundFunc={dragBoundFunc}
+        onMouseEnter={() => onHoverCursor?.('move')}
+        onMouseLeave={() => onHoverCursor?.('default')}
+        onDragStart={onDragStart}
+        onTransformStart={onDragStart}
+        onClick={onSelect}
+        onTap={onSelect}
+        onDragMove={onDragMove}
+        onDragEnd={(e) => {
+          if (onSnapDragEnd) {
+            onSnapDragEnd(e, onChange)
+          } else {
+            onChange({
+              x: e.target.x(),
+              y: e.target.y()
+            })
+            useSceneStore.getState().commitTransaction()
+          }
+        }}
+        onTransformEnd={() => {
+          const node = imageRef.current
+          if (!node) return
+
+          const scaleX = node.scaleX()
+          const scaleY = node.scaleY()
+
+          // Reset scale and bake it into width/height
+          node.scaleX(1)
+          node.scaleY(1)
+
+          onChange({
+            x: node.x(),
+            y: node.y(),
+            width: Math.max(24, imageEl.width * scaleX),
+            height: Math.max(24, imageEl.height * scaleY),
+            rotation: node.rotation()
+          })
+
+          if (onTransformEnd) {
+            onTransformEnd()
+          } else {
+            useSceneStore.getState().commitTransaction()
+          }
+        }}
+      />
+      {isSelected && (
+        <Transformer
+          ref={transformerRef}
+          rotationSnaps={[0, 45, 90, 135, 180, 225, 270, 315]}
+          rotateEnabled={true}
+          rotateAnchorOffset={20}
+          enabledAnchors={[
+            'top-left',
+            'top-right',
+            'bottom-left',
+            'bottom-right'
+          ]}
+          boundBoxFunc={(oldBox, newBox) => {
+            if (newBox.width < 20 || newBox.height < 20) {
+              return oldBox
+            }
+            return newBox
+          }}
+        />
+      )}
+    </>
+  )
+}
+
 // Location component with transformer
 function EditableLocation({
   location,
@@ -639,11 +762,13 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
   }
 
   const handleStageClick = (e: any) => {
-    // Deselect when clicking on empty area or background image
+    // Deselect when clicking on empty area or the background image.
+    // Image stickers are Konva Images too, so match the background by name
+    // rather than by class — otherwise clicking a sticker would deselect it.
     const clickedOnEmpty = e.target === e.target.getStage()
-    const clickedOnImage = e.target.className === 'Image'
+    const clickedOnBackground = e.target.name?.() === 'background-image'
 
-    if (clickedOnEmpty || clickedOnImage) {
+    if (clickedOnEmpty || clickedOnBackground) {
       selectOne(null)
     }
   }
@@ -755,6 +880,16 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
               size: Math.max(20, Math.min(200, selectedEl.size * scale)),
               rotation: (selectedEl.rotation + rotation) % 360
             })
+          } else if (selectedEl.type === 'image') {
+            // Clamp the scale factor itself so both dimensions shrink together
+            // and the sticker keeps its aspect ratio at the minimum size
+            const minScale = 24 / Math.min(selectedEl.width, selectedEl.height)
+            const uniformScale = Math.max(minScale, scale)
+            updateElement(selectedId, {
+              width: selectedEl.width * uniformScale,
+              height: selectedEl.height * uniformScale,
+              rotation: (selectedEl.rotation + rotation) % 360
+            })
           } else if (selectedEl.type === 'location') {
             updateElement(selectedId, {
               fontSize: Math.max(12, Math.min(100, (selectedEl.fontSize || 24) * scale)),
@@ -776,7 +911,7 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
   }
 
   return (
-    <div className="flex justify-center items-center bg-gray-100 rounded-lg p-4">
+    <div className="flex justify-center items-center bg-pastel-blush bg-confetti-dots bg-dots rounded-xl border border-ink/5 p-4">
       <Stage
         ref={stageRef}
         width={canvasDimensions.width}
@@ -791,6 +926,7 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
           {/* Background Image */}
           {image && (
             <KonvaImage
+              name="background-image"
               image={image}
               width={canvasDimensions.width}
               height={canvasDimensions.height}
@@ -837,6 +973,22 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
                     if (attrs.rotation !== undefined) updates.rotation = attrs.rotation
                     updateElement(element.id, updates)
                   }}
+                  onDragStart={() => beginTransaction()}
+                  onDragMove={handleDragMove}
+                  onSnapDragEnd={handleSnapDragEnd}
+                  onTransformEnd={() => commitTransaction()}
+                  dragBoundFunc={clampToCanvas}
+                  onHoverCursor={setCursor}
+                />
+              )
+            } else if (element.type === 'image') {
+              return (
+                <EditableImage
+                  key={element.id}
+                  imageEl={element}
+                  isSelected={scene.selection.includes(element.id)}
+                  onSelect={() => selectOne(element.id)}
+                  onChange={(attrs) => updateElement(element.id, attrs)}
                   onDragStart={() => beginTransaction()}
                   onDragMove={handleDragMove}
                   onSnapDragEnd={handleSnapDragEnd}

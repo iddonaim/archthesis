@@ -35,7 +35,7 @@ export default function Header() {
           <Link
             to="/"
             onClick={(e) => handleNavClick(e, '/')}
-            className="text-2xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent hover:scale-105 transition-transform"
+            className="text-2xl font-black bg-bubblegum bg-clip-text text-transparent hover:scale-105 transition-transform"
           >
             {t('brand.short')}
           </Link>
@@ -50,8 +50,8 @@ export default function Header() {
                 className={cn(
                   'flex items-center gap-2 px-4 py-2 rounded-full font-semibold transition-all duration-200',
                   isActive(path)
-                    ? 'bg-primary-50 text-primary-700 ring-1 ring-primary-200'
-                    : 'text-ink-light hover:bg-ink/5'
+                    ? 'bg-pastel-pink/60 text-ink ring-1 ring-pop-pink/40'
+                    : 'text-ink-light hover:bg-pastel-lilac/50'
                 )}
               >
                 <Icon className="h-5 w-5" />

@@ -52,20 +52,35 @@ export default {
         // Warm off-white page background
         paper: '#FAF8F5',
         dark: '#2C3E50', // legacy alias, kept for old class usage
+        // Bubblegum pop palette — playful accents + pastel washes
+        pop: {
+          pink: '#FF66A3',
+          purple: '#8C52FF',
+          orange: '#FF9A3D',
+          teal: '#4ECDC4',
+          yellow: '#FFD166',
+        },
+        pastel: {
+          pink: '#FFD6EC',
+          teal: '#C9F5EF',
+          lilac: '#E4D9FF',
+          butter: '#FFF3C4',
+          blush: '#FFF7FC',
+        },
       },
       fontFamily: {
         sans: ['Heebo', 'Arial', 'sans-serif'],
       },
       backgroundImage: {
-        // Signature sunset gradient — the one gradient used across the site
+        // Signature sunset gradient — used for primary buttons
         'sunset': 'linear-gradient(135deg, #FF6B6B 0%, #FF9A62 100%)',
-        // Subtle blueprint grid for dark architectural surfaces
-        'blueprint': `linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px)`,
+        // Bubblegum headline/CTA gradient (reads right-to-left)
+        'bubblegum': 'linear-gradient(to left, #8C52FF 0%, #FF66A3 50%, #FF9A3D 100%)',
+        // Playful polka dots for light surfaces (e.g. behind the editor canvas)
+        'confetti-dots': 'radial-gradient(circle, rgba(255,102,163,0.14) 1.5px, transparent 1.5px)',
       },
       backgroundSize: {
-        'grid-sm': '24px 24px',
-        'grid-lg': '96px 96px',
+        'dots': '18px 18px',
       },
       boxShadow: {
         'card': '0 1px 2px rgba(32,36,46,0.06), 0 4px 16px rgba(32,36,46,0.06)',
