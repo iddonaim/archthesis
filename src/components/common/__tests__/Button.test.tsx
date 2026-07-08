@@ -11,13 +11,13 @@ describe('Button', () => {
 
   it('renders different variants', () => {
     const { rerender } = render(<Button variant="primary">Primary</Button>)
-    expect(screen.getByRole('button')).toHaveClass('from-primary')
+    expect(screen.getByRole('button')).toHaveClass('bg-sunset')
 
     rerender(<Button variant="secondary">Secondary</Button>)
-    expect(screen.getByRole('button')).toHaveClass('from-secondary')
+    expect(screen.getByRole('button')).toHaveClass('bg-secondary-500')
 
     rerender(<Button variant="outline">Outline</Button>)
-    expect(screen.getByRole('button')).toHaveClass('border-primary')
+    expect(screen.getByRole('button')).toHaveClass('border-primary-300')
   })
 
   it('renders different sizes', () => {

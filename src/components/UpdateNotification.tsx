@@ -70,7 +70,7 @@ export default function UpdateNotification() {
   if (!hasUpdate) {
     return (
       <div className="fixed bottom-4 left-4 text-xs text-gray-400 bg-white px-2 py-1 rounded shadow">
-        v{APP_VERSION}
+        {APP_VERSION}
       </div>
     )
   }

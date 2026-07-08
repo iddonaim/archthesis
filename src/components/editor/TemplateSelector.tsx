@@ -248,13 +248,10 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
         className="cursor-pointer transition-all border-2 border-dashed border-primary/30 hover:border-primary hover:shadow-xl"
         onClick={() => fileInputRef.current?.click()}
       >
-        <div className="h-48 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
-          {/* Background pattern */}
-          <div className="absolute inset-0 bg-white/50" />
-
+        <div className="h-48 bg-primary-50/60 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
           <div className="relative z-10 flex flex-col items-center gap-4">
-            <div className="bg-primary/10 p-6 rounded-full backdrop-blur-sm border-2 border-primary/20">
-              <Upload size={48} className="text-primary" />
+            <div className="bg-white p-6 rounded-full shadow-card ring-1 ring-primary-200">
+              <Upload size={48} className="text-primary-600" />
             </div>
             <div className="text-center px-4">
               <h3 className="text-2xl font-bold text-gray-800 mb-2">
@@ -282,7 +279,7 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
           <div className="w-full border-t border-gray-300"></div>
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-gray-50 px-4 text-sm text-gray-500 font-medium">
+          <span className="bg-paper px-4 text-sm text-gray-500 font-medium">
             או בחרו תבנית קיימת
           </span>
         </div>

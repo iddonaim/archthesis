@@ -154,7 +154,8 @@ describe('Admin Authentication Flow', () => {
 
   it('has link to home page', () => {
     render(<AdminLoginPage />)
-    expect(screen.getByText(/חזרה לדף הבית/i)).toBeInTheDocument()
+    // The link text appears in more than one place; assert at least one exists
+    expect(screen.getAllByText(/חזרה לדף הבית/i).length).toBeGreaterThan(0)
   })
 
   it('displays security notice', () => {

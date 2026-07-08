@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Layout from '@/components/layout/Layout'
 import TemplateSelector from '@/components/editor/TemplateSelector'
 import CanvasEditor, { type CanvasEditorHandle } from '@/components/editor/CanvasEditor'
+import SelectionToolbar from '@/components/editor/SelectionToolbar'
 import TextPanel from '@/components/editor/panels/TextPanel'
 import EmojiPanel from '@/components/editor/panels/EmojiPanel'
 import TagsPanel from '@/components/editor/panels/TagsPanel'
@@ -426,7 +427,8 @@ export default function CreatePage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-8">
           {/* Main: Canvas Editor - Takes 3 columns */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-xl shadow-lg p-3 md:p-6">
+            <div className="bg-white rounded-2xl shadow-card border border-ink/5 p-3 md:p-6">
+              <SelectionToolbar />
               <CanvasEditor ref={canvasRef} width={canvasDimensions.width} height={canvasDimensions.height} />
             </div>
           </div>
@@ -435,7 +437,7 @@ export default function CreatePage() {
           <div
             className={cn(
               "bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-gray-100 rounded-t-2xl transition-all duration-300 flex flex-col z-30",
-              "lg:col-span-1 lg:rounded-xl lg:static lg:shadow-lg lg:border-none lg:h-auto lg:z-auto", // Desktop resets
+              "lg:col-span-1 lg:rounded-2xl lg:static lg:shadow-card lg:border lg:border-ink/5 lg:h-auto lg:z-auto", // Desktop resets
               "fixed bottom-0 left-0 right-0", // Mobile layout positioning
               isExpanded ? "mobile-bottom-sheet-expanded lg:h-auto" : "h-[74px] lg:h-auto" // Mobile heights with dvh fallback class
             )}
