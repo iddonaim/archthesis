@@ -705,6 +705,38 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
     const [image] = useImage(currentImageUrl || '', 'anonymous')
     const stageRef = useRef<Konva.Stage>(null)
 
+    // Cap the canvas to the width its container actually offers. The target
+    // width/height props come from viewport breakpoints, which can hand us a
+    // box wider than the grid column it lives in (e.g. an 11" iPad landscape
+    // lands on the desktop breakpoint's 900px but the 3/4 column is narrower),
+    // making the fixed-pixel Konva Stage overflow. Measuring the container and
+    // scaling the box down keeps it inside no matter the device.
+    const containerRef = useRef<HTMLDivElement>(null)
+    const [availableWidth, setAvailableWidth] = useState(width)
+
+    useEffect(() => {
+      const el = containerRef.current
+      if (!el) return
+
+      const measure = () => {
+        const style = window.getComputedStyle(el)
+        const padX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight)
+        const content = el.clientWidth - padX
+        if (content > 0) setAvailableWidth(content)
+      }
+
+      measure()
+      const observer = new ResizeObserver(measure)
+      observer.observe(el)
+      return () => observer.disconnect()
+    }, [])
+
+    // Scale the target box to fit, preserving its aspect ratio so the image-fit
+    // math below behaves the same as it did at full size.
+    const fitScale = width > 0 ? Math.min(1, availableWidth / width) : 1
+    const boxWidth = width * fitScale
+    const boxHeight = height * fitScale
+
     // Delete/arrows/undo shortcuts — active only while the editor is mounted
     useEditorKeyboard()
 
@@ -722,22 +754,22 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
 
   // Calculate canvas dimensions to fit image
   const canvasDimensions = (() => {
-    if (!image) return { width, height }
+    if (!image) return { width: boxWidth, height: boxHeight }
 
     const imgRatio = image.width / image.height
-    const canvasRatio = width / height
+    const canvasRatio = boxWidth / boxHeight
 
     if (imgRatio > canvasRatio) {
       // Image is wider
       return {
-        width,
-        height: width / imgRatio
+        width: boxWidth,
+        height: boxWidth / imgRatio
       }
     } else {
       // Image is taller
       return {
-        width: height * imgRatio,
-        height
+        width: boxHeight * imgRatio,
+        height: boxHeight
       }
     }
   })()
@@ -911,7 +943,7 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
   }
 
   return (
-    <div className="flex justify-center items-center bg-pastel-blush bg-confetti-dots bg-dots rounded-xl border border-ink/5 p-4">
+    <div ref={containerRef} className="flex justify-center items-center bg-pastel-blush bg-confetti-dots bg-dots rounded-xl border border-ink/5 p-4 overflow-hidden">
       <Stage
         ref={stageRef}
         width={canvasDimensions.width}
