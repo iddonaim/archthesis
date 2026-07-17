@@ -30,7 +30,7 @@ export default defineConfig({
       }
     },
     include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache']
+    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'e2e']
   },
   resolve: {
     alias: {

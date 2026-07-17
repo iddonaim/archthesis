@@ -5,6 +5,7 @@ import { useSceneStore } from '@/stores/useSceneStore'
 import { useEditorKeyboard } from '@/hooks/useEditorKeyboard'
 import type { TextElement, EmojiElement, LocationElement, ImageElement } from '@/types/scene'
 import { getContrastColor } from '@/lib/utils'
+import { fitBoxToWidth, fitImageIntoBox } from '@/lib/canvasSizing'
 import useImage from 'use-image'
 import Konva from 'konva'
 import type { Sticker, Location } from '@/types/editor'
@@ -733,9 +734,7 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
 
     // Scale the target box to fit, preserving its aspect ratio so the image-fit
     // math below behaves the same as it did at full size.
-    const fitScale = width > 0 ? Math.min(1, availableWidth / width) : 1
-    const boxWidth = width * fitScale
-    const boxHeight = height * fitScale
+    const { width: boxWidth, height: boxHeight } = fitBoxToWidth(width, height, availableWidth)
 
     // Delete/arrows/undo shortcuts — active only while the editor is mounted
     useEditorKeyboard()
@@ -753,26 +752,7 @@ const CanvasEditor = forwardRef<CanvasEditorHandle, CanvasEditorProps>(
     }))
 
   // Calculate canvas dimensions to fit image
-  const canvasDimensions = (() => {
-    if (!image) return { width: boxWidth, height: boxHeight }
-
-    const imgRatio = image.width / image.height
-    const canvasRatio = boxWidth / boxHeight
-
-    if (imgRatio > canvasRatio) {
-      // Image is wider
-      return {
-        width: boxWidth,
-        height: boxWidth / imgRatio
-      }
-    } else {
-      // Image is taller
-      return {
-        width: boxHeight * imgRatio,
-        height: boxHeight
-      }
-    }
-  })()
+  const canvasDimensions = fitImageIntoBox(boxWidth, boxHeight, image)
 
   // Update canvas dimensions in store when they change
   useEffect(() => {

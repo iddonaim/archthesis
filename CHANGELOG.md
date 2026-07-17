@@ -1,5 +1,43 @@
 # Meme Editor - Development Changelog
 
+## Session: Mobile Publish Button & Editor Layout Tests
+**Date: 2026-07-17**
+
+### Overview
+Fixes the reported "can't publish memes on iPhone" bug and adds automated
+coverage for canvas visibility and editor usability across device sizes.
+
+#### Fix: publish button unreachable on phones
+- The editor's bottom sheet clipped itself to a fixed 74px when collapsed
+  (its initial state), which pushed the publish footer completely below the
+  screen — on phones the **פרסם גיחוך** button was simply not there until the
+  sheet was expanded, and collapsed again the moment users closed the sheet
+  to look at their meme. The collapsed sheet now sizes to its content and
+  keeps the publish button visible at all times; only the tool panels
+  collapse. The footer also pads itself above the iPhone home indicator
+  (`env(safe-area-inset-bottom)`).
+- The site header's minimum width (nav pills + language toggle + logo) was
+  wider than narrow phone screens (≤~390px). The resulting horizontal
+  overflow inflates the mobile layout viewport, and iOS Safari then renders
+  `position: fixed` elements — including the publish bar — partly below the
+  visible screen. Nav paddings/gaps now compress below the `sm` breakpoint
+  and the logo may shrink, so the header fits 320px screens.
+
+#### Tests: canvas visibility & usability
+- Canvas sizing math extracted to `src/lib/canvasSizing.ts` (pure functions,
+  shared by CreatePage and CanvasEditor) with unit tests: viewport
+  breakpoints, container-fit scaling (iPad overflow regression), image
+  aspect fitting.
+- New CreatePage unit tests: publish button present and outside the
+  collapsed area, sheet expands on tab tap, publishing works straight from
+  the collapsed sheet.
+- New Playwright e2e suite (`npm run test:e2e`, `e2e/`): real-layout checks
+  on iPhone 14/15, iPhone SE, small Android, iPad 11" landscape and desktop —
+  publish button fully on-screen and hit-testable in both sheet states,
+  canvas fits between header and sheet, no horizontal overflow inflating the
+  layout viewport, canvas taps don't scroll the page. External traffic
+  (Firebase, template images) is stubbed, so the suite runs offline.
+
 ## Session: Stickers, Bubblegum Design & CI (v3.4.0)
 **Date: 2026-07-07**
 

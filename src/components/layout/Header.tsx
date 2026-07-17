@@ -35,20 +35,22 @@ export default function Header() {
           <Link
             to="/"
             onClick={(e) => handleNavClick(e, '/')}
-            className="text-2xl font-black bg-bubblegum bg-clip-text text-transparent hover:scale-105 transition-transform"
+            className="text-xl sm:text-2xl font-black bg-bubblegum bg-clip-text text-transparent hover:scale-105 transition-transform shrink min-w-0"
           >
             {t('brand.short')}
           </Link>
 
-          {/* Navigation */}
-          <nav className="flex items-center gap-2">
+          {/* Navigation - compact paddings below sm so the header's minimum
+              width fits narrow phones; overflowing the viewport widens the
+              mobile layout viewport and drops fixed bottom bars off-screen. */}
+          <nav className="flex items-center gap-1 sm:gap-2 shrink-0">
             {navLinks.map(({ path, label, icon: Icon }) => (
               <Link
                 key={path}
                 to={path}
                 onClick={(e) => handleNavClick(e, path)}
                 className={cn(
-                  'flex items-center gap-2 px-4 py-2 rounded-full font-semibold transition-all duration-200',
+                  'flex items-center gap-2 px-2.5 sm:px-4 py-2 rounded-full font-semibold transition-all duration-200',
                   isActive(path)
                     ? 'bg-pastel-pink/60 text-ink ring-1 ring-pop-pink/40'
                     : 'text-ink-light hover:bg-pastel-lilac/50'

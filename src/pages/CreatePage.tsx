@@ -20,6 +20,7 @@ import { useSceneStore } from '@/stores/useSceneStore'
 import { usePublishMeme } from '@/hooks/usePublishMeme'
 import { ArrowRight, Type, Smile, Sticker, Tag, MapPin, RotateCcw, Sparkles, Upload, Undo2, Redo2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { canvasSizeForViewport } from '@/lib/canvasSizing'
 
 type EditorTab = 'text' | 'emoji' | 'sticker' | 'tags' | 'location'
 
@@ -73,21 +74,7 @@ export default function CreatePage() {
 
   useEffect(() => {
     const updateCanvasSize = () => {
-      const isMobile = window.innerWidth < 768
-      const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024
-
-      if (isMobile) {
-        // Mobile: fit to screen width with padding
-        const width = Math.min(window.innerWidth - 32, 600)
-        const height = Math.min(width * 0.75, window.innerHeight - 300)
-        setCanvasDimensions({ width, height })
-      } else if (isTablet) {
-        // Tablet: medium size
-        setCanvasDimensions({ width: 700, height: 500 })
-      } else {
-        // Desktop: full size
-        setCanvasDimensions({ width: 900, height: 650 })
-      }
+      setCanvasDimensions(canvasSizeForViewport(window.innerWidth, window.innerHeight))
     }
 
     updateCanvasSize()
@@ -319,7 +306,7 @@ export default function CreatePage() {
   // Show editor when image is selected
   return (
     <Layout>
-      <div className="container mx-auto px-2 md:px-4 py-4 md:py-8 pb-24 lg:pb-8">
+      <div className="container mx-auto px-2 md:px-4 py-4 md:py-8 pb-44 lg:pb-8">
         <div className="mb-4 md:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">עורך הגיחוכים</h1>
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-stretch sm:items-center">
@@ -440,7 +427,9 @@ export default function CreatePage() {
               "bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-gray-100 rounded-t-2xl transition-all duration-300 flex flex-col z-30",
               "lg:col-span-1 lg:rounded-2xl lg:static lg:shadow-card lg:border lg:border-ink/5 lg:h-auto lg:z-auto", // Desktop resets
               "fixed bottom-0 left-0 right-0", // Mobile layout positioning
-              isExpanded ? "mobile-bottom-sheet-expanded lg:h-auto" : "h-[74px] lg:h-auto" // Mobile heights with dvh fallback class
+              // Collapsed: intrinsic height (handle + tabs + publish button all visible).
+              // A fixed height here used to clip the publish footer off-screen on phones.
+              isExpanded && "mobile-bottom-sheet-expanded lg:h-auto" // Expanded height with dvh fallback class
             )}
           >
             {/* Drag handle pill for mobile viewports */}
@@ -478,10 +467,13 @@ export default function CreatePage() {
               ))}
             </div>
 
-            {/* Tab Content area - scrollable when height shrunken by software keyboard */}
+            {/* Tab Content area - scrollable when height shrunken by software keyboard.
+                Hidden while the mobile sheet is collapsed so the publish footer below
+                stays on-screen (desktop always shows it). */}
             <div className={cn(
               "p-3 md:p-6 overflow-y-auto scrollbar-thin flex-1 min-h-0",
-              "lg:max-h-[calc(100vh-300px)]"
+              "lg:max-h-[calc(100vh-300px)]",
+              !isExpanded && "hidden lg:block"
             )}>
               <AnimatePresence mode="wait">
                 <motion.div
@@ -500,8 +492,8 @@ export default function CreatePage() {
               </AnimatePresence>
             </div>
 
-            {/* Publish Button Footer */}
-            <div className="border-t p-3 md:p-4 flex-shrink-0">
+            {/* Publish Button Footer - bottom padding clears the iOS home indicator */}
+            <div className="border-t p-3 md:p-4 flex-shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:pb-[max(1rem,env(safe-area-inset-bottom))] lg:pb-4">
               <Button
                 variant="primary"
                 className="w-full flex items-center justify-center gap-2 text-sm md:text-base py-3"
