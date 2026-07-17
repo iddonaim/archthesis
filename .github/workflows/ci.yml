@@ -44,6 +44,33 @@ jobs:
       - name: Production build
         run: npm run build
 
+  # Real-layout tests for the meme editor (e2e/): publish button reachable
+  # and canvas visible across phone/tablet/desktop viewports. The suite stubs
+  # all external traffic itself, so the placeholder env vars above are enough.
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Editor layout tests
+        run: npm run test:e2e
+
+      - name: Upload traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: test-results/
+          retention-days: 7
+
   # Deploys the PR to a temporary Firebase Hosting preview channel (7 days),
   # pointing at the production database — so the gallery can be checked with
   # real data before merging. Skips quietly until the secret is configured,

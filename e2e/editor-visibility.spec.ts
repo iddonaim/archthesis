@@ -48,6 +48,18 @@ test.beforeEach(async ({ context }) => {
 const publishButton = (page: Page) =>
   page.getByRole('button', { name: /פרסם גיחוך/ }).first()
 
+/** Viewport-relative edges of the bottom sheet and the sticky header. */
+const sheetAndHeaderEdges = (page: Page) =>
+  page.evaluate(() => {
+    const btn = [...document.querySelectorAll('button')].find(b => (b.textContent ?? '').includes('פרסם גיחוך'))
+    const sheet = btn?.closest('.fixed')
+    const header = document.querySelector('header')
+    return {
+      sheetTop: sheet ? sheet.getBoundingClientRect().top : Number.POSITIVE_INFINITY,
+      headerBottom: header ? header.getBoundingClientRect().bottom : 0
+    }
+  })
+
 async function expectFullyInViewport(page: Page, locator: ReturnType<typeof publishButton>, label: string) {
   const box = await locator.boundingBox()
   expect(box, `${label} should have a bounding box`).not.toBeNull()
@@ -108,30 +120,77 @@ for (const phone of phones) {
       await expectTappable(page, /פרסם גיחוך/, 'expanded sheet')
     })
 
-    test('canvas fits fully between the header and the collapsed sheet', async ({ page }) => {
+    test('canvas and publish button are both visible with no scrolling at all', async ({ page }) => {
       await openEditorWithTemplate(page)
 
-      // On short screens the canvas may start below the fold; the usability
-      // requirement is that it can be seen WHOLE at once — scrolled into
-      // view, it must fit between the sticky header and the bottom sheet.
-      await page.evaluate(() => document.querySelector('canvas')?.scrollIntoView({ block: 'center' }))
-      await page.waitForTimeout(300)
-
+      // With the compact mobile toolbar the whole working set — canvas plus
+      // publish button — must fit on the first screen, no scrolling needed.
       const canvas = page.locator('canvas').first()
       await expectFullyInViewport(page, canvas, 'canvas')
+      await expectFullyInViewport(page, publishButton(page), 'publish button')
 
       const canvasBox = (await canvas.boundingBox())!
-      const { sheetTop, headerBottom } = await page.evaluate(() => {
-        const btn = [...document.querySelectorAll('button')].find(b => (b.textContent ?? '').includes('פרסם גיחוך'))
-        const sheet = btn?.closest('.fixed')
-        const header = document.querySelector('header')
-        return {
-          sheetTop: sheet ? sheet.getBoundingClientRect().top : Number.POSITIVE_INFINITY,
-          headerBottom: header ? header.getBoundingClientRect().bottom : 0
-        }
-      })
+      const { sheetTop, headerBottom } = await sheetAndHeaderEdges(page)
       expect(canvasBox.y + canvasBox.height, 'canvas should end above the bottom sheet').toBeLessThanOrEqual(sheetTop)
       expect(canvasBox.y, 'canvas should start below the sticky header').toBeGreaterThanOrEqual(headerBottom - 1)
+    })
+
+    test('canvas can still be seen whole while editing with the half-open sheet', async ({ page }) => {
+      await openEditorWithTemplate(page)
+
+      await page.getByRole('button', { name: /טקסט/ }).first().click()
+      await page.waitForTimeout(500) // sheet expand animation
+
+      const canvas = page.locator('canvas').first()
+      let canvasBox = (await canvas.boundingBox())!
+      const { sheetTop, headerBottom } = await sheetAndHeaderEdges(page)
+
+      // The half sheet must leave a band big enough for the whole canvas...
+      expect(canvasBox.height, 'canvas must fit between header and half-open sheet').toBeLessThanOrEqual(sheetTop - headerBottom)
+
+      // ...and scrolling the canvas into that band must actually reveal all of it.
+      await page.evaluate((delta) => window.scrollBy(0, delta), canvasBox.y - headerBottom - 4)
+      await page.waitForTimeout(200)
+      canvasBox = (await canvas.boundingBox())!
+      expect(canvasBox.y).toBeGreaterThanOrEqual(headerBottom - 1)
+      expect(canvasBox.y + canvasBox.height).toBeLessThanOrEqual(sheetTop + 1)
+    })
+
+    test('dragging the handle resizes the sheet and the publish button stays reachable', async ({ page }) => {
+      await openEditorWithTemplate(page)
+      const vh = page.viewportSize()!.height
+
+      const handle = page.getByRole('button', { name: /חלונית הכלים/ })
+      const grab = async () => {
+        const hb = (await handle.boundingBox())!
+        return { x: hb.x + hb.width / 2, y: hb.y + hb.height / 2 }
+      }
+      const sheetHeight = () => page.evaluate(() => {
+        const btn = [...document.querySelectorAll('button')].find(b => (b.textContent ?? '').includes('פרסם גיחוך'))
+        return btn!.closest('.fixed')!.getBoundingClientRect().height
+      })
+
+      // Drag far up → snaps to the tall state
+      let from = await grab()
+      await page.mouse.move(from.x, from.y)
+      await page.mouse.down()
+      await page.mouse.move(from.x, from.y - vh * 0.55, { steps: 8 })
+      await page.mouse.up()
+      await page.waitForTimeout(500)
+      expect(await sheetHeight(), 'sheet should snap tall after a big upward drag').toBeGreaterThanOrEqual(vh * 0.7)
+      await expectFullyInViewport(page, publishButton(page), 'publish button (tall sheet)')
+      await expectTappable(page, /פרסם גיחוך/, 'tall sheet')
+
+      // Drag far down → snaps back to collapsed, publish still on-screen
+      from = await grab()
+      await page.mouse.move(from.x, from.y)
+      await page.mouse.down()
+      await page.mouse.move(from.x, from.y + vh * 0.6, { steps: 8 })
+      await page.mouse.up()
+      await page.waitForTimeout(500)
+      expect(await sheetHeight(), 'sheet should snap collapsed after a big downward drag').toBeLessThanOrEqual(vh * 0.3)
+      await expectFullyInViewport(page, publishButton(page), 'publish button (collapsed after drag)')
+      await expectTappable(page, /פרסם גיחוך/, 'collapsed after drag')
     })
 
     test('layout viewport is not widened by horizontal overflow', async ({ page }) => {

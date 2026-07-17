@@ -23,6 +23,25 @@ coverage for canvas visibility and editor usability across device sizes.
   visible screen. Nav paddings/gaps now compress below the `sm` breakpoint
   and the logo may shrink, so the header fits 320px screens.
 
+#### Mobile editor UX improvements
+- **Compact toolbar:** the stacked full-width buttons above the canvas
+  (undo/redo, replace image, switch template, start fresh) are now a single
+  icon row on phones (labels return from `sm` up), so the canvas and the
+  publish button fit on the first screen with no scrolling — verified by e2e
+  on iPhone 14/15, iPhone SE and a small Android.
+- **Resizable bottom sheet:** the tools sheet now has three heights —
+  collapsed, half (45dvh, the new default when a tab is tapped; leaves the
+  canvas visible while editing) and tall (80dvh, for browsing stickers and
+  emoji). The handle can be dragged freely and snaps to the nearest state;
+  tapping it still toggles, and it is keyboard-accessible (Enter/Space).
+- **Software keyboard handling:** new `useKeyboardInset` hook tracks
+  `window.visualViewport` and lifts the sheet above the keyboard while
+  typing (iOS Safari and Chrome Android keep `position: fixed` elements
+  *behind* the keyboard otherwise), capping the sheet height so the handle
+  stays reachable.
+- **CI:** new `e2e` job in the CI workflow runs the Playwright layout suite
+  on every PR (Chromium only), uploading traces on failure.
+
 #### Tests: canvas visibility & usability
 - Canvas sizing math extracted to `src/lib/canvasSizing.ts` (pure functions,
   shared by CreatePage and CanvasEditor) with unit tests: viewport

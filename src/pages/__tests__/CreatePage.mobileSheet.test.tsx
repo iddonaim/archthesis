@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@/test/utils'
+import { render, screen, fireEvent } from '@/test/utils'
 import userEvent from '@testing-library/user-event'
 import { forwardRef, useImperativeHandle } from 'react'
 import CreatePage from '@/pages/CreatePage'
@@ -86,7 +86,8 @@ describe('CreatePage mobile bottom sheet', () => {
 
     const sheet = getSheet()
     expect(sheet.className).not.toMatch(/h-\[\d+px\]/)
-    expect(sheet.className).not.toContain('mobile-bottom-sheet-expanded')
+    expect(sheet.className).not.toContain('mobile-bottom-sheet-half')
+    expect(sheet.className).not.toContain('mobile-bottom-sheet-tall')
   })
 
   it('hides only the tab content while collapsed, and reveals it when a tab is clicked', async () => {
@@ -104,7 +105,36 @@ describe('CreatePage mobile bottom sheet', () => {
     await user.click(screen.getByRole('button', { name: /טקסט/ }))
 
     expect(contentArea.className).not.toContain('hidden')
-    expect(getSheet().className).toContain('mobile-bottom-sheet-expanded')
+    expect(getSheet().className).toContain('mobile-bottom-sheet-half')
+  })
+
+  it('toggles between collapsed and half height when the drag handle is tapped', () => {
+    // Pointer-drag on the handle is mobile-only; simulate a phone viewport
+    Object.defineProperty(window, 'innerWidth', { value: 390, configurable: true, writable: true })
+    openEditor()
+    render(<CreatePage />)
+
+    const handle = screen.getByRole('button', { name: /חלונית הכלים/ })
+
+    // Tap = pointer down + up without movement
+    fireEvent.pointerDown(handle, { pointerId: 1, clientY: 700 })
+    fireEvent.pointerUp(handle, { pointerId: 1, clientY: 700 })
+    expect(getSheet().className).toContain('mobile-bottom-sheet-half')
+
+    fireEvent.pointerDown(handle, { pointerId: 1, clientY: 700 })
+    fireEvent.pointerUp(handle, { pointerId: 1, clientY: 700 })
+    expect(getSheet().className).not.toContain('mobile-bottom-sheet-half')
+  })
+
+  it('opens the sheet with the keyboard for accessibility', async () => {
+    const user = userEvent.setup()
+    openEditor()
+    render(<CreatePage />)
+
+    const handle = screen.getByRole('button', { name: /חלונית הכלים/ })
+    handle.focus()
+    await user.keyboard('{Enter}')
+    expect(getSheet().className).toContain('mobile-bottom-sheet-half')
   })
 
   it('keeps the publish button rendered in the expanded sheet too', async () => {

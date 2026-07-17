@@ -18,11 +18,21 @@ import Spinner from '@/components/common/Spinner'
 import { useEditorStore } from '@/stores/useEditorStore'
 import { useSceneStore } from '@/stores/useSceneStore'
 import { usePublishMeme } from '@/hooks/usePublishMeme'
-import { ArrowRight, Type, Smile, Sticker, Tag, MapPin, RotateCcw, Sparkles, Upload, Undo2, Redo2 } from 'lucide-react'
+import { useKeyboardInset } from '@/hooks/useKeyboardInset'
+import { ArrowRight, Type, Smile, Sticker, Tag, MapPin, RotateCcw, Sparkles, Upload, Undo2, Redo2, LayoutGrid } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { canvasSizeForViewport } from '@/lib/canvasSizing'
 
 type EditorTab = 'text' | 'emoji' | 'sticker' | 'tags' | 'location'
+
+// Mobile bottom sheet states: collapsed (tabs + publish button only),
+// half (default editing height) and tall (almost full screen). The handle
+// can also be dragged freely; on release the sheet snaps to the nearest state.
+type SheetState = 'collapsed' | 'half' | 'tall'
+const SHEET_DRAG_MIN_PX = 80
+const SHEET_DRAG_MAX_VH = 0.85
+const SNAP_HALF_BELOW_VH = 0.3
+const SNAP_TALL_ABOVE_VH = 0.62
 
 export default function CreatePage() {
   const {
@@ -41,7 +51,12 @@ export default function CreatePage() {
   const past = useSceneStore((state) => state.past)
   const future = useSceneStore((state) => state.future)
   const [activeTab, setActiveTab] = useState<EditorTab>('text')
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [sheetState, setSheetState] = useState<SheetState>('collapsed')
+  // Live height while the user drags the sheet handle; null when not dragging
+  const [dragHeight, setDragHeight] = useState<number | null>(null)
+  const sheetRef = useRef<HTMLDivElement>(null)
+  const dragRef = useRef<{ startY: number; startHeight: number; moved: boolean } | null>(null)
+  const { keyboardInset, visualHeight } = useKeyboardInset()
   const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   const [publishedMeme, setPublishedMeme] = useState<{ imageUrl: string; memeId: string } | null>(null)
@@ -114,6 +129,49 @@ export default function CreatePage() {
       navigate(location.pathname, { replace: true, state: {} })
     }
   }, [location, setCurrentImage, setSelectedTags, setSelectedLocation, navigate])
+
+  // --- Bottom sheet drag-to-resize (mobile only; the sheet is static on lg) ---
+  const isSheetExpanded = sheetState !== 'collapsed' || dragHeight !== null
+
+  const handleSheetPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (window.innerWidth >= 1024) return
+    const sheet = sheetRef.current
+    if (!sheet) return
+    dragRef.current = { startY: e.clientY, startHeight: sheet.getBoundingClientRect().height, moved: false }
+    e.currentTarget.setPointerCapture?.(e.pointerId)
+  }
+
+  const handleSheetPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current
+    if (!drag) return
+    const dy = drag.startY - e.clientY
+    if (Math.abs(dy) > 6) drag.moved = true
+    if (!drag.moved) return
+    const maxH = Math.round(window.innerHeight * SHEET_DRAG_MAX_VH)
+    setDragHeight(Math.min(maxH, Math.max(SHEET_DRAG_MIN_PX, Math.round(drag.startHeight + dy))))
+  }
+
+  const handleSheetPointerEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current
+    dragRef.current = null
+    if (!drag) return
+    e.currentTarget.releasePointerCapture?.(e.pointerId)
+
+    if (!drag.moved) {
+      // A tap (no real movement) toggles the sheet like before
+      setSheetState((s) => (s === 'collapsed' ? 'half' : 'collapsed'))
+      setDragHeight(null)
+      return
+    }
+
+    // Snap the dragged height to the nearest state
+    const h = sheetRef.current?.getBoundingClientRect().height ?? 0
+    const vh = window.innerHeight
+    if (h < vh * SNAP_HALF_BELOW_VH) setSheetState('collapsed')
+    else if (h < vh * SNAP_TALL_ABOVE_VH) setSheetState('half')
+    else setSheetState('tall')
+    setDragHeight(null)
+  }
 
   const handlePublish = async () => {
     const stage = canvasRef.current?.getStage()
@@ -307,49 +365,56 @@ export default function CreatePage() {
   return (
     <Layout>
       <div className="container mx-auto px-2 md:px-4 py-4 md:py-8 pb-44 lg:pb-8">
-        <div className="mb-4 md:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">עורך הגיחוכים</h1>
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-stretch sm:items-center">
+        {/* Compact single-row toolbar on phones (icons only) so the canvas
+            starts above the fold; labels appear from the sm breakpoint up. */}
+        <div className="mb-3 md:mb-8 flex flex-row items-center justify-between gap-2 flex-wrap">
+          <h1 className="text-xl md:text-3xl lg:text-4xl font-bold">עורך הגיחוכים</h1>
+          <div className="flex flex-row items-center gap-1.5 sm:gap-2">
             {/* Undo/Redo Controls */}
-            <div className="flex gap-2 w-full sm:w-auto">
-              <Button
-                variant="outline"
-                onClick={undo}
-                disabled={past.length === 0}
-                className="flex-1 sm:flex-initial flex items-center justify-center p-2 min-w-[44px]"
-                title="ביטול פעולה אחרונה"
-              >
-                <Undo2 size={18} />
-              </Button>
-              <Button
-                variant="outline"
-                onClick={redo}
-                disabled={future.length === 0}
-                className="flex-1 sm:flex-initial flex items-center justify-center p-2 min-w-[44px]"
-                title="ביצוע שוב של הפעולה"
-              >
-                <Redo2 size={18} />
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              onClick={undo}
+              disabled={past.length === 0}
+              className="flex items-center justify-center p-2 min-w-[44px]"
+              title="ביטול פעולה אחרונה"
+              aria-label="ביטול פעולה אחרונה"
+            >
+              <Undo2 size={18} />
+            </Button>
+            <Button
+              variant="outline"
+              onClick={redo}
+              disabled={future.length === 0}
+              className="flex items-center justify-center p-2 min-w-[44px]"
+              title="ביצוע שוב של הפעולה"
+              aria-label="ביצוע שוב של הפעולה"
+            >
+              <Redo2 size={18} />
+            </Button>
 
             {/* Upload Different Image - Only for custom uploads */}
             {currentTemplateId === null && (
               <Button
                 variant="secondary"
                 onClick={handleChangeCustomImageClick}
-                className="text-sm md:text-base w-full sm:w-auto flex items-center justify-center gap-2"
+                className="text-sm md:text-base p-2 min-w-[44px] sm:px-4 flex items-center justify-center gap-2"
+                title="החלף תמונה"
+                aria-label="החלף תמונה"
               >
                 <Upload size={18} />
-                <span>החלף תמונה</span>
+                <span className="hidden sm:inline">החלף תמונה</span>
               </Button>
             )}
             {/* Choose Different Template */}
             <Button
               variant="outline"
               onClick={handleSwitchTemplateClick}
-              className="text-sm md:text-base w-full sm:w-auto"
+              className="text-sm md:text-base p-2 min-w-[44px] sm:px-4 flex items-center justify-center gap-2"
+              title="בחר תבנית אחרת"
+              aria-label="בחר תבנית אחרת"
             >
-              בחר תבנית אחרת
+              <LayoutGrid size={18} />
+              <span className="hidden sm:inline">בחר תבנית אחרת</span>
             </Button>
             {/* Start Fresh */}
             <Button
@@ -360,10 +425,12 @@ export default function CreatePage() {
                   resetScene()
                 }
               }}
-              className="text-sm md:text-base w-full sm:w-auto flex items-center justify-center gap-2"
+              className="text-sm md:text-base p-2 min-w-[44px] sm:px-4 flex items-center justify-center gap-2"
+              title="התחל מחדש"
+              aria-label="התחל מחדש"
             >
               <RotateCcw size={18} />
-              <span>התחל מחדש</span>
+              <span className="hidden sm:inline">התחל מחדש</span>
             </Button>
           </div>
         </div>
@@ -423,19 +490,46 @@ export default function CreatePage() {
 
           {/* Right: Editor Tools & Mobile Bottom Sheet */}
           <div
+            ref={sheetRef}
+            style={{
+              ...(dragHeight !== null ? { height: dragHeight } : {}),
+              // Lift the sheet above the software keyboard (iOS Safari and
+              // Chrome Android keep fixed elements behind it otherwise) and
+              // cap its height so the handle stays reachable.
+              ...(keyboardInset > 0
+                ? {
+                    bottom: keyboardInset,
+                    maxHeight: Math.max(160, (visualHeight ?? window.innerHeight) - 56)
+                  }
+                : {})
+            }}
             className={cn(
-              "bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-gray-100 rounded-t-2xl transition-all duration-300 flex flex-col z-30",
+              "bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-gray-100 rounded-t-2xl flex flex-col z-30",
+              dragHeight !== null ? "transition-none" : "transition-all duration-300",
               "lg:col-span-1 lg:rounded-2xl lg:static lg:shadow-card lg:border lg:border-ink/5 lg:h-auto lg:z-auto", // Desktop resets
               "fixed bottom-0 left-0 right-0", // Mobile layout positioning
               // Collapsed: intrinsic height (handle + tabs + publish button all visible).
               // A fixed height here used to clip the publish footer off-screen on phones.
-              isExpanded && "mobile-bottom-sheet-expanded lg:h-auto" // Expanded height with dvh fallback class
+              dragHeight === null && sheetState === 'half' && "mobile-bottom-sheet-half lg:h-auto",
+              dragHeight === null && sheetState === 'tall' && "mobile-bottom-sheet-tall lg:h-auto"
             )}
           >
-            {/* Drag handle pill for mobile viewports */}
+            {/* Drag handle for mobile viewports: tap toggles, drag resizes */}
             <div
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="lg:hidden flex items-center justify-center py-2.5 cursor-pointer border-b border-gray-50 flex-shrink-0"
+              role="button"
+              aria-label={isSheetExpanded ? 'הקטן את חלונית הכלים' : 'הגדל את חלונית הכלים'}
+              tabIndex={0}
+              onPointerDown={handleSheetPointerDown}
+              onPointerMove={handleSheetPointerMove}
+              onPointerUp={handleSheetPointerEnd}
+              onPointerCancel={handleSheetPointerEnd}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setSheetState((s) => (s === 'collapsed' ? 'half' : 'collapsed'))
+                }
+              }}
+              className="lg:hidden flex items-center justify-center py-2.5 cursor-grab touch-none select-none border-b border-gray-50 flex-shrink-0"
             >
               <div className="w-12 h-1 bg-gray-300 rounded-full hover:bg-gray-400 transition-colors" />
             </div>
@@ -453,7 +547,8 @@ export default function CreatePage() {
                   key={tab.id}
                   onClick={() => {
                     setActiveTab(tab.id)
-                    setIsExpanded(true) // Auto-expand bottom sheet when tab clicked on mobile
+                    // Auto-expand bottom sheet when a tab is clicked on mobile
+                    setSheetState((s) => (s === 'collapsed' ? 'half' : s))
                   }}
                   className={`flex flex-col items-center gap-1 py-2 md:py-3 transition-colors ${
                     activeTab === tab.id
@@ -473,7 +568,7 @@ export default function CreatePage() {
             <div className={cn(
               "p-3 md:p-6 overflow-y-auto scrollbar-thin flex-1 min-h-0",
               "lg:max-h-[calc(100vh-300px)]",
-              !isExpanded && "hidden lg:block"
+              !isSheetExpanded && "hidden lg:block"
             )}>
               <AnimatePresence mode="wait">
                 <motion.div
