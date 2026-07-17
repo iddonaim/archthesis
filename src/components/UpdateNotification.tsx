@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { APP_VERSION } from '@/version'
+import { APP_VERSION, APP_BUILD_ID } from '@/version'
+import { isNewBuildAvailable } from '@/lib/updateCheck'
 import Button from './common/Button'
 import { RefreshCw } from 'lucide-react'
 
@@ -21,9 +22,16 @@ export default function UpdateNotification() {
 
       if (response.ok) {
         const data = await response.json()
-        console.log('✅ Version check:', { current: APP_VERSION, deployed: data.version })
+        console.log('✅ Version check:', {
+          current: { version: APP_VERSION, buildId: APP_BUILD_ID },
+          deployed: { version: data.version, buildId: data.buildId }
+        })
 
-        if (data.version !== APP_VERSION) {
+        // Compare build IDs (change on EVERY deploy), not just the version
+        // number — most deploys ship without a version bump, and each one
+        // replaces all hashed chunk files, breaking open tabs that keep
+        // running the old bundle.
+        if (isNewBuildAvailable({ version: APP_VERSION, buildId: APP_BUILD_ID }, data)) {
           setHasUpdate(true)
         }
       }
