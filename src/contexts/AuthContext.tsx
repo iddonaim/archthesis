@@ -6,6 +6,7 @@ import {
   onAuthStateChanged
 } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
+import { resolveIsAdmin } from '@/lib/adminAccess'
 
 interface AuthContextType {
   user: User | null
@@ -19,19 +20,36 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const [claims, setClaims] = useState<Record<string, unknown> | null>(null)
   const [loading, setLoading] = useState(true)
 
-  // Check if current user is admin
-  const isAdmin = user?.email === import.meta.env.VITE_ADMIN_EMAIL
-
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user)
+    const unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
+      setUser(nextUser)
+
+      // Pull the ID token's custom claims so `isAdmin` can honour the
+      // `admin: true` claim that the security rules rely on. Failures here
+      // (offline, revoked token) simply mean no claim-based admin — the email
+      // allow-list still applies.
+      if (nextUser) {
+        try {
+          const tokenResult = await nextUser.getIdTokenResult()
+          setClaims(tokenResult.claims)
+        } catch (error) {
+          console.error('Failed to read auth token claims:', error)
+          setClaims(null)
+        }
+      } else {
+        setClaims(null)
+      }
+
       setLoading(false)
     })
 
     return unsubscribe
   }, [])
+
+  const isAdmin = resolveIsAdmin(user, claims)
 
   const signIn = async (email: string, password: string) => {
     try {
