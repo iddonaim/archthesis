@@ -63,10 +63,16 @@
     overscroll-behavior-y: contain;
   }
 
-  /* Mobile bottom sheet height dynamic viewport fallback */
-  .mobile-bottom-sheet-expanded {
-    height: 60vh;
-    height: 60dvh;
+  /* Mobile bottom sheet heights (dvh with vh fallback).
+     half: default editing height — leaves the canvas visible above it.
+     tall: nearly full screen, for browsing stickers/emoji. */
+  .mobile-bottom-sheet-half {
+    height: 45vh;
+    height: 45dvh;
+  }
+  .mobile-bottom-sheet-tall {
+    height: 80vh;
+    height: 80dvh;
   }
 }
 
