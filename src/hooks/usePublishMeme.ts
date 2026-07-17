@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { FirebaseError } from 'firebase/app'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { storage, db } from '@/lib/firebase'
+import { validateMemePublish } from '@/lib/publishValidation'
 import { useEditorStore } from '@/stores/useEditorStore'
 import { useSceneStore } from '@/stores/useSceneStore'
 import type { TextElement } from '@/types/scene'
@@ -21,8 +23,7 @@ export function usePublishMeme() {
     selectedTags,
     selectedLocation,
     username,
-    description,
-    resetEditor
+    description
   } = useEditorStore()
   const { scene, clearSelection } = useSceneStore()
 
@@ -35,6 +36,27 @@ export function usePublishMeme() {
     const toastId = toast.loading('מפרסם גיחוך...')
 
     try {
+      // 0. Validate against the firestore.rules limits BEFORE exporting or
+      // uploading anything — otherwise the server rejects the Firestore write
+      // with a cryptic English permissions error after the image upload.
+      const combinedText = scene.elements
+        .filter((el): el is TextElement => el.type === 'text')
+        .filter(tb => !tb.isPlaceholder && tb.text && tb.text.trim())
+        .map(tb => tb.text.trim())
+        .join(' ')
+
+      const validationError = validateMemePublish({
+        memeText: combinedText,
+        description: description || '',
+        username: username || '',
+        tags: selectedTags
+      })
+      if (validationError) {
+        setIsPublishing(false)
+        toast.error(validationError, { id: toastId })
+        return { success: false, error: validationError }
+      }
+
       // 1. Deselect all elements to avoid rendering selection boxes
       clearSelection()
 
@@ -107,17 +129,10 @@ export function usePublishMeme() {
       // 6. Get download URL
       const imageUrl = await getDownloadURL(storageRef)
 
-      // 7. Collect text content for search (exclude unedited placeholders)
-      const memeText = scene.elements
-        .filter((el): el is TextElement => el.type === 'text')
-        .filter(tb => !tb.isPlaceholder && tb.text && tb.text.trim())
-        .map(tb => tb.text.trim())
-        .join(' ')
-
-      // 8. Save metadata to Firestore
+      // 7. Save metadata to Firestore (combinedText computed in step 0)
       const memeData = {
         imageUrl,
-        memeText: memeText || '', // Searchable text content from all text boxes
+        memeText: combinedText || '', // Searchable text content from all text boxes
         description: description || '',
         tags: selectedTags,
         location: selectedLocation ? {
@@ -151,8 +166,16 @@ export function usePublishMeme() {
       console.error('Error publishing meme:', error)
       setIsPublishing(false)
 
-      // Show error toast
-      const errorMessage = error instanceof Error ? error.message : 'שגיאה בפרסום הגיחוך'
+      // Show error toast — translate known Firebase denials into actionable
+      // Hebrew instead of surfacing the raw English SDK message.
+      let errorMessage = error instanceof Error ? error.message : 'שגיאה בפרסום הגיחוך'
+      if (error instanceof FirebaseError) {
+        if (error.code === 'permission-denied' || error.code === 'storage/unauthorized') {
+          errorMessage = 'הפרסום נדחה על ידי השרת — ייתכן שהתוכן חורג מהמגבלות (למשל טקסט ארוך מדי). נסו לקצר ולפרסם שוב.'
+        } else if (error.code === 'unavailable' || error.code === 'storage/retry-limit-exceeded') {
+          errorMessage = 'בעיית תקשורת עם השרת — בדקו את החיבור לאינטרנט ונסו שוב.'
+        }
+      }
       toast.error(errorMessage, { id: toastId })
 
       return {

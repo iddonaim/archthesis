@@ -1,5 +1,40 @@
 # Meme Editor - Development Changelog
 
+## Session: Deploy-Aware Update Banner & Publish Validation
+**Date: 2026-07-17**
+
+### Overview
+Every merge to main deploys and replaces all content-hashed chunk files, but
+the "new version available" banner only compared version numbers — which
+rarely change — so open tabs never saw the banner and instead broke with
+"Failed to fetch dynamically imported module" when lazy-loading a page.
+Separately, a visitor publishing a meme hit a cryptic English "Missing or
+insufficient permissions" server error.
+
+#### Update banner now fires on every deploy
+- New per-deploy build ID (git SHA): `scripts/build-id.mjs` is the single
+  source used by both `vite.config.ts` (baked into the bundle as
+  `__APP_BUILD_ID__`) and `scripts/generate-version.mjs` (written to
+  `dist/version.json`). `UpdateNotification` compares build IDs via
+  `src/lib/updateCheck.ts`, falling back to version comparison for old
+  version.json files. `generate-version` converted from CJS to ESM so the
+  shared helper can be imported from the (ESM-bundled) Vite config.
+- Stale-chunk auto-recovery: `main.tsx` listens for Vite's
+  `vite:preloadError` and reloads once (session-storage loop guard) so a tab
+  that lazy-loads a chunk deleted by a newer deploy self-heals instead of
+  showing a broken page.
+
+#### Publish errors are now understandable and mostly preventable
+- `src/lib/publishValidation.ts` mirrors the firestore.rules create guards
+  (meme text ≤ 2000 chars, description ≤ 2000, username ≤ 100, tags ≤ 20) and
+  `usePublishMeme` validates BEFORE exporting/uploading anything, showing a
+  clear Hebrew message instead of letting the server reject the write after
+  the image already uploaded.
+- Server-side denials that still occur (`permission-denied`,
+  `storage/unauthorized`, connectivity errors) are translated to actionable
+  Hebrew instead of the raw English SDK message.
+- Removed an unused `resetEditor` binding in `usePublishMeme`.
+
 ## Session: Restore Admin Console Access
 **Date: 2026-07-17**
 

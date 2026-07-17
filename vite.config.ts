@@ -3,9 +3,17 @@ import react from '@vitejs/plugin-react'
 // import { VitePWA } from 'vite-plugin-pwa' // Disabled - no benefit for online-only app
 import { visualizer } from 'rollup-plugin-visualizer'
 import path from 'path'
+import { getBuildId } from './scripts/build-id.mjs'
 
 // https://vite.dev/config/
 export default defineConfig({
+  define: {
+    // Per-deploy build ID (git SHA), compared against /version.json's buildId
+    // by UpdateNotification so the "new version available" banner fires on
+    // EVERY deploy — not only when the human-facing version number changes.
+    // scripts/generate-version.mjs writes the identical value to version.json.
+    __APP_BUILD_ID__: JSON.stringify(getBuildId())
+  },
   plugins: [
     react(),
     // PWA DISABLED - causes aggressive caching issues, no benefit for online-only app
