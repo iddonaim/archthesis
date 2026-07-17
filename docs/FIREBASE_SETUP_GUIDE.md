@@ -89,24 +89,55 @@ When prompted:
 
 **⚠️ IMPORTANT:** Save your admin credentials securely!
 
-### Update Admin Email in Code
+### Grant Admin Access
 
-If using a different admin email, update these files:
+Logging in only proves *who* you are (authentication). Being recognised as the
+admin is a separate decision (authorization). There are **two independent ways**
+an account is treated as admin — either one is sufficient, and you can use both:
 
-1. **`.env`:**
+**A. Firebase custom claim `admin: true` (required for data access).**
+This is the source of truth the security rules enforce — `firestore.rules` and
+`storage.rules` both gate on `request.auth.token.admin == true`. Without it,
+even a logged-in admin cannot read contact messages, delete memes, etc. Grant it
+once with the Firebase Admin SDK (e.g. a Cloud Function or a local Node script
+authenticated with a service-account key):
+
+```js
+// setAdmin.mjs — run once with GOOGLE_APPLICATION_CREDENTIALS pointing at a
+// service-account key for the project.
+import { initializeApp, cert } from 'firebase-admin/app'
+import { getAuth } from 'firebase-admin/auth'
+initializeApp()
+const uid = 'THE_USERS_FIREBASE_UID'  // from Authentication > Users
+await getAuth().setCustomUserClaims(uid, { admin: true })
+console.log('admin claim set for', uid)
+```
+
+The claim only takes effect on the account's next token refresh — sign out and
+back in after setting it.
+
+**B. `VITE_ADMIN_EMAIL` allow-list (front-end console convenience).**
+The admin console UI *also* opens for a logged-in user whose email matches the
+`VITE_ADMIN_EMAIL` value baked into the build. This is optional; it is handy
+when you haven't set a custom claim yet. Because it is baked in at build time it
+must be provided wherever the site is built:
+
+1. **Local dev — `.env`:**
    ```env
    VITE_ADMIN_EMAIL=your-admin@email.com
    ```
 
-2. **`firestore.rules`** (line 10):
-   ```javascript
-   && request.auth.token.email == 'your-admin@email.com';
-   ```
+2. **Production — GitHub → Settings → Secrets and variables → Actions →
+   Variables:** add a repository variable `VITE_ADMIN_EMAIL` set to the owner's
+   login email. The deploy workflow reads it into the production build; if it is
+   missing, the email path is disabled and only the custom claim (A) grants
+   access. (This is exactly the gap that once locked the owner out: the variable
+   was never set, so the build compared every email against `undefined`.)
 
-3. **`storage.rules`** (line 10):
-   ```javascript
-   && request.auth.token.email == 'your-admin@email.com';
-   ```
+> The security rules are **claim-based only** — `VITE_ADMIN_EMAIL` has no effect
+> on Firestore/Storage access. It affects only whether the admin console UI is
+> shown. For a fully working admin, set the custom claim (A); optionally add the
+> email (B) so the console UI recognises you before the claim propagates.
 
 ---
 
@@ -176,8 +207,13 @@ firebase logout
 firebase login
 ```
 
-### Error: "Invalid email"
-Make sure the email in `.env`, `firestore.rules`, and `storage.rules` match the email you created in Firebase Authentication.
+### Console shows "אין הרשאה" (no permission) after logging in
+You are authenticated but not recognised as admin. Confirm at least one of:
+1. Your account carries the `admin: true` custom claim (grant it per "Grant
+   Admin Access" above), and you have signed out/in since it was set.
+2. `VITE_ADMIN_EMAIL` is set to your login email **in the build that shipped** —
+   for production that means the `VITE_ADMIN_EMAIL` GitHub *repository variable*,
+   not just your local `.env`.
 
 ### Error: "Rules deployment failed"
 1. Check syntax in `firestore.rules` and `storage.rules`
@@ -186,7 +222,8 @@ Make sure the email in `.env`, `firestore.rules`, and `storage.rules` match the 
 
 ### Admin can't delete memes
 1. Verify Firebase rules are deployed
-2. Check admin email matches in all files
+2. Verify the account has the `admin: true` custom claim — the rules gate on it,
+   not on the email. (Set it per "Grant Admin Access", then sign out/in.)
 3. Check browser console for errors
 4. Verify user is authenticated (check `/admin` header)
 
@@ -261,6 +298,12 @@ If using different Firebase project for production:
    ```bash
    npm run build
    ```
+
+> The automated GitHub Actions deploy does **not** read a committed
+> `.env.production`. It builds from repository *variables* — the six
+> `VITE_FIREBASE_*` values and `VITE_ADMIN_EMAIL` — configured under
+> **Settings → Secrets and variables → Actions → Variables**. Set
+> `VITE_ADMIN_EMAIL` there for the live site.
 
 ---
 

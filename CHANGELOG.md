@@ -1,5 +1,32 @@
 # Meme Editor - Development Changelog
 
+## Session: Restore Admin Console Access
+**Date: 2026-07-17**
+
+### Overview
+Fixes the reported "lost admin console privileges" bug — a logged-in owner was
+shown "אין הרשאה" (no permission) on `/admin`.
+
+#### Fix: admin gate compared against an undefined value in production
+- The console gate resolved admin as `user.email === VITE_ADMIN_EMAIL`, but the
+  production deploy workflow never injected `VITE_ADMIN_EMAIL` into the build, so
+  it was `undefined` and the comparison failed for **every** user, owner
+  included. The build guard (`scripts/check-env.mjs`) did not require the var, so
+  the misconfiguration shipped silently.
+- Admin resolution moved to `src/lib/adminAccess.ts` (`resolveIsAdmin`) and now
+  grants admin on **either** signal: the Firebase custom claim `admin: true`
+  (the same source of truth the Firestore/Storage rules already enforce) **or**
+  a match against `VITE_ADMIN_EMAIL` when that var is actually set. An unset var
+  can no longer match by accident. `AuthContext` reads the ID token's custom
+  claims on auth-state change to support the claim path.
+- The deploy workflow (`.github/workflows/deploy.yml`) now passes the
+  `VITE_ADMIN_EMAIL` repository variable into the production build.
+- Updated `docs/FIREBASE_SETUP_GUIDE.md`: it previously described an email-based
+  rule that no longer matches the deployed claim-based rules, and now documents
+  both admin paths and the "אין הרשאה" troubleshooting steps.
+- Added `src/__tests__/unit/resolveIsAdmin.test.ts` covering the claim path, the
+  email path, and the undefined-var regression.
+
 ## Session: Mobile Publish Button & Editor Layout Tests
 **Date: 2026-07-17**
 
