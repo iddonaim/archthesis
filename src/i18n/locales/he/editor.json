@@ -1,0 +1,227 @@
+{
+  "title": {
+    "chooseTemplate": "בחרו תבנית",
+    "editor": "עורך הגיחוכים",
+    "loadingMeme": "טוען גיחוך..."
+  },
+  "defaultText": "כתבו כאן...",
+  "canvasPlaceholder": "כתוב כאן...",
+  "templates": {
+    "uploadTitle": "העלו תמונה משלכם",
+    "uploadHint": "לחצו כאן כדי לבחור תמונה מהמחשב",
+    "divider": "או בחרו תבנית קיימת",
+    "loadError": "שגיאה בטעינת התבנית"
+  },
+  "toolbar": {
+    "undo": "ביטול פעולה אחרונה",
+    "redo": "ביצוע שוב של הפעולה",
+    "changeImage": "החלף תמונה",
+    "changeTemplate": "בחר תבנית אחרת",
+    "startOver": "התחל מחדש",
+    "startOverConfirm": "האם אתה בטוח? כל השינויים יימחקו",
+    "expandSheet": "הגדל את חלונית הכלים",
+    "collapseSheet": "הקטן את חלונית הכלים"
+  },
+  "tabs": {
+    "text": "טקסט",
+    "emoji": "אמוג׳י",
+    "sticker": "סטיקרים",
+    "location": "מיקום",
+    "tags": "תגיות"
+  },
+  "selection": {
+    "text": "טקסט",
+    "emoji": "אימוג׳י",
+    "sticker": "סטיקר",
+    "location": "מיקום",
+    "duplicate": "שכפל",
+    "bringToFront": "הבא לחזית",
+    "sendToBack": "שלח לרקע",
+    "delete": "מחק (Delete)"
+  },
+  "upload": {
+    "notAnImage": "נא לבחור קובץ תמונה",
+    "tooLarge": "גודל הקובץ ({{size}}MB) חורג מהמקסימום המותר (20MB).\nנא לבחור תמונה קטנה יותר."
+  },
+  "publish": {
+    "publishing": "מפרסם...",
+    "publish": "פרסם גיחוך",
+    "notReady": "אנא המתן עד שהעורך יהיה מוכן",
+    "error": "שגיאה בפרסום: {{error}}",
+    "loading": "מפרסם גיחוך...",
+    "success": "הגיחוך פורסם בהצלחה! 🎉",
+    "genericError": "שגיאה בפרסום הגיחוך",
+    "rejected": "הפרסום נדחה על ידי השרת — ייתכן שהתוכן חורג מהמגבלות (למשל טקסט ארוך מדי). נסו לקצר ולפרסם שוב.",
+    "networkError": "בעיית תקשורת עם השרת — בדקו את החיבור לאינטרנט ונסו שוב.",
+    "validation": {
+      "memeTextTooLong": "הטקסט בגיחוך ארוך מדי ({{count}} תווים) — המגבלה היא {{limit}} תווים. נסו לקצר.",
+      "descriptionTooLong": "התיאור ארוך מדי — המגבלה היא {{limit}} תווים.",
+      "usernameTooLong": "שם המשתמש ארוך מדי — המגבלה היא {{limit}} תווים.",
+      "tooManyTags": "נבחרו יותר מדי תגיות — המגבלה היא {{limit}} תגיות."
+    }
+  },
+  "dialogs": {
+    "unsaved": {
+      "title": "רגע, יש לך גיחוך בעבודה!",
+      "question": "מה תרצה לעשות עם הגיחוך שלך?",
+      "discard": "מחק והמשך",
+      "cancel": "בטל"
+    },
+    "changeTemplate": {
+      "title": "החלפת תבנית",
+      "question": "מה תרצה לעשות עם העריכות הנוכחיות?",
+      "save": "שמור והחלף תבנית",
+      "startOver": "התחל מחדש (מחק הכל)"
+    },
+    "changeImage": {
+      "title": "החלפת תמונה",
+      "question": "מה תרצה לעשות עם העריכות הנוכחיות?",
+      "save": "שמור והעלה תמונה חדשה",
+      "startOver": "התחל מחדש (מחק הכל)"
+    }
+  },
+  "textPanel": {
+    "descriptionLabel": "תיאור הגיחוך (אופציונלי)",
+    "descriptionPlaceholder": "הוסף תיאור לגיחוך שלך...",
+    "addText": "הוסף טקסט לקנבס",
+    "hint": "לחצו פעמיים על טקסט בקנבס כדי לערוך אותו"
+  },
+  "emojiPanel": {
+    "title": "אמוג'י",
+    "searchPlaceholder": "חיפוש אמוג'י...",
+    "hint": "לחצו על אמוג'י כדי להוסיף אותו לתמונה"
+  },
+  "colorPanel": {
+    "title": "צבעים",
+    "noSelection": "בחרו טקסט כדי לשנות צבעים",
+    "textColor": "צבע טקסט:",
+    "outlineColor": "צבע מתאר:",
+    "outlineWidth": "עובי מתאר: {{width}}px",
+    "backgroundColor": "צבע רקע:",
+    "transparent": "שקוף"
+  },
+  "tagsPanel": {
+    "title": "תגיות",
+    "selected": "תגיות נבחרות ({{count}}/3):",
+    "empty": "לא נבחרו תגיות עדיין",
+    "common": "תגיות נפוצות:",
+    "customPlaceholder": "תגית מותאמת אישית...",
+    "similar": "תגיות דומות:",
+    "add": "הוסף תגית",
+    "hint": "הקלידו לפחות 2 תווים לקבלת הצעות",
+    "limitReached": "ניתן להוסיף עד 3 תגיות"
+  },
+  "locationPanel": {
+    "title": "מיקום ושם משתמש",
+    "usernameLabel": "שם משתמש (אופציונלי)",
+    "usernamePlaceholder": "הזינו שם משתמש...",
+    "usernameHint": "השם יופיע בגלריה מתחת לגיחוך שלכם",
+    "sectionTitle": "מיקום",
+    "locating": "מאתר...",
+    "myLocation": "המיקום שלי",
+    "searchLabel": "חיפוש מיקום",
+    "searchPlaceholder": "הקלד שם עיר, רחוב או מקום...",
+    "customLabel": "מיקום מותאם אישית",
+    "customPlaceholder": "הזן טקסט מיקום כלשהו...",
+    "customAdd": "הוסף",
+    "customHint": "הזן טקסט חופשי שיוצג כמיקום (ללא קואורדינטות GPS)",
+    "noResults": "לא נמצאו תוצאות",
+    "selected": "מיקום נבחר",
+    "onMeme": "על הגיחוך:",
+    "remove": "הסר מיקום",
+    "showOnImage": "הוסף מיקום לתמונה",
+    "showOnImageHint": "המיקום יופיע על התמונה (ניתן לגרור ולשנות גודל)",
+    "showInGallery": "הצג בגלריה",
+    "showInGalleryHint": "המיקום יופיע מתחת לגיחוך בגלריה",
+    "hideFromGallery": "הסתר מהגלריה, לשימוש מחקרי בלבד",
+    "hideFromGalleryHint": "המיקום יהיה זמין רק בקונסול הניהול",
+    "unsupported": "הדפדפן שלך לא תומך במיקום",
+    "lookupError": "שגיאה באיתור המיקום",
+    "unavailable": "לא ניתן לקבל את המיקום שלך"
+  },
+  "stickerPanel": {
+    "title": "סטיקרים",
+    "myStickers": "הסטיקרים שלי",
+    "mine": "שלי",
+    "processing": "מעבד תמונה...",
+    "upload": "העלו תמונה כסטיקר",
+    "uploadHint": "PNG עם רקע שקוף עובד הכי טוב",
+    "addToCanvas": "הוסיפו לקנבס",
+    "personalSticker": "סטיקר אישי",
+    "removeFromLibrary": "הסירו מהספרייה",
+    "libraryHint": "סטיקרים שתעלו יישמרו כאן לפעם הבאה (עד {{limit}})",
+    "hint": "לחצו על סטיקר כדי להוסיף אותו לתמונה — אפשר להזיז, לסובב ולשנות גודל",
+    "notAnImage": "נא לבחור קובץ תמונה",
+    "tooLarge": "התמונה גדולה מדי (מקסימום 10MB)",
+    "loadError": "לא הצלחנו לטעון את התמונה, נסו קובץ אחר"
+  },
+  "stickers": {
+    "packs": {
+      "meme": "ממים",
+      "props": "אביזרים",
+      "hebrew": "עברית",
+      "tools": "שרטוט"
+    },
+    "meme": {
+      "cryingLaughing": "בוכה מצחוק",
+      "sobbing": "בכי",
+      "holdingBackTears": "מתרגש",
+      "skull": "גולגולת",
+      "moai": "מואי",
+      "fire": "אש",
+      "hundred": "מאה",
+      "clown": "ליצן",
+      "smilingWithTear": "חיוך עם דמעה",
+      "eyes": "עיניים",
+      "foldedHands": "תודה",
+      "cool": "קול",
+      "nailPolish": "לק",
+      "salute": "סאלוט",
+      "nerd": "חנון",
+      "explodingHead": "ראש מתפוצץ",
+      "popcorn": "פופקורן",
+      "poop": "קקי",
+      "heartOnFire": "לב בוער",
+      "steaming": "עצבים"
+    },
+    "props": {
+      "sunglasses": "משקפי שמש",
+      "glasses": "משקפיים",
+      "crown": "כתר",
+      "topHat": "מגבעת",
+      "cap": "כובע",
+      "disguise": "תחפושת",
+      "boom": "בום",
+      "anger": "עצבים",
+      "party": "מסיבה",
+      "sparkles": "נצנצים",
+      "speechBalloon": "בועת דיבור",
+      "trophy": "גביע"
+    },
+    "hebrew": {
+      "walla": "וואלה",
+      "sababa": "סבבה",
+      "einmatzav": "אין מצב",
+      "dai": "!!די",
+      "haval": "חבל על הזמן",
+      "kapara": "כפרה",
+      "mehamem": "מהמם",
+      "lonormali": "לא נורמלי"
+    },
+    "tools": {
+      "speechBubble": "בועת דיבור",
+      "thoughtBubble": "בועת מחשבה",
+      "approvedStamp": "חותמת אושר",
+      "rejectedStamp": "חותמת נפסל",
+      "hardHat": "קסדת בנייה",
+      "blueprint": "שרטוט",
+      "setSquare": "משולשון",
+      "greekColumn": "עמוד יווני",
+      "crane": "מנוף",
+      "wow": "וואו!",
+      "arrow": "חץ",
+      "crown": "כתר",
+      "sunglasses": "משקפי שמש"
+    }
+  }
+}

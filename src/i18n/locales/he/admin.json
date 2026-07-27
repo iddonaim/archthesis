@@ -1,0 +1,109 @@
+{
+  "login": {
+    "backHome": "חזרה לדף הבית",
+    "title": "כניסה לפאנל הניהול",
+    "subtitle": "מכונת הגיחוך וההגחה",
+    "email": "אימייל",
+    "password": "סיסמה",
+    "submitting": "מתחבר...",
+    "submit": "התחבר",
+    "notice": "דף זה מוגן ומיועד למנהלי המערכת בלבד",
+    "success": "התחברת בהצלחה!",
+    "errors": {
+      "default": "שגיאה בהתחברות. נסה שוב.",
+      "invalidCredential": "אימייל או סיסמה שגויים",
+      "userNotFound": "משתמש לא נמצא",
+      "wrongPassword": "סיסמה שגויה",
+      "tooManyRequests": "יותר מדי ניסיונות. נסה שוב מאוחר יותר",
+      "networkRequestFailed": "בעיית חיבור לאינטרנט"
+    }
+  },
+  "dashboard": {
+    "title": "פאנל ניהול",
+    "signedInAs": "מחובר כ: {{email}} • {{version}} ({{date}})",
+    "logout": "התנתק",
+    "logoutSuccess": "התנתקת בהצלחה",
+    "logoutError": "שגיאה בהתנתקות",
+    "tabs": {
+      "analytics": "סטטיסטיקות",
+      "memes": "ניהול גיחוכים",
+      "messages": "הודעות קשר"
+    }
+  },
+  "analytics": {
+    "loading": "טוען נתונים סטטיסטיים...",
+    "title": "סטטיסטיקות",
+    "totalMemes": "סך הכל גיחוכים",
+    "memesToday": "גיחוכים היום",
+    "memesThisWeek": "גיחוכים השבוע",
+    "dailyAverage": "ממוצע יומי",
+    "trafficSources": "מקורות תנועה",
+    "directLink": "🔗 קישור ישיר",
+    "qrSource": "📍 QR: {{location}}",
+    "popularTags": "תגיות פופולריות",
+    "popularLocations": "מיקומים פופולריים",
+    "noData": "אין נתונים"
+  },
+  "memes": {
+    "loading": "טוען גיחוכים...",
+    "title": "ניהול גיחוכים ({{count}})",
+    "empty": "אין גיחוכים עדיין",
+    "loadError": "שגיאה בטעינת גיחוכים",
+    "columns": {
+      "image": "תמונה",
+      "status": "סטטוס",
+      "tags": "תגיות",
+      "location": "מיקום",
+      "createdAt": "תאריך יצירה",
+      "actions": "פעולות"
+    },
+    "status": {
+      "hidden": "מוסתר",
+      "visible": "גלוי"
+    },
+    "noTags": "אין תגיות",
+    "noLocation": "אין מיקום",
+    "unknownDate": "לא ידוע",
+    "actions": {
+      "show": "הצג בגלריה",
+      "hide": "הסתר מהגלריה",
+      "openImage": "פתח תמונה",
+      "delete": "מחק לצמיתות"
+    },
+    "hideSuccess": "הגיחוך הוסתר מהגלריה (נשמר במסד הנתונים)",
+    "showSuccess": "הגיחוך חזר להיות גלוי בגלריה",
+    "statusError": "שגיאה בעדכון הסטטוס",
+    "deleteModal": {
+      "title": "מחיקת גיחוך",
+      "message": "האם אתה בטוח שברצונך למחוק את הגיחוך? פעולה זו לא ניתנת לביטול.",
+      "deleting": "מוחק...",
+      "confirm": "מחק"
+    },
+    "deleteSuccess": "הגיחוך נמחק בהצלחה",
+    "deleteError": "שגיאה במחיקת הגיחוך"
+  },
+  "messages": {
+    "loading": "טוען הודעות...",
+    "emptyTitle": "אין הודעות",
+    "emptyBody": "טרם התקבלו הודעות מהמשתמשים",
+    "total": "סה\"כ הודעות",
+    "unread": "לא נקראו",
+    "read": "נקראו",
+    "anonymous": "אנונימי",
+    "new": "חדש",
+    "unknownDate": "לא ידוע",
+    "sources": {
+      "privacy_page": "דף פרטיות",
+      "homepage": "דף הבית",
+      "footer": "פוטר"
+    },
+    "markAsRead": "סמן כנקרא",
+    "delete": "מחק",
+    "deleteConfirm": "האם אתה בטוח שברצונך למחוק הודעה זו?",
+    "loadError": "שגיאה בטעינת הודעות",
+    "deleteSuccess": "ההודעה נמחקה",
+    "deleteError": "שגיאה במחיקת ההודעה",
+    "markReadSuccess": "סומן כנקרא",
+    "markReadError": "שגיאה בעדכון ההודעה"
+  }
+}

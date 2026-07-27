@@ -1,0 +1,109 @@
+{
+  "login": {
+    "backHome": "Back to Home",
+    "title": "Admin Panel Login",
+    "subtitle": "The Giggletecture Machine",
+    "email": "Email",
+    "password": "Password",
+    "submitting": "Logging in...",
+    "submit": "Log In",
+    "notice": "This page is protected and intended for system administrators only",
+    "success": "Logged in successfully!",
+    "errors": {
+      "default": "Error logging in. Try again.",
+      "invalidCredential": "Invalid email or password",
+      "userNotFound": "User not found",
+      "wrongPassword": "Wrong password",
+      "tooManyRequests": "Too many attempts. Try again later",
+      "networkRequestFailed": "Internet connection problem"
+    }
+  },
+  "dashboard": {
+    "title": "Admin Panel",
+    "signedInAs": "Logged in as: {{email}} • {{version}} ({{date}})",
+    "logout": "Log Out",
+    "logoutSuccess": "Logged out successfully",
+    "logoutError": "Error logging out",
+    "tabs": {
+      "analytics": "Statistics",
+      "memes": "Manage Memes",
+      "messages": "Contact Messages"
+    }
+  },
+  "analytics": {
+    "loading": "Loading statistics...",
+    "title": "Statistics",
+    "totalMemes": "Total Memes",
+    "memesToday": "Memes Today",
+    "memesThisWeek": "Memes This Week",
+    "dailyAverage": "Daily Average",
+    "trafficSources": "Traffic Sources",
+    "directLink": "🔗 Direct Link",
+    "qrSource": "📍 QR: {{location}}",
+    "popularTags": "Popular Tags",
+    "popularLocations": "Popular Locations",
+    "noData": "No data"
+  },
+  "memes": {
+    "loading": "Loading memes...",
+    "title": "Manage Memes ({{count}})",
+    "empty": "No memes yet",
+    "loadError": "Error loading memes",
+    "columns": {
+      "image": "Image",
+      "status": "Status",
+      "tags": "Tags",
+      "location": "Location",
+      "createdAt": "Creation Date",
+      "actions": "Actions"
+    },
+    "status": {
+      "hidden": "Hidden",
+      "visible": "Visible"
+    },
+    "noTags": "No tags",
+    "noLocation": "No location",
+    "unknownDate": "Unknown",
+    "actions": {
+      "show": "Show in gallery",
+      "hide": "Hide from gallery",
+      "openImage": "Open image",
+      "delete": "Delete permanently"
+    },
+    "hideSuccess": "Meme hidden from the gallery (kept in the database)",
+    "showSuccess": "Meme is visible in the gallery again",
+    "statusError": "Error updating status",
+    "deleteModal": {
+      "title": "Delete Meme",
+      "message": "Are you sure you want to delete this meme? This action cannot be undone.",
+      "deleting": "Deleting...",
+      "confirm": "Delete"
+    },
+    "deleteSuccess": "Meme deleted successfully",
+    "deleteError": "Error deleting meme"
+  },
+  "messages": {
+    "loading": "Loading messages...",
+    "emptyTitle": "No Messages",
+    "emptyBody": "No messages received from users yet",
+    "total": "Total Messages",
+    "unread": "Unread",
+    "read": "Read",
+    "anonymous": "Anonymous",
+    "new": "New",
+    "unknownDate": "Unknown",
+    "sources": {
+      "privacy_page": "Privacy Page",
+      "homepage": "Home Page",
+      "footer": "Footer"
+    },
+    "markAsRead": "Mark as read",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this message?",
+    "loadError": "Error loading messages",
+    "deleteSuccess": "Message deleted",
+    "deleteError": "Error deleting message",
+    "markReadSuccess": "Marked as read",
+    "markReadError": "Error updating message"
+  }
+}

@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useEditorStore } from '@/stores/useEditorStore'
 import { useSceneStore } from '@/stores/useSceneStore'
 import Button from '@/components/common/Button'
@@ -19,6 +20,7 @@ export default function LocationPanel() {
   const [isSearching, setIsSearching] = useState(false)
   const [isLoadingCurrent, setIsLoadingCurrent] = useState(false)
   const [customLocationText, setCustomLocationText] = useState('')
+  const { t } = useTranslation('editor')
 
   // Debounced search function
   const searchLocation = useCallback(async (query: string) => {
@@ -96,7 +98,7 @@ export default function LocationPanel() {
 
   const handleCurrentLocation = async () => {
     if (!navigator.geolocation) {
-      alert('הדפדפן שלך לא תומך במיקום')
+      alert(t('locationPanel.unsupported'))
       return
     }
 
@@ -143,14 +145,14 @@ export default function LocationPanel() {
           }
         } catch (error) {
           console.error('Geolocation error:', error)
-          alert('שגיאה באיתור המיקום')
+          alert(t('locationPanel.lookupError'))
         } finally {
           setIsLoadingCurrent(false)
         }
       },
       (error) => {
         console.error('Geolocation error:', error)
-        alert('לא ניתן לקבל את המיקום שלך')
+        alert(t('locationPanel.unavailable'))
         setIsLoadingCurrent(false)
       }
     )
@@ -263,27 +265,27 @@ export default function LocationPanel() {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">מיקום ושם משתמש</h3>
+      <h3 className="text-lg font-semibold text-gray-900">{t('locationPanel.title')}</h3>
 
       {/* Username Field */}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">
-          שם משתמש (אופציונלי)
+          {t('locationPanel.usernameLabel')}
         </label>
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          placeholder="הזינו שם משתמש..."
+          placeholder={t('locationPanel.usernamePlaceholder')}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
         />
         <p className="text-xs text-gray-500">
-          השם יופיע בגלריה מתחת לגיחוך שלכם
+          {t('locationPanel.usernameHint')}
         </p>
       </div>
 
       <div className="border-t border-gray-200 pt-4">
-        <h4 className="text-md font-semibold text-gray-900 mb-3">מיקום</h4>
+        <h4 className="text-md font-semibold text-gray-900 mb-3">{t('locationPanel.sectionTitle')}</h4>
 
       {/* Current Location Button */}
       <Button
@@ -295,12 +297,12 @@ export default function LocationPanel() {
         {isLoadingCurrent ? (
           <>
             <Loader2 size={18} className="animate-spin" />
-            <span>מאתר...</span>
+            <span>{t('locationPanel.locating')}</span>
           </>
         ) : (
           <>
             <MapPin size={18} />
-            <span>המיקום שלי</span>
+            <span>{t('locationPanel.myLocation')}</span>
           </>
         )}
       </Button>
@@ -308,18 +310,18 @@ export default function LocationPanel() {
       {/* Search Input */}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">
-          חיפוש מיקום
+          {t('locationPanel.searchLabel')}
         </label>
         <div className="relative">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="הקלד שם עיר, רחוב או מקום..."
+            placeholder={t('locationPanel.searchPlaceholder')}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
           />
           {isSearching && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2">
+            <div className="absolute end-3 top-1/2 -translate-y-1/2">
               <Loader2 size={16} className="animate-spin text-gray-400" />
             </div>
           )}
@@ -329,7 +331,7 @@ export default function LocationPanel() {
       {/* Custom Location Input */}
       <div className="space-y-2 pt-4 border-t border-gray-200">
         <label className="block text-sm font-medium text-gray-700">
-          מיקום מותאם אישית
+          {t('locationPanel.customLabel')}
         </label>
         <div className="flex gap-2">
           <input
@@ -341,7 +343,7 @@ export default function LocationPanel() {
                 handleCustomLocation()
               }
             }}
-            placeholder="הזן טקסט מיקום כלשהו..."
+            placeholder={t('locationPanel.customPlaceholder')}
             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
           />
           <Button
@@ -350,11 +352,11 @@ export default function LocationPanel() {
             disabled={!customLocationText.trim()}
             className="px-4"
           >
-            הוסף
+            {t('locationPanel.customAdd')}
           </Button>
         </div>
         <p className="text-xs text-gray-500">
-          הזן טקסט חופשי שיוצג כמיקום (ללא קואורדינטות GPS)
+          {t('locationPanel.customHint')}
         </p>
       </div>
 
@@ -365,7 +367,7 @@ export default function LocationPanel() {
             <button
               key={index}
               onClick={() => handleSelectLocation(result)}
-              className="w-full px-4 py-3 text-right hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
+              className="w-full px-4 py-3 text-start hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
             >
               <div className="font-medium text-gray-900">
                 {result.display_name.split(',')[0]}
@@ -381,7 +383,7 @@ export default function LocationPanel() {
       {/* No Results */}
       {searchQuery.length >= 3 && results.length === 0 && !isSearching && (
         <div className="text-center py-4 text-gray-500 text-sm">
-          לא נמצאו תוצאות
+          {t('locationPanel.noResults')}
         </div>
       )}
 
@@ -392,19 +394,19 @@ export default function LocationPanel() {
             <div className="flex-1">
               <div className="flex items-center gap-2 text-green-800 font-medium mb-1">
                 <MapPin size={16} />
-                <span>מיקום נבחר</span>
+                <span>{t('locationPanel.selected')}</span>
               </div>
               <div className="text-sm text-green-700 mb-2">
                 {getSimplifiedName(selectedLocation.display_name)}
               </div>
               <div className="text-xs text-gray-600 bg-white px-2 py-1 rounded border border-green-200">
-                <strong>על הגיחוך:</strong> {getShortFormat(selectedLocation.display_name)}
+                <strong>{t('locationPanel.onMeme')}</strong> {getShortFormat(selectedLocation.display_name)}
               </div>
             </div>
             <button
               onClick={handleClearLocation}
               className="text-green-600 hover:text-green-800 transition-colors"
-              title="הסר מיקום"
+              title={t('locationPanel.remove')}
             >
               <X size={18} />
             </button>
@@ -422,10 +424,10 @@ export default function LocationPanel() {
               />
               <div className={selectedLocation.hideFromGallery ? 'opacity-50' : ''}>
                 <div className="text-sm font-medium text-gray-900">
-                  הוסף מיקום לתמונה
+                  {t('locationPanel.showOnImage')}
                 </div>
                 <div className="text-xs text-gray-600">
-                  המיקום יופיע על התמונה (ניתן לגרור ולשנות גודל)
+                  {t('locationPanel.showOnImageHint')}
                 </div>
               </div>
             </label>
@@ -440,10 +442,10 @@ export default function LocationPanel() {
               />
               <div className={selectedLocation.hideFromGallery ? 'opacity-50' : ''}>
                 <div className="text-sm font-medium text-gray-900">
-                  הצג בגלריה
+                  {t('locationPanel.showInGallery')}
                 </div>
                 <div className="text-xs text-gray-600">
-                  המיקום יופיע מתחת לגיחוך בגלריה
+                  {t('locationPanel.showInGalleryHint')}
                 </div>
               </div>
             </label>
@@ -457,10 +459,10 @@ export default function LocationPanel() {
               />
               <div>
                 <div className="text-sm font-medium text-gray-900">
-                  הסתר מהגלריה, לשימוש מחקרי בלבד
+                  {t('locationPanel.hideFromGallery')}
                 </div>
                 <div className="text-xs text-gray-600">
-                  המיקום יהיה זמין רק בקונסול הניהול
+                  {t('locationPanel.hideFromGalleryHint')}
                 </div>
               </div>
             </label>

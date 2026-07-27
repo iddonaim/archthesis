@@ -1,4 +1,5 @@
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useEditorStore } from '@/stores/useEditorStore'
 import { useSceneStore } from '@/stores/useSceneStore'
 import Button from '@/components/common/Button'
@@ -11,6 +12,7 @@ export default function TextPanel() {
     setDescription
   } = useEditorStore()
   const { scene, addElement } = useSceneStore()
+  const { t } = useTranslation('editor')
 
   const selectedElement = scene.elements.find(el => scene.selection.includes(el.id))
   const isTextSelected = selectedElement?.type === 'text'
@@ -27,7 +29,7 @@ export default function TextPanel() {
 
     addElement({
       type: 'text',
-      text: 'כתוב כאן...',
+      text: t('canvasPlaceholder'),
       x: centerX,
       y: centerY,
       width: textBoxWidth,
@@ -48,7 +50,7 @@ export default function TextPanel() {
       {/* Meme Description */}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-ink-light">
-          תיאור הגיחוך (אופציונלי)
+          {t('textPanel.descriptionLabel')}
         </label>
         <textarea
           value={description}
@@ -57,12 +59,12 @@ export default function TextPanel() {
               setDescription(e.target.value)
             }
           }}
-          placeholder="הוסף תיאור לגיחוך שלך..."
+          placeholder={t('textPanel.descriptionPlaceholder')}
           maxLength={200}
           rows={3}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"
         />
-        <p className="text-xs text-ink-light/70 text-left">
+        <p className="text-xs text-ink-light/70 text-end">
           {description.length}/200
         </p>
       </div>
@@ -75,12 +77,12 @@ export default function TextPanel() {
         className="w-full flex items-center justify-center gap-2"
       >
         <Plus size={16} />
-        <span>הוסף טקסט לקנבס</span>
+        <span>{t('textPanel.addText')}</span>
       </Button>
 
       {/* Help text */}
       <p className="text-xs text-ink-light/70 text-center">
-        לחצו פעמיים על טקסט בקנבס כדי לערוך אותו
+        {t('textPanel.hint')}
       </p>
 
       {/* Color Controls - only show when text is selected */}

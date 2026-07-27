@@ -2,6 +2,12 @@ import { expect, afterEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
 import * as matchers from '@testing-library/jest-dom/matchers'
 
+// Initialise i18next once for the whole suite. Without it every `t()` call
+// returns the raw key, so components render key names instead of text.
+// Nothing is stored in localStorage under test, so this lands on the default
+// language (Hebrew) — assertions on Hebrew copy keep working as before.
+import '@/i18n'
+
 // Extend Vitest's expect with jest-dom matchers
 expect.extend(matchers)
 

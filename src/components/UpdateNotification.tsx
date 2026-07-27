@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { APP_VERSION, APP_BUILD_ID } from '@/version'
 import { isNewBuildAvailable } from '@/lib/updateCheck'
 import Button from './common/Button'
@@ -11,6 +12,7 @@ import { RefreshCw } from 'lucide-react'
 export default function UpdateNotification() {
   const [hasUpdate, setHasUpdate] = useState(false)
   const [isChecking, setIsChecking] = useState(false)
+  const { t } = useTranslation()
 
   const checkVersion = async () => {
     setIsChecking(true)
@@ -88,8 +90,8 @@ export default function UpdateNotification() {
     <div className="fixed top-0 left-0 right-0 z-[9999] bg-gradient-to-r from-primary to-secondary p-4 shadow-lg">
       <div className="container mx-auto flex items-center justify-between gap-4 flex-wrap">
         <div className="text-white">
-          <p className="font-bold">🎉 גרסה חדשה זמינה!</p>
-          <p className="text-sm opacity-90">לחץ לטעינה מחדש</p>
+          <p className="font-bold">{t('update.title')}</p>
+          <p className="text-sm opacity-90">{t('update.description')}</p>
         </div>
         <Button
           variant="outline"
@@ -98,7 +100,7 @@ export default function UpdateNotification() {
           disabled={isChecking}
         >
           <RefreshCw size={18} className={isChecking ? 'animate-spin' : ''} />
-          רענן עכשיו
+          {t('update.refresh')}
         </Button>
       </div>
     </div>

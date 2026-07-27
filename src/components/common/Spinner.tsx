@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 interface SpinnerProps {
@@ -26,22 +27,27 @@ export default function Spinner({ size = 'md', className }: SpinnerProps) {
   )
 }
 
-export function LoadingOverlay({ message = 'טוען...' }: { message?: string }) {
+export function LoadingOverlay({ message }: { message?: string }) {
+  const { t } = useTranslation()
+  const label = message ?? t('loading.default')
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-xl p-8 shadow-2xl flex flex-col items-center gap-4">
         <Spinner size="lg" />
-        <p className="text-lg font-semibold text-gray-900">{message}</p>
+        <p className="text-lg font-semibold text-gray-900">{label}</p>
       </div>
     </div>
   )
 }
 
-export function LoadingState({ message = 'טוען נתונים...' }: { message?: string }) {
+export function LoadingState({ message }: { message?: string }) {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-col items-center justify-center py-12">
       <Spinner size="lg" />
-      <p className="mt-4 text-gray-600">{message}</p>
+      <p className="mt-4 text-gray-600">{message ?? t('loading.data')}</p>
     </div>
   )
 }

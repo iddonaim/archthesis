@@ -4,7 +4,7 @@
  * Mirrors the create guards in firestore.rules for /memes — the server rejects
  * writes that exceed these limits with a generic English "Missing or
  * insufficient permissions" error (after the image was already uploaded).
- * Validating here first gives the user a clear Hebrew message, before any
+ * Validating here first gives the user a clear message, before any
  * upload happens.
  *
  * Keep these limits in sync with firestore.rules.
@@ -23,19 +23,32 @@ export interface PublishData {
   tags: string[]
 }
 
-/** Returns a user-facing Hebrew error message, or null if the data is valid. */
-export function validateMemePublish(data: PublishData): string | null {
+/**
+ * A failure is reported as a key plus its interpolation values rather than a
+ * finished sentence, so this module stays independent of any one language —
+ * the caller resolves it against the active locale.
+ */
+export interface PublishValidationError {
+  key: 'memeTextTooLong' | 'descriptionTooLong' | 'usernameTooLong' | 'tooManyTags'
+  values: Record<string, number>
+}
+
+/** Returns the validation failure, or null if the data is valid. */
+export function validateMemePublish(data: PublishData): PublishValidationError | null {
   if (data.memeText.length > PUBLISH_LIMITS.memeText) {
-    return `הטקסט בגיחוך ארוך מדי (${data.memeText.length.toLocaleString()} תווים) — המגבלה היא ${PUBLISH_LIMITS.memeText.toLocaleString()} תווים. נסו לקצר.`
+    return {
+      key: 'memeTextTooLong',
+      values: { count: data.memeText.length, limit: PUBLISH_LIMITS.memeText }
+    }
   }
   if (data.description.length > PUBLISH_LIMITS.description) {
-    return `התיאור ארוך מדי — המגבלה היא ${PUBLISH_LIMITS.description.toLocaleString()} תווים.`
+    return { key: 'descriptionTooLong', values: { limit: PUBLISH_LIMITS.description } }
   }
   if (data.username.length > PUBLISH_LIMITS.username) {
-    return `שם המשתמש ארוך מדי — המגבלה היא ${PUBLISH_LIMITS.username} תווים.`
+    return { key: 'usernameTooLong', values: { limit: PUBLISH_LIMITS.username } }
   }
   if (data.tags.length > PUBLISH_LIMITS.tags) {
-    return `נבחרו יותר מדי תגיות — המגבלה היא ${PUBLISH_LIMITS.tags} תגיות.`
+    return { key: 'tooManyTags', values: { limit: PUBLISH_LIMITS.tags } }
   }
   return null
 }

@@ -12,6 +12,7 @@ import Card, { CardContent, CardFooter } from '@/components/common/Card'
 import Button from '@/components/common/Button'
 import Badge from '@/components/common/Badge'
 import type { Meme } from '@/types/meme'
+import { useTagLabel } from '@/hooks/useTagLabel'
 
 interface MemeCardProps {
   meme: Meme
@@ -20,6 +21,7 @@ interface MemeCardProps {
 
 export default function MemeCard({ meme, onImageClick }: MemeCardProps) {
   const { t } = useTranslation('gallery')
+  const tagLabel = useTagLabel()
   const navigate = useNavigate()
   const { likedMemes, toggleLike } = useMemeStore()
   const [isLiking, setIsLiking] = useState(false)
@@ -173,7 +175,7 @@ export default function MemeCard({ meme, onImageClick }: MemeCardProps) {
             <div className="flex flex-wrap gap-1.5">
               {meme.tags.map((tag) => (
                 <Badge key={tag} variant="secondary" size="sm">
-                  {tag}
+                  {tagLabel(tag)}
                 </Badge>
               ))}
             </div>

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import { Toaster } from 'react-hot-toast'
 import ErrorBoundary from './components/common/ErrorBoundary'
 import { LoadingState } from './components/common/Spinner'
@@ -19,6 +20,7 @@ const AdminLoginPage = lazy(() => import('./pages/AdminLoginPage'))
 // Page transition wrapper component
 function AnimatedRoutes() {
   const location = useLocation()
+  const { t } = useTranslation()
 
   return (
     <AnimatePresence mode="wait">
@@ -29,7 +31,7 @@ function AnimatedRoutes() {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2, ease: 'easeInOut' }}
       >
-        <Suspense fallback={<LoadingState message="טוען דף..." />}>
+        <Suspense fallback={<LoadingState message={t('loading.page')} />}>
           <Routes location={location}>
             <Route path="/" element={<HomePage />} />
             <Route path="/gallery" element={<GalleryPage />} />
@@ -98,21 +100,23 @@ function App() {
 
 // 404 Not Found component
 function NotFound() {
+  const { t } = useTranslation()
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center px-4">
         <h1 className="text-9xl font-black text-gray-200 mb-4">404</h1>
         <h2 className="text-3xl font-bold text-gray-700 mb-4">
-          הדף לא נמצא
+          {t('notFound.title')}
         </h2>
         <p className="text-gray-500 mb-8">
-          הדף שחיפשתם אינו קיים או הועבר למיקום אחר
+          {t('notFound.message')}
         </p>
         <a
           href="/"
           className="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
         >
-          חזרה לדף הבית
+          {t('notFound.home')}
         </a>
       </div>
     </div>

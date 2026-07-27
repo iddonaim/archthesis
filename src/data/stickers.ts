@@ -12,8 +12,8 @@
 
 export interface CuratedSticker {
   id: string
-  /** Hebrew display name, shown as tooltip */
-  label: string
+  /** Translation key for the tooltip, resolved in the sticker panel. */
+  labelKey: string
   src: string
   /** width / height of the artwork. 1 = square. */
   aspect: number
@@ -33,7 +33,7 @@ const TEXT_FONT = 'font-family="Heebo, Arial, sans-serif" font-weight="800"'
 export const CURATED_STICKERS: CuratedSticker[] = [
   {
     id: 'speech-bubble',
-    label: 'בועת דיבור',
+    labelKey: 'stickers.tools.speechBubble',
     aspect: 1,
     src: svg(
       `<path d="M48 8C25 8 7 21 7 38c0 11 8 20 20 25l-7 24 26-16q1 .1 2 .1c23 0 41-14 41-33S71 8 48 8z" fill="#FAF8F5" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`
@@ -41,7 +41,7 @@ export const CURATED_STICKERS: CuratedSticker[] = [
   },
   {
     id: 'thought-bubble',
-    label: 'בועת מחשבה',
+    labelKey: 'stickers.tools.thoughtBubble',
     aspect: 1,
     src: svg(
       `<ellipse cx="52" cy="34" rx="36" ry="26" fill="#FAF8F5" stroke="${INK}" stroke-width="5"/>
@@ -51,7 +51,7 @@ export const CURATED_STICKERS: CuratedSticker[] = [
   },
   {
     id: 'stamp-approved',
-    label: 'חותמת אושר',
+    labelKey: 'stickers.tools.approvedStamp',
     aspect: 1,
     src: svg(
       `<g transform="rotate(-12 48 48)">
@@ -63,7 +63,7 @@ export const CURATED_STICKERS: CuratedSticker[] = [
   },
   {
     id: 'stamp-rejected',
-    label: 'חותמת נפסל',
+    labelKey: 'stickers.tools.rejectedStamp',
     aspect: 1,
     src: svg(
       `<g transform="rotate(-10 48 48)">
@@ -74,7 +74,7 @@ export const CURATED_STICKERS: CuratedSticker[] = [
   },
   {
     id: 'hard-hat',
-    label: 'קסדת בנייה',
+    labelKey: 'stickers.tools.hardHat',
     aspect: 1,
     src: svg(
       `<rect x="40" y="16" width="16" height="16" rx="5" fill="#FFD166" stroke="${INK}" stroke-width="5"/>
@@ -84,7 +84,7 @@ export const CURATED_STICKERS: CuratedSticker[] = [
   },
   {
     id: 'blueprint',
-    label: 'שרטוט',
+    labelKey: 'stickers.tools.blueprint',
     aspect: 1,
     src: svg(
       `<rect x="10" y="18" width="76" height="60" rx="4" fill="#3B6EA5" stroke="${INK}" stroke-width="5"/>
@@ -95,7 +95,7 @@ export const CURATED_STICKERS: CuratedSticker[] = [
   },
   {
     id: 'set-square',
-    label: 'משולשון',
+    labelKey: 'stickers.tools.setSquare',
     aspect: 1,
     src: svg(
       `<path d="M16 84V12l70 72z" fill="#FFD166" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>
@@ -105,7 +105,7 @@ export const CURATED_STICKERS: CuratedSticker[] = [
   },
   {
     id: 'column',
-    label: 'עמוד יווני',
+    labelKey: 'stickers.tools.greekColumn',
     aspect: 1,
     src: svg(
       `<rect x="18" y="8" width="60" height="11" rx="2.5" fill="#EDE7DC" stroke="${INK}" stroke-width="4.5"/>
@@ -118,7 +118,7 @@ export const CURATED_STICKERS: CuratedSticker[] = [
   },
   {
     id: 'crane',
-    label: 'מנוף',
+    labelKey: 'stickers.tools.crane',
     aspect: 1,
     src: svg(
       `<path d="M31 10L14 24M31 10l44 14" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>
@@ -132,7 +132,7 @@ export const CURATED_STICKERS: CuratedSticker[] = [
   },
   {
     id: 'wow-burst',
-    label: 'וואו!',
+    labelKey: 'stickers.tools.wow',
     aspect: 1,
     src: svg(
       `<polygon points="48.0,3.0 55.3,15.8 67.5,7.5 68.6,22.2 83.2,19.9 77.7,33.7 91.9,38.0 81.0,48.0 91.9,58.0 77.7,62.3 83.2,76.1 68.6,73.8 67.5,88.5 55.3,80.2 48.0,93.0 40.7,80.2 28.5,88.5 27.4,73.8 12.8,76.1 18.3,62.3 4.1,58.0 15.0,48.0 4.1,38.0 18.3,33.7 12.8,19.9 27.4,22.2 28.5,7.5 40.7,15.8" fill="#FFD166" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
@@ -141,7 +141,7 @@ export const CURATED_STICKERS: CuratedSticker[] = [
   },
   {
     id: 'arrow',
-    label: 'חץ',
+    labelKey: 'stickers.tools.arrow',
     aspect: 1,
     src: svg(
       `<path d="M86 40v16H38v18L8 48l30-26v18z" fill="#F04E4E" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`
@@ -149,7 +149,7 @@ export const CURATED_STICKERS: CuratedSticker[] = [
   },
   {
     id: 'crown',
-    label: 'כתר',
+    labelKey: 'stickers.tools.crown',
     aspect: 1,
     src: svg(
       `<path d="M16 68L8 26l22 14L48 12l18 28 22-14-8 42z" fill="#FFD166" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>
@@ -159,7 +159,7 @@ export const CURATED_STICKERS: CuratedSticker[] = [
   },
   {
     id: 'cool-glasses',
-    label: 'משקפי שמש',
+    labelKey: 'stickers.tools.sunglasses',
     aspect: 2.5,
     src: svg(
       `<rect x="0" y="0" width="120" height="8" fill="${INK}"/>

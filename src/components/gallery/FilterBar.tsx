@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import Badge from '@/components/common/Badge'
+import { useTagLabel } from '@/hooks/useTagLabel'
 
 interface FilterBarProps {
   selectedTags: string[]
@@ -16,6 +17,7 @@ export default function FilterBar({
   memes
 }: FilterBarProps) {
   const { t } = useTranslation('gallery')
+  const tagLabel = useTagLabel()
   const availableTags = useMemo(() => {
     const tagsSet = new Set<string>()
     for (const meme of memes) {
@@ -25,8 +27,10 @@ export default function FilterBar({
         }
       }
     }
-    return Array.from(tagsSet).sort()
-  }, [memes])
+    // Sort by the label the user actually reads, not the stored Hebrew value,
+    // so the chips stay alphabetical in whichever language is active.
+    return Array.from(tagsSet).sort((a, b) => tagLabel(a).localeCompare(tagLabel(b)))
+  }, [memes, tagLabel])
 
   if (availableTags.length === 0) {
     return null
@@ -60,7 +64,7 @@ export default function FilterBar({
                 size="md"
                 className="cursor-pointer"
               >
-                {tag}
+                {tagLabel(tag)}
                 {isSelected && ' ✓'}
               </Badge>
             </button>

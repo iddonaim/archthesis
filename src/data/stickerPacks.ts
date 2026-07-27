@@ -15,8 +15,8 @@ import { CURATED_STICKERS, type CuratedSticker } from './stickers'
 
 export interface StickerDef {
   id: string
-  /** Hebrew display name, used as tooltip + alt text */
-  label: string
+  /** Translation key for the tooltip + alt text, resolved in the panel. */
+  labelKey: string
   src: string
   /** width / height of the artwork */
   aspect: number
@@ -24,7 +24,7 @@ export interface StickerDef {
 
 export interface StickerPack {
   id: string
-  label: string
+  labelKey: string
   /** Emoji shown on the pack-switcher button */
   icon: string
   stickers: StickerDef[]
@@ -38,54 +38,56 @@ const twemojiFiles = import.meta.glob('/src/assets/stickers/*/*.svg', {
   import: 'default',
 }) as Record<string, string>
 
-const twemoji = (dir: 'meme' | 'props', code: string, label: string): StickerDef | null => {
+const twemoji = (dir: 'meme' | 'props', code: string, labelKey: string): StickerDef | null => {
   const src = twemojiFiles[`/src/assets/stickers/${dir}/${code}.svg`]
   if (!src) return null
-  return { id: `${dir}-${code}`, label, src, aspect: 1 }
+  return { id: `${dir}-${code}`, labelKey, src, aspect: 1 }
 }
 
 const buildPack = (
   dir: 'meme' | 'props',
-  entries: Array<[code: string, label: string]>
+  entries: Array<[code: string, labelKey: string]>
 ): StickerDef[] =>
-  entries.map(([code, label]) => twemoji(dir, code, label)).filter((s): s is StickerDef => s !== null)
+  entries
+    .map(([code, labelKey]) => twemoji(dir, code, `stickers.${dir}.${labelKey}`))
+    .filter((s): s is StickerDef => s !== null)
 
 const MEME_STICKERS = buildPack('meme', [
-  ['1f602', 'בוכה מצחוק'],
-  ['1f62d', 'בכי'],
-  ['1f979', 'מתרגש'],
-  ['1f480', 'גולגולת'],
-  ['1f5ff', 'מואי'],
-  ['1f525', 'אש'],
-  ['1f4af', 'מאה'],
-  ['1f921', 'ליצן'],
-  ['1f972', 'חיוך עם דמעה'],
-  ['1f440', 'עיניים'],
-  ['1f64f', 'תודה'],
-  ['1f60e', 'קול'],
-  ['1f485', 'לק'],
-  ['1fae1', 'סאלוט'],
-  ['1f913', 'חנון'],
-  ['1f92f', 'ראש מתפוצץ'],
-  ['1f37f', 'פופקורן'],
-  ['1f4a9', 'קקי'],
-  ['2764-fe0f-200d-1f525', 'לב בוער'],
-  ['1f624', 'עצבים'],
+  ['1f602', 'cryingLaughing'],
+  ['1f62d', 'sobbing'],
+  ['1f979', 'holdingBackTears'],
+  ['1f480', 'skull'],
+  ['1f5ff', 'moai'],
+  ['1f525', 'fire'],
+  ['1f4af', 'hundred'],
+  ['1f921', 'clown'],
+  ['1f972', 'smilingWithTear'],
+  ['1f440', 'eyes'],
+  ['1f64f', 'foldedHands'],
+  ['1f60e', 'cool'],
+  ['1f485', 'nailPolish'],
+  ['1fae1', 'salute'],
+  ['1f913', 'nerd'],
+  ['1f92f', 'explodingHead'],
+  ['1f37f', 'popcorn'],
+  ['1f4a9', 'poop'],
+  ['2764-fe0f-200d-1f525', 'heartOnFire'],
+  ['1f624', 'steaming'],
 ])
 
 const PROP_STICKERS = buildPack('props', [
-  ['1f576', 'משקפי שמש'],
-  ['1f453', 'משקפיים'],
-  ['1f451', 'כתר'],
-  ['1f3a9', 'מגבעת'],
-  ['1f9e2', 'כובע'],
-  ['1f978', 'תחפושת'],
-  ['1f4a5', 'בום'],
-  ['1f4a2', 'עצבים'],
-  ['1f389', 'מסיבה'],
-  ['2728', 'נצנצים'],
-  ['1f4ac', 'בועת דיבור'],
-  ['1f3c6', 'גביע'],
+  ['1f576', 'sunglasses'],
+  ['1f453', 'glasses'],
+  ['1f451', 'crown'],
+  ['1f3a9', 'topHat'],
+  ['1f9e2', 'cap'],
+  ['1f978', 'disguise'],
+  ['1f4a5', 'boom'],
+  ['1f4a2', 'anger'],
+  ['1f389', 'party'],
+  ['2728', 'sparkles'],
+  ['1f4ac', 'speechBalloon'],
+  ['1f3c6', 'trophy'],
 ])
 
 // --- Hebrew text badges -----------------------------------------------------
@@ -102,10 +104,21 @@ const badgeSvg = (text: string, fill: string, textFill: string, width: number): 
   )}`
 }
 
+/**
+ * The badge text is artwork, not UI: these stickers say something in Hebrew
+ * slang, and that is the point of the pack. Their tooltips therefore resolve
+ * to the same Hebrew wording in both languages — the key exists only so the
+ * panel can treat every sticker uniformly.
+ */
 const badge = (id: string, text: string, fill: string, textFill = '#FFFFFF'): StickerDef => {
   // Rough width estimate for bold Hebrew at font-size 24
   const width = Math.max(96, Math.round(text.length * 15 + 44))
-  return { id: `badge-${id}`, label: text, src: badgeSvg(text, fill, textFill, width), aspect: width / 64 }
+  return {
+    id: `badge-${id}`,
+    labelKey: `stickers.hebrew.${id}`,
+    src: badgeSvg(text, fill, textFill, width),
+    aspect: width / 64,
+  }
 }
 
 const HEBREW_BADGES: StickerDef[] = [
@@ -123,14 +136,14 @@ const HEBREW_BADGES: StickerDef[] = [
 
 const TOOL_STICKERS: StickerDef[] = CURATED_STICKERS.map((s: CuratedSticker) => ({
   id: s.id,
-  label: s.label,
+  labelKey: s.labelKey,
   src: s.src,
   aspect: s.aspect,
 }))
 
 export const STICKER_PACKS: StickerPack[] = [
-  { id: 'meme', label: 'ממים', icon: '💀', stickers: MEME_STICKERS },
-  { id: 'props', label: 'אביזרים', icon: '🕶️', stickers: PROP_STICKERS },
-  { id: 'hebrew', label: 'עברית', icon: '🗯️', stickers: HEBREW_BADGES },
-  { id: 'tools', label: 'שרטוט', icon: '📐', stickers: TOOL_STICKERS },
+  { id: 'meme', labelKey: 'stickers.packs.meme', icon: '💀', stickers: MEME_STICKERS },
+  { id: 'props', labelKey: 'stickers.packs.props', icon: '🕶️', stickers: PROP_STICKERS },
+  { id: 'hebrew', labelKey: 'stickers.packs.hebrew', icon: '🗯️', stickers: HEBREW_BADGES },
+  { id: 'tools', labelKey: 'stickers.packs.tools', icon: '📐', stickers: TOOL_STICKERS },
 ]

@@ -20,7 +20,25 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
   }
 }
 
-export function formatTimestamp(timestamp: Date): string {
+/**
+ * Maps a UI language code to the locale used for date and number formatting.
+ * Hebrew dates follow the Israeli convention; everything else falls back to
+ * en-US, matching the only other language the UI ships.
+ */
+export function dateLocale(language: string): string {
+  return language.startsWith('he') ? 'he-IL' : 'en-US'
+}
+
+/**
+ * Formats a timestamp as relative time ("3 days ago" / "לפני 3 ימים"),
+ * falling back to an absolute date once it is more than a week old.
+ *
+ * The wording comes from `Intl.RelativeTimeFormat` rather than translation
+ * keys, so both languages get grammatically correct output — including the
+ * forms Hebrew has but English doesn't ("אתמול" for a single day).
+ */
+export function formatTimestamp(timestamp: Date, language = 'he'): string {
+  const locale = dateLocale(language)
   const now = new Date()
   const diff = now.getTime() - timestamp.getTime()
   const seconds = Math.floor(diff / 1000)
@@ -29,16 +47,15 @@ export function formatTimestamp(timestamp: Date): string {
   const days = Math.floor(hours / 24)
 
   if (days > 7) {
-    return timestamp.toLocaleDateString('he-IL')
-  } else if (days > 0) {
-    return `לפני ${days} ימים`
-  } else if (hours > 0) {
-    return `לפני ${hours} שעות`
-  } else if (minutes > 0) {
-    return `לפני ${minutes} דקות`
-  } else {
-    return 'עכשיו'
+    return timestamp.toLocaleDateString(locale)
   }
+
+  const relative = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' })
+
+  if (days > 0) return relative.format(-days, 'day')
+  if (hours > 0) return relative.format(-hours, 'hour')
+  if (minutes > 0) return relative.format(-minutes, 'minute')
+  return relative.format(0, 'second')
 }
 
 /**

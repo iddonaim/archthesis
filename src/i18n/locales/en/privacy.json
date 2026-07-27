@@ -1,0 +1,164 @@
+{
+  "backHome": "Back to Home",
+  "lastUpdatedLabel": "Last updated:",
+  "contactButton": "Contact",
+  "fullPolicy": "The full privacy policy ↓",
+  "contactNameLabel": "Name:",
+  "contactInstitutionLabel": "Institution:",
+  "document": {
+    "title": "Privacy Policy and Terms of Service",
+    "lastUpdated": "January 2026",
+    "tldr": {
+      "title": "A Few Words Before You Start",
+      "sections": [
+        {
+          "title": "Nice to Meet You",
+          "content": "I'm Iddo, a fifth-year architecture student. This site is the laboratory of my thesis, part of my final project. The goal is to examine how absurdity, humour and memes can become planning tools."
+        },
+        {
+          "title": "Everything Here Is Public, and That's the Whole Point",
+          "content": "A meme is a template made to move, to change and to pass from hand to hand. So everything you create here goes into the open gallery, and may appear in my final exhibition or in my research book. Note — you can share as well! Download a meme you like and share it on social networks, or share it directly from the button in the gallery."
+        },
+        {
+          "title": "Location Is Part of the Story – Use It Wisely",
+          "content": "Please note! If you chose to add a location to the meme, everyone will see it. For the purposes of the research there is no need to share the specific location of your home — the street name, the neighbourhood or the general area is enough."
+        },
+        {
+          "title": "Give a Smile",
+          "content": "Architecture sometimes tends towards gravity and pathos. What I'm looking for here is the spark of lightness and laughter the profession is missing. You're welcome to be absurd, sharp and creative, as long as the language stays respectful and inoffensive."
+        },
+        {
+          "title": "Get in Touch",
+          "content": "Want to suggest something? Ran into a bug? Send me a message through the contact form!"
+        }
+      ]
+    },
+    "sections": [
+      {
+        "id": "intro",
+        "title": "1. Introduction and Academic Background",
+        "content": "Welcome to \"The Giggletecture Machine\". This document sets out the terms of service and the privacy policy of the platform. The site was created and is operated by Iddo Naim, a student-researcher (fifth year), as a research and applied tool within a final project at the David Azrieli School of Architecture, Tel Aviv University.",
+        "note": {
+          "label": "Important clarification:",
+          "text": "The content, opinions and works presented on the site are the sole responsibility of the creator and the users, and do not represent an official position of Tel Aviv University or anyone acting on its behalf."
+        }
+      },
+      {
+        "id": "purpose",
+        "title": "2. Research Purpose and Nature of the Activity",
+        "content": "The platform is a non-profit tool intended to examine the potential of internet memes as tools for architectural critique, and as a means of producing an \"adaptive memetic framework\" in physical and virtual space. Use of the site is based on voluntary participation in the creation of shared content."
+      },
+      {
+        "id": "data-collection",
+        "title": "3. Data Collection and Types of Data",
+        "content": "We collect information solely for the purposes of the research and the operation of the site, while adhering to principles of data minimisation:",
+        "subsections": [
+          {
+            "title": "a. Virtual Works (Memes)",
+            "content": "The memes you create are stored in the project's database. These memes are public by default and are displayed in the shared gallery. The stored information includes the image, the text, and the creation date."
+          },
+          {
+            "title": "b. Location Data (Optional)",
+            "content": "The site lets you add a location (geo-tagging) to a meme, for the purpose of mapping architectural critique.",
+            "warnings": [
+              "Please note: if you chose to add a location, it becomes a public part of the work.",
+              "Warning: do not mark the exact location of a private residence, or any location that could reveal your identity or harm your privacy. We recommend marking only at the level of the neighbourhood or the general street."
+            ]
+          },
+          {
+            "title": "c. Identifying Details",
+            "content": "The system does not require registration or identification by full name.",
+            "list": [
+              "Identifying details (name/email) are collected only if the user chose to get in touch on their own initiative through the form on the site.",
+              "Memes may be published completely anonymously, or under a nickname."
+            ]
+          },
+          {
+            "title": "d. Technical Data (Automatic)",
+            "content": "We use standard tools to analyse general usage patterns (such as Google Analytics / Firebase) without personal identification (number of visitors, pages viewed, types of interaction)."
+          }
+        ]
+      },
+      {
+        "id": "use-of-information",
+        "title": "4. Use and Retention of Data",
+        "content": "The information collected is used for academic purposes only:",
+        "list": [
+          "Analysis and mapping of architectural critique.",
+          "Presenting the project in final exhibitions, academic presentations, and the thesis book.",
+          "Future academic publications."
+        ],
+        "note": {
+          "label": "Data retention period:",
+          "text": "The data will be kept at least until the end of the research (the end of 2026). After that, data may be kept in an academic archive, or in anonymised form for follow-up research."
+        }
+      },
+      {
+        "id": "third-party",
+        "title": "5. Third-Party Services and Data Security",
+        "content": "The site relies on external services in order to operate. We work to keep the data secure, but use is also subject to the privacy policies of those providers:",
+        "services": [
+          "Google Firebase: used to store the data and files securely and encrypted. The servers are located in regions that respect GDPR principles (Europe / the USA under appropriate safeguards).",
+          "OpenStreetMap / Nominatim: used for location and map services.",
+          "Imgflip: used as a repository of meme templates.",
+          "Cookies & Local Storage: we use local browser storage to save work drafts, and basic technical cookies to operate the site. We do not carry out profiling for advertising purposes."
+        ]
+      },
+      {
+        "id": "copyright",
+        "title": "6. Copyright and Intellectual Property",
+        "list": [
+          {
+            "label": "Your content:",
+            "text": "You retain the rights to the personal images you upload."
+          },
+          {
+            "label": "Licence of use:",
+            "text": "By creating a meme and publishing it on the site, you grant the project a non-exclusive, worldwide, royalty-free licence to display the content, to analyse it and to publish it within the academic and exhibition settings described above."
+          },
+          {
+            "label": "Fair use:",
+            "text": "Existing meme templates are used under \"fair use\" principles, for the purposes of research, critique and parody."
+          },
+          {
+            "label": "Responsibility:",
+            "text": "The user declares that they hold the rights (or permission) to any content they upload, and that the content is not offensive, inciting, privacy-infringing, or in breach of a third party's copyright."
+          }
+        ]
+      },
+      {
+        "id": "user-rights",
+        "title": "7. User Rights",
+        "content": "At any time you have the right:",
+        "list": [
+          "To view the public content in the gallery.",
+          "To request removal of content you created (through the contact form, providing the identifying details needed to locate the content).",
+          "To choose not to use the platform if you do not agree to this policy."
+        ]
+      },
+      {
+        "id": "minimum-age",
+        "title": "8. Minimum Age",
+        "content": "Use of the platform is intended for users aged 16 and over. The age limit is meant to ensure sufficient understanding and informed consent to take part in public academic research. We do not knowingly collect information about minors below this age."
+      },
+      {
+        "id": "contact",
+        "title": "9. Contact",
+        "content": "For questions about the research or about privacy, or for removal requests, you can get in touch with:",
+        "contactInfo": {
+          "name": "Iddo Naim",
+          "institution": "School of Architecture, Tel Aviv University"
+        }
+      }
+    ],
+    "consent": {
+      "text": "By using \"The Giggletecture Machine\" platform, you confirm that you have read these terms, that you are over the age of 16, and that you agree to the research and public use of the content you create."
+    },
+    "creator": {
+      "name": "Iddo Naim",
+      "title": "Site creator",
+      "institution": "School of Architecture, Tel Aviv University",
+      "technology": "Built with Claude (Anthropic) - Sonnet 4.5"
+    }
+  }
+}
