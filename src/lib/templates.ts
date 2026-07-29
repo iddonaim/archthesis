@@ -11,7 +11,6 @@ export const TEMPLATES: Record<string, Template> = {
     height: 1200,
     defaultTextBoxes: [
       {
-        text: 'כתבו כאן...',
         xPercent: 0.70,
         yPercent: 0.20,
         fontSize: 48,
@@ -22,7 +21,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.70,
         yPercent: 0.70,
         fontSize: 48,
@@ -42,7 +40,6 @@ export const TEMPLATES: Record<string, Template> = {
     height: 800,
     defaultTextBoxes: [
       {
-        text: 'כתבו כאן...',
         xPercent: 0.18,
         yPercent: 0.70,
         fontSize: 42,
@@ -53,7 +50,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.50,
         yPercent: 0.20,
         fontSize: 42,
@@ -64,7 +60,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.82,
         yPercent: 0.45,
         fontSize: 42,
@@ -84,7 +79,6 @@ export const TEMPLATES: Record<string, Template> = {
     height: 908,
     defaultTextBoxes: [
       {
-        text: 'כתבו כאן...',
         xPercent: 0.28,
         yPercent: 0.12,
         fontSize: 28,
@@ -95,7 +89,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.72,
         yPercent: 0.12,
         fontSize: 28,
@@ -106,7 +99,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.50,
         yPercent: 0.80,
         fontSize: 38,
@@ -126,7 +118,6 @@ export const TEMPLATES: Record<string, Template> = {
     height: 1202,
     defaultTextBoxes: [
       {
-        text: 'כתבו כאן...',
         xPercent: 0.30,
         yPercent: 0.13,
         fontSize: 32,
@@ -137,7 +128,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.30,
         yPercent: 0.38,
         fontSize: 32,
@@ -148,7 +138,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.30,
         yPercent: 0.63,
         fontSize: 32,
@@ -159,7 +148,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.30,
         yPercent: 0.88,
         fontSize: 32,
@@ -179,7 +167,6 @@ export const TEMPLATES: Record<string, Template> = {
     height: 361,
     defaultTextBoxes: [
       {
-        text: 'כתבו כאן...',
         xPercent: 0.60,
         yPercent: 0.58,
         fontSize: 32,
@@ -199,7 +186,6 @@ export const TEMPLATES: Record<string, Template> = {
     height: 1425,
     defaultTextBoxes: [
       {
-        text: 'כתבו כאן...',
         xPercent: 0.22,
         yPercent: 0.12,
         fontSize: 44,
@@ -210,7 +196,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.68,
         yPercent: 0.28,
         fontSize: 40,
@@ -221,7 +206,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.50,
         yPercent: 0.85,
         fontSize: 48,
@@ -241,7 +225,6 @@ export const TEMPLATES: Record<string, Template> = {
     height: 438,
     defaultTextBoxes: [
       {
-        text: 'כתבו כאן...',
         xPercent: 0.25,
         yPercent: 0.08,
         fontSize: 32,
@@ -252,7 +235,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.75,
         yPercent: 0.08,
         fontSize: 32,
@@ -272,7 +254,6 @@ export const TEMPLATES: Record<string, Template> = {
     height: 375,
     defaultTextBoxes: [
       {
-        text: 'כתבו כאן...',
         xPercent: 0.50,
         yPercent: 0.12,
         fontSize: 36,
@@ -283,7 +264,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.50,
         yPercent: 0.80,
         fontSize: 36,
@@ -303,7 +283,6 @@ export const TEMPLATES: Record<string, Template> = {
     height: 437,
     defaultTextBoxes: [
       {
-        text: 'כתבו כאן...',
         xPercent: 0.50,
         yPercent: 0.08,
         fontSize: 32,
@@ -314,7 +293,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.50,
         yPercent: 0.82,
         fontSize: 32,
@@ -334,7 +312,6 @@ export const TEMPLATES: Record<string, Template> = {
     height: 387,
     defaultTextBoxes: [
       {
-        text: 'כתבו כאן...',
         xPercent: 0.22,
         yPercent: 0.12,
         fontSize: 32,
@@ -345,7 +322,6 @@ export const TEMPLATES: Record<string, Template> = {
         fontStyle: 'bold'
       },
       {
-        text: 'כתבו כאן...',
         xPercent: 0.72,
         yPercent: 0.12,
         fontSize: 32,

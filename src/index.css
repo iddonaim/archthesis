@@ -9,7 +9,10 @@
 
   body {
     @apply bg-paper text-ink;
-    direction: rtl;
+    /* Direction is owned by `applyDirection` in src/i18n, which sets it on
+       <html> from the active language. Pinning it here would keep the layout
+       mirrored in English no matter what the language toggle did. */
+    direction: inherit;
     font-family: 'Heebo', Arial, sans-serif;
   }
 

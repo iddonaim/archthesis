@@ -1,4 +1,5 @@
 import { Trash2, Copy, ChevronsUp, ChevronsDown, Type, Smile, MapPin, Sticker } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useSceneStore } from '@/stores/useSceneStore'
 import { useEditorStore } from '@/stores/useEditorStore'
 
@@ -10,6 +11,7 @@ import { useEditorStore } from '@/stores/useEditorStore'
 export default function SelectionToolbar() {
   const { scene, deleteElement, addElement, reorderElement, selectOne } = useSceneStore()
   const { canvasDimensions } = useEditorStore()
+  const { t } = useTranslation('editor')
 
   const selected = scene.elements.find((el) => scene.selection.includes(el.id))
   if (!selected) return null
@@ -20,12 +22,12 @@ export default function SelectionToolbar() {
 
   const typeInfo =
     selected.type === 'text'
-      ? { icon: Type, label: 'טקסט' }
+      ? { icon: Type, label: t('selection.text') }
       : selected.type === 'emoji'
-      ? { icon: Smile, label: 'אימוג׳י' }
+      ? { icon: Smile, label: t('selection.emoji') }
       : selected.type === 'image'
-      ? { icon: Sticker, label: 'סטיקר' }
-      : { icon: MapPin, label: 'מיקום' }
+      ? { icon: Sticker, label: t('selection.sticker') }
+      : { icon: MapPin, label: t('selection.location') }
   const TypeIcon = typeInfo.icon
 
   const handleDuplicate = () => {
@@ -52,14 +54,14 @@ export default function SelectionToolbar() {
       </span>
 
       {selected.type !== 'location' && (
-        <button onClick={handleDuplicate} title="שכפל" className={buttonClass}>
+        <button onClick={handleDuplicate} title={t('selection.duplicate')} className={buttonClass}>
           <Copy size={16} />
         </button>
       )}
       <button
         onClick={() => reorderElement(selected.id, scene.elements.length - 1)}
         disabled={isTop}
-        title="הבא לחזית"
+        title={t('selection.bringToFront')}
         className={buttonClass}
       >
         <ChevronsUp size={16} />
@@ -67,14 +69,14 @@ export default function SelectionToolbar() {
       <button
         onClick={() => reorderElement(selected.id, 0)}
         disabled={isBottom}
-        title="שלח לרקע"
+        title={t('selection.sendToBack')}
         className={buttonClass}
       >
         <ChevronsDown size={16} />
       </button>
       <button
         onClick={() => deleteElement(selected.id)}
-        title="מחק (Delete)"
+        title={t('selection.delete')}
         className="p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
       >
         <Trash2 size={16} />

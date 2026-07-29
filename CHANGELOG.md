@@ -1,5 +1,64 @@
 # Meme Editor - Development Changelog
 
+## Session: Finish the English Translation
+**Date: 2026-07-27**
+
+### Overview
+The i18n foundation and the home/gallery pages were already translated, but
+the editor, the admin console and the privacy policy were still Hebrew-only —
+the English toggle produced a half-translated site (see suggestion 4 in
+`docs/REVIEW_2026-07.md`). This session finishes the pass: every user-facing
+string now comes from a locale file, and the layout actually flips to LTR.
+
+#### English is now complete
+- Three new namespaces — `editor`, `admin` and `privacy` — cover the canvas
+  editor and all its panels, the admin dashboard/login/tables/analytics, and
+  the full privacy policy and terms.
+- The `common` namespace grew to cover the shared chrome that was still
+  Hebrew-only: consent, contact and publish-success modals, the error
+  boundary, 404 and no-access screens, the update banner and loading states.
+- Wording follows the master translation table preserved in
+  `docs/archive/TRANSLATION_MASTER.md`. The privacy policy is the one part
+  that table left untranslated, so it was translated fresh — **worth a read
+  before it goes live, since it is a legal/academic text.**
+- `src/data/privacyContent.json` is gone; the policy now lives in
+  `src/i18n/locales/{he,en}/privacy.json` so the whole document switches with
+  the toggle.
+
+#### The layout flips now, not just the words
+- `body { direction: rtl }` in `index.css` pinned the entire site to RTL, so
+  English rendered mirrored (nav right-to-left, right-aligned inputs) no
+  matter what the language toggle set on `<html>`. Body now inherits the
+  direction that `applyDirection` already manages.
+- Direction-locked utilities replaced with logical ones (`text-start`,
+  `ms-*`/`me-*`, `start-*`/`end-*`) in the inputs, modals, privacy page,
+  admin table, contact table and login form.
+- Lightbox and carousel navigation are direction-aware: "previous" now sits
+  on the reading-start side, points the right way, and the arrow keys are
+  swapped in LTR — previously ArrowLeft meant "next" in both languages.
+
+#### Tags stay one vocabulary across languages
+- The 12 suggested tags are stored as their canonical Hebrew values and only
+  their *labels* are translated (`src/lib/tagLabels.ts`, `useTagLabel`).
+  Translating the stored value would have split each tag in two, fragmenting
+  the gallery filter and the tag analytics this project's research relies on.
+- Sticker and pack names moved to translation keys. The Hebrew slang badge
+  stickers keep their wording in both languages — that text is artwork, not
+  UI.
+
+#### Supporting changes
+- `formatTimestamp` uses `Intl.RelativeTimeFormat`, which reproduces the
+  existing Hebrew wording exactly and gives correct English for free; date
+  formatting across the admin area follows the active language.
+- `validateMemePublish` returns a translation key plus values instead of a
+  finished Hebrew sentence, so the lib stays language-independent.
+- Tests: i18next is initialised in the test setup (it never was, so `t()`
+  returned raw keys), plus a new `src/i18n/__tests__/locales.test.ts` that
+  fails if the two locales drift in key structure, interpolation
+  placeholders, or contain empty strings.
+- The 24 duplicated `'כתבו כאן...'` placeholders in `templates.ts` collapsed
+  into one translated string supplied by the consumer.
+
 ## Session: Deploy-Aware Update Banner & Publish Validation
 **Date: 2026-07-17**
 

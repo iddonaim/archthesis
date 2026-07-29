@@ -6,6 +6,10 @@ import { useEditorStore } from '@/stores/useEditorStore'
 import { STICKER_PACKS } from '@/data/stickerPacks'
 import { loadUserStickers, saveUserSticker, removeUserSticker, USER_STICKER_LIMIT } from '@/lib/userStickers'
 import type { ImageElement } from '@/types/scene'
+import i18n from '@/i18n'
+
+/** Packs and stickers carry translation keys; the DOM shows resolved labels. */
+const label = (key: string) => i18n.t(key, { ns: 'editor' })
 
 describe('StickerPanel', () => {
   beforeEach(() => {
@@ -20,20 +24,20 @@ describe('StickerPanel', () => {
     render(<StickerPanel />)
     expect(screen.getByTitle('הסטיקרים שלי')).toBeInTheDocument()
     for (const pack of STICKER_PACKS) {
-      expect(screen.getByTitle(pack.label)).toBeInTheDocument()
+      expect(screen.getByTitle(label(pack.labelKey))).toBeInTheDocument()
     }
     // First pack is active by default and its stickers are visible
     for (const sticker of STICKER_PACKS[0].stickers) {
-      expect(screen.getByTitle(sticker.label)).toBeInTheDocument()
+      expect(screen.getByTitle(label(sticker.labelKey))).toBeInTheDocument()
     }
   })
 
   it('switches packs when a pack button is clicked', () => {
     render(<StickerPanel />)
     const secondPack = STICKER_PACKS[1]
-    fireEvent.click(screen.getByTitle(secondPack.label))
+    fireEvent.click(screen.getByTitle(label(secondPack.labelKey)))
     for (const sticker of secondPack.stickers) {
-      expect(screen.getByTitle(sticker.label)).toBeInTheDocument()
+      expect(screen.getByTitle(label(sticker.labelKey))).toBeInTheDocument()
     }
   })
 
@@ -44,7 +48,7 @@ describe('StickerPanel', () => {
     render(<StickerPanel />)
 
     const first = STICKER_PACKS[0].stickers[0]
-    fireEvent.click(screen.getByTitle(first.label))
+    fireEvent.click(screen.getByTitle(label(first.labelKey)))
 
     const { scene } = useSceneStore.getState()
     expect(scene.elements).toHaveLength(1)
@@ -68,8 +72,8 @@ describe('StickerPanel', () => {
     if (!wide) return
 
     const pack = STICKER_PACKS.find((p) => p.stickers.includes(wide))!
-    fireEvent.click(screen.getByTitle(pack.label))
-    fireEvent.click(screen.getByTitle(wide.label))
+    fireEvent.click(screen.getByTitle(label(pack.labelKey)))
+    fireEvent.click(screen.getByTitle(label(wide.labelKey)))
     const el = useSceneStore.getState().scene.elements[0] as ImageElement
     expect(el.width / el.height).toBeCloseTo(wide.aspect, 5)
   })

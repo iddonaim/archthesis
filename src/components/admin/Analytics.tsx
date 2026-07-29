@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { collection, query, onSnapshot } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { TrendingUp, Tag, MapPin, Image, Calendar, BarChart3, QrCode } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { useTagLabel } from '@/hooks/useTagLabel'
 
 interface Meme {
   id: string
@@ -38,6 +40,8 @@ export default function Analytics() {
   const [originSources, setOriginSources] = useState<OriginCount[]>([])
   const [memesToday, setMemesToday] = useState(0)
   const [memesThisWeek, setMemesThisWeek] = useState(0)
+  const { t } = useTranslation('admin')
+  const tagLabel = useTagLabel()
 
   useEffect(() => {
     const q = query(collection(db, 'memes'))
@@ -142,38 +146,38 @@ export default function Analytics() {
     return (
       <div className="text-center py-12">
         <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        <p className="mt-4 text-gray-600">טוען נתונים סטטיסטיים...</p>
+        <p className="mt-4 text-gray-600">{t('analytics.loading')}</p>
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">סטטיסטיקות</h2>
+      <h2 className="text-2xl font-bold">{t('analytics.title')}</h2>
 
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           icon={<Image className="w-6 h-6" />}
-          title="סך הכל גיחוכים"
+          title={t('analytics.totalMemes')}
           value={totalMemes}
           color="bg-blue-500"
         />
         <StatCard
           icon={<Calendar className="w-6 h-6" />}
-          title="גיחוכים היום"
+          title={t('analytics.memesToday')}
           value={memesToday}
           color="bg-green-500"
         />
         <StatCard
           icon={<TrendingUp className="w-6 h-6" />}
-          title="גיחוכים השבוע"
+          title={t('analytics.memesThisWeek')}
           value={memesThisWeek}
           color="bg-purple-500"
         />
         <StatCard
           icon={<BarChart3 className="w-6 h-6" />}
-          title="ממוצע יומי"
+          title={t('analytics.dailyAverage')}
           value={memesThisWeek > 0 ? Math.round(memesThisWeek / 7) : 0}
           color="bg-orange-500"
         />
@@ -183,7 +187,7 @@ export default function Analytics() {
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center gap-2 mb-4">
           <QrCode className="w-5 h-5 text-accent" />
-          <h3 className="text-lg font-bold">מקורות תנועה</h3>
+          <h3 className="text-lg font-bold">{t('analytics.trafficSources')}</h3>
         </div>
         {originSources.length > 0 ? (
           <div className="space-y-3">
@@ -194,7 +198,9 @@ export default function Analytics() {
                     {idx + 1}
                   </span>
                   <span className="font-medium">
-                    {item.origin === 'link' ? '🔗 קישור ישיר' : `📍 QR: ${item.origin}`}
+                    {item.origin === 'link'
+                      ? t('analytics.directLink')
+                      : t('analytics.qrSource', { location: item.origin })}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -217,7 +223,7 @@ export default function Analytics() {
             ))}
           </div>
         ) : (
-          <p className="text-gray-400 text-center py-8">אין נתונים</p>
+          <p className="text-gray-400 text-center py-8">{t('analytics.noData')}</p>
         )}
       </div>
 
@@ -227,7 +233,7 @@ export default function Analytics() {
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center gap-2 mb-4">
             <Tag className="w-5 h-5 text-secondary" />
-            <h3 className="text-lg font-bold">תגיות פופולריות</h3>
+            <h3 className="text-lg font-bold">{t('analytics.popularTags')}</h3>
           </div>
           {topTags.length > 0 ? (
             <div className="space-y-3">
@@ -237,7 +243,7 @@ export default function Analytics() {
                     <span className="text-2xl font-bold text-gray-300">
                       {idx + 1}
                     </span>
-                    <span className="font-medium">{item.tag}</span>
+                    <span className="font-medium">{tagLabel(item.tag)}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-32 bg-gray-200 rounded-full h-2">
@@ -256,7 +262,7 @@ export default function Analytics() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-400 text-center py-8">אין נתונים</p>
+            <p className="text-gray-400 text-center py-8">{t('analytics.noData')}</p>
           )}
         </div>
 
@@ -264,7 +270,7 @@ export default function Analytics() {
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center gap-2 mb-4">
             <MapPin className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-bold">מיקומים פופולריים</h3>
+            <h3 className="text-lg font-bold">{t('analytics.popularLocations')}</h3>
           </div>
           {topLocations.length > 0 ? (
             <div className="space-y-3">
@@ -295,7 +301,7 @@ export default function Analytics() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-400 text-center py-8">אין נתונים</p>
+            <p className="text-gray-400 text-center py-8">{t('analytics.noData')}</p>
           )}
         </div>
       </div>

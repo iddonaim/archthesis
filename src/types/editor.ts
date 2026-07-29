@@ -64,7 +64,6 @@ export interface Template {
   width: number
   height: number
   defaultTextBoxes: Array<{
-    text: string
     xPercent: number
     yPercent: number
     fontSize: number

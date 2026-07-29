@@ -3,6 +3,7 @@ import { Smile } from 'lucide-react'
 // Type-only import — a runtime import here would pull the whole picker
 // (and its emoji data) into the page chunk and defeat the lazy() split.
 import type { EmojiStyle, EmojiClickData } from 'emoji-picker-react'
+import { useTranslation } from 'react-i18next'
 import { useSceneStore } from '@/stores/useSceneStore'
 import { useEditorStore } from '@/stores/useEditorStore'
 import Spinner from '@/components/common/Spinner'
@@ -14,6 +15,7 @@ const EmojiPicker = lazy(() => import('emoji-picker-react'))
 export default function EmojiPanel() {
   const { addElement, selectOne } = useSceneStore()
   const { canvasDimensions } = useEditorStore()
+  const { t } = useTranslation('editor')
 
   const handleEmojiClick = (emojiData: EmojiClickData) => {
     // Drop the emoji at the canvas center (its anchor is the top-left corner)
@@ -35,7 +37,7 @@ export default function EmojiPanel() {
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-1">
         <Smile size={20} className="text-primary" />
-        <h3 className="font-bold text-lg">אמוג'י</h3>
+        <h3 className="font-bold text-lg">{t('emojiPanel.title')}</h3>
       </div>
 
       <Suspense
@@ -50,7 +52,7 @@ export default function EmojiPanel() {
           // Native glyphs — matches exactly how the emoji renders on the
           // canvas (a Konva Text node) and avoids any CDN image fetches.
           emojiStyle={'native' as EmojiStyle}
-          searchPlaceholder="חיפוש אמוג'י..."
+          searchPlaceholder={t('emojiPanel.searchPlaceholder')}
           width="100%"
           height={380}
           previewConfig={{ showPreview: false }}
@@ -60,7 +62,7 @@ export default function EmojiPanel() {
       </Suspense>
 
       <p className="text-xs text-ink-light/70 text-center border-t border-ink/5 pt-3">
-        לחצו על אמוג'י כדי להוסיף אותו לתמונה
+        {t('emojiPanel.hint')}
       </p>
     </div>
   )

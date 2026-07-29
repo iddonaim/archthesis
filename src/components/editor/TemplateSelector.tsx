@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Upload } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useEditorStore } from '@/stores/useEditorStore'
 import { useSceneStore } from '@/stores/useSceneStore'
 import { TEMPLATES, getTemplatesList } from '@/lib/templates'
@@ -24,12 +25,13 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
   const { addElement, reset: resetScene } = useSceneStore()
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const { t } = useTranslation('editor')
 
   const templates = getTemplatesList()
 
   // Preload template images on mount
   useEffect(() => {
-    const imageUrls = templates.map(t => t.url)
+    const imageUrls = templates.map(template => template.url)
     preloadImages(imageUrls).catch(err => {
       console.warn('Failed to preload some template images:', err)
     })
@@ -100,7 +102,7 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
         template.defaultTextBoxes.forEach((defaultBox) => {
           addElement({
             type: 'text',
-            text: defaultBox.text,
+            text: t('defaultText'),
             x: defaultBox.xPercent * scaledWidth,  // Use scaled canvas width
             y: defaultBox.yPercent * scaledHeight, // Use scaled canvas height
             width: textBoxWidth,
@@ -119,7 +121,7 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
 
     img.onerror = () => {
       console.error('Failed to load template image:', template.url)
-      alert('שגיאה בטעינת התבנית')
+      alert(t('templates.loadError'))
     }
 
     img.src = template.url
@@ -131,7 +133,7 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      alert('נא לבחור קובץ תמונה')
+      alert(t('upload.notAnImage'))
       return
     }
 
@@ -139,7 +141,7 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
     const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
     if (file.size > MAX_FILE_SIZE) {
       const fileSizeMB = (file.size / 1024 / 1024).toFixed(2)
-      alert(`גודל הקובץ (${fileSizeMB}MB) חורג מהמקסימום המותר (20MB).\nנא לבחור תמונה קטנה יותר.`)
+      alert(t('upload.tooLarge', { size: fileSizeMB }))
       return
     }
 
@@ -202,7 +204,7 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
           // No saved state - add default text boxes for custom image at top and bottom
           addElement({
             type: 'text',
-            text: 'כתבו כאן...',
+            text: t('defaultText'),
             x: scaledWidth / 2,
             y: scaledHeight * 0.1,
             width: textBoxWidth,
@@ -218,7 +220,7 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
 
           addElement({
             type: 'text',
-            text: 'כתבו כאן...',
+            text: t('defaultText'),
             x: scaledWidth / 2,
             y: scaledHeight * 0.85,
             width: textBoxWidth,
@@ -255,10 +257,10 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
             </div>
             <div className="text-center px-4">
               <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                העלו תמונה משלכם
+                {t('templates.uploadTitle')}
               </h3>
               <p className="text-gray-600">
-                לחצו כאן כדי לבחור תמונה מהמחשב
+                {t('templates.uploadHint')}
               </p>
             </div>
           </div>
@@ -280,7 +282,7 @@ export default function TemplateSelector({ canvasWidth = 900, canvasHeight = 650
         </div>
         <div className="relative flex justify-center">
           <span className="bg-paper px-4 text-sm text-gray-500 font-medium">
-            או בחרו תבנית קיימת
+            {t('templates.divider')}
           </span>
         </div>
       </div>

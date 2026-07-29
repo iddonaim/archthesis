@@ -1,14 +1,57 @@
 import { useState } from 'react'
 import Layout from '@/components/layout/Layout'
-import Button from '@/components/common/Button'
 import ContactModal from '@/components/common/ContactModal'
 import { ArrowRight, Mail } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import privacyContent from '@/data/privacyContent.json'
+import { useTranslation } from 'react-i18next'
+
+/**
+ * The policy text lives in the `privacy` i18n namespace rather than in a data
+ * file, so the whole document switches with the language toggle. Every field
+ * past `title` is optional because sections use whichever blocks they need.
+ */
+interface LabelledText {
+  label: string
+  text: string
+}
+
+type ListItem = string | LabelledText
+
+interface PrivacySubsection {
+  title: string
+  content?: string
+  list?: ListItem[]
+  warnings?: string[]
+  note?: LabelledText
+}
+
+interface PrivacySection {
+  id: string
+  title: string
+  content?: string
+  subtitle?: string
+  list?: ListItem[]
+  note?: LabelledText
+  warning?: string
+  subsections?: PrivacySubsection[]
+  services?: string[]
+  contactInfo?: { name: string; institution: string }
+}
+
+interface PrivacyDocument {
+  title: string
+  lastUpdated: string
+  tldr?: { title: string; sections: Array<{ title: string; content: string }> }
+  sections: PrivacySection[]
+  consent?: { text: string }
+  creator?: { name: string; institution: string; technology: string }
+}
 
 export default function PrivacyPage() {
   const navigate = useNavigate()
   const [showContactModal, setShowContactModal] = useState(false)
+  const { t } = useTranslation('privacy')
+  const privacyContent = t('document', { returnObjects: true }) as PrivacyDocument
 
   // Helper function to render bold text from markdown-style **text**
   const renderText = (text: string) => {
@@ -22,7 +65,7 @@ export default function PrivacyPage() {
   }
 
   // Helper to render list items (handles both strings and objects with label/text)
-  const renderListItem = (item: any) => {
+  const renderListItem = (item: ListItem) => {
     if (typeof item === 'string') {
       return renderText(item)
     }
@@ -44,8 +87,8 @@ export default function PrivacyPage() {
           onClick={() => navigate('/')}
           className="inline-flex items-center gap-2 text-primary hover:underline font-semibold mb-8"
         >
-          <ArrowRight className="h-4 w-4" />
-          חזרה לדף הבית
+          <ArrowRight className="h-4 w-4 rtl:rotate-0 ltr:rotate-180" />
+          {t('backHome')}
         </button>
 
         {/* Title */}
@@ -54,9 +97,9 @@ export default function PrivacyPage() {
         </h1>
 
         {/* Last Updated Notice */}
-        <div className="bg-blue-50 border-r-4 border-blue-400 p-4 mb-8 rounded-lg">
+        <div className="bg-blue-50 border-s-4 border-blue-400 p-4 mb-8 rounded-lg">
           <p className="text-sm text-blue-800">
-            <strong>עדכון אחרון:</strong> {privacyContent.lastUpdated}
+            <strong>{t('lastUpdatedLabel')}</strong> {privacyContent.lastUpdated}
           </p>
         </div>
 
@@ -67,7 +110,7 @@ export default function PrivacyPage() {
               {privacyContent.tldr.title}
             </h2>
             <div className="space-y-6">
-              {privacyContent.tldr.sections.map((section: any, index: number) => (
+              {privacyContent.tldr.sections.map((section, index) => (
                 <div key={index} className="bg-white/80 p-5 rounded-lg shadow-sm">
                   <h3 className="text-xl font-bold mb-3 text-primary">
                     {section.title}
@@ -86,20 +129,20 @@ export default function PrivacyPage() {
                 className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-full font-bold text-lg shadow-lg hover:bg-primary/90 transition-all hover:scale-105"
               >
                 <Mail size={24} />
-                <span>צור קשר</span>
+                <span>{t('contactButton')}</span>
               </button>
             </div>
 
             {/* Separator */}
             <div className="mt-10 mb-6 border-t-2 border-gray-300"></div>
             <p className="text-center text-gray-600 font-semibold text-lg">
-              מדיניות הפרטיות המלאה ←
+              {t('fullPolicy')}
             </p>
           </div>
         )}
 
         {/* Main Sections */}
-        {privacyContent.sections.map((section: any) => (
+        {privacyContent.sections.map((section) => (
           <div key={section.id}>
             <h2 className="text-3xl font-bold mt-12 mb-6">{section.title}</h2>
 
@@ -117,8 +160,8 @@ export default function PrivacyPage() {
 
             {/* Direct list (for sections without subsections) */}
             {section.list && (
-              <ul className="list-disc mr-8 mb-6 space-y-2 text-gray-700">
-                {section.list.map((item: any, idx: number) => (
+              <ul className="list-disc ms-8 mb-6 space-y-2 text-gray-700">
+                {section.list.map((item, idx) => (
                   <li key={idx}>{renderListItem(item)}</li>
                 ))}
               </ul>
@@ -126,7 +169,7 @@ export default function PrivacyPage() {
 
             {/* Note box */}
             {section.note && (
-              <div className="bg-gray-100 border-r-4 border-primary p-6 rounded-lg mb-8">
+              <div className="bg-gray-100 border-s-4 border-primary p-6 rounded-lg mb-8">
                 <p>
                   <strong>{section.note.label}</strong> {renderText(section.note.text)}
                 </p>
@@ -135,7 +178,7 @@ export default function PrivacyPage() {
 
             {/* Warning box */}
             {section.warning && (
-              <div className="bg-gray-100 border-r-4 border-primary p-6 rounded-lg mb-8">
+              <div className="bg-gray-100 border-s-4 border-primary p-6 rounded-lg mb-8">
                 <p>
                   <strong>{section.warning}</strong>
                 </p>
@@ -143,7 +186,7 @@ export default function PrivacyPage() {
             )}
 
             {/* Subsections */}
-            {section.subsections?.map((subsection: any, idx: number) => (
+            {section.subsections?.map((subsection, idx) => (
               <div key={idx}>
                 <h3 className="text-2xl font-semibold mt-8 mb-4">{subsection.title}</h3>
                 {subsection.content && (
@@ -152,15 +195,15 @@ export default function PrivacyPage() {
                   </p>
                 )}
                 {subsection.list && (
-                  <ul className="list-disc mr-8 mb-6 space-y-2 text-gray-700">
-                    {subsection.list.map((item: any, listIdx: number) => (
+                  <ul className="list-disc ms-8 mb-6 space-y-2 text-gray-700">
+                    {subsection.list.map((item, listIdx) => (
                       <li key={listIdx}>{renderListItem(item)}</li>
                     ))}
                   </ul>
                 )}
                 {subsection.warnings && (
-                  <div className="bg-yellow-50 border-r-4 border-yellow-500 p-6 rounded-lg mb-6 space-y-3">
-                    {subsection.warnings.map((warning: string, wIdx: number) => (
+                  <div className="bg-yellow-50 border-s-4 border-yellow-500 p-6 rounded-lg mb-6 space-y-3">
+                    {subsection.warnings.map((warning, wIdx) => (
                       <p key={wIdx} className="text-gray-800">
                         <strong className="text-yellow-700">⚠️ {warning}</strong>
                       </p>
@@ -168,7 +211,7 @@ export default function PrivacyPage() {
                   </div>
                 )}
                 {subsection.note && (
-                  <div className="bg-gray-100 border-r-4 border-primary p-6 rounded-lg mb-8">
+                  <div className="bg-gray-100 border-s-4 border-primary p-6 rounded-lg mb-8">
                     <p>
                       <strong>{subsection.note.label}</strong> {renderText(subsection.note.text)}
                     </p>
@@ -179,8 +222,8 @@ export default function PrivacyPage() {
 
             {/* Third party services */}
             {section.services && (
-              <ul className="list-disc mr-8 mb-6 space-y-3 text-gray-700">
-                {section.services.map((service: string, idx: number) => (
+              <ul className="list-disc ms-8 mb-6 space-y-3 text-gray-700">
+                {section.services.map((service, idx) => (
                   <li key={idx}>{renderText(service)}</li>
                 ))}
               </ul>
@@ -188,13 +231,13 @@ export default function PrivacyPage() {
 
             {/* Contact section - show contact info with button */}
             {section.id === 'contact' && section.contactInfo && (
-              <div className="bg-gradient-to-br from-primary/10 to-secondary/10 border-r-4 border-primary p-8 rounded-xl mb-8">
+              <div className="bg-gradient-to-br from-primary/10 to-secondary/10 border-s-4 border-primary p-8 rounded-xl mb-8">
                 <div className="space-y-3 mb-6">
                   <p className="text-lg">
-                    <strong>שם:</strong> {section.contactInfo.name}
+                    <strong>{t('contactNameLabel')}</strong> {section.contactInfo.name}
                   </p>
                   <p className="text-lg">
-                    <strong>מוסד:</strong> {section.contactInfo.institution}
+                    <strong>{t('contactInstitutionLabel')}</strong> {section.contactInfo.institution}
                   </p>
                 </div>
                 <div className="text-center">
@@ -203,7 +246,7 @@ export default function PrivacyPage() {
                     className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-full font-bold text-lg shadow-lg hover:bg-primary/90 transition-all hover:scale-105"
                   >
                     <Mail size={24} />
-                    <span>צור קשר</span>
+                    <span>{t('contactButton')}</span>
                   </button>
                 </div>
               </div>

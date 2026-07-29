@@ -63,5 +63,9 @@
     "location": "Location",
     "mapTitle": "Location map",
     "openInMap": "Can't see the map? Open in OpenStreetMap"
+  },
+  "topMemes": {
+    "title": "Top Memes",
+    "subtitle": "The memes that got the most hearts this month"
   }
 }

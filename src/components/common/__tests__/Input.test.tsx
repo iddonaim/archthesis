@@ -63,8 +63,11 @@ describe('Input', () => {
     expect(passwordInput).toBeInTheDocument()
   })
 
-  it('applies RTL text direction', () => {
+  it('aligns text to the reading direction rather than a fixed side', () => {
     render(<Input />)
-    expect(screen.getByRole('textbox')).toHaveClass('text-right')
+    // `text-start` resolves to right in Hebrew and left in English; a pinned
+    // `text-right` would leave English inputs right-aligned.
+    expect(screen.getByRole('textbox')).toHaveClass('text-start')
+    expect(screen.getByRole('textbox')).not.toHaveClass('text-right')
   })
 })

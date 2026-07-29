@@ -63,5 +63,9 @@
     "location": "מיקום",
     "mapTitle": "מפת מיקום",
     "openInMap": "לא רואה את המפה? פתח ב-OpenStreetMap"
+  },
+  "topMemes": {
+    "title": "הגיחוכים המובילים",
+    "subtitle": "הגיחוכים שקיבלו הכי הרבה לבבות החודש"
   }
 }

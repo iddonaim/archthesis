@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { FirebaseError } from 'firebase/app'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
@@ -26,6 +27,7 @@ export function usePublishMeme() {
     description
   } = useEditorStore()
   const { scene, clearSelection } = useSceneStore()
+  const { t } = useTranslation('editor')
 
   const publishMeme = async (
     stageRef: React.RefObject<Konva.Stage>
@@ -33,7 +35,7 @@ export function usePublishMeme() {
     setIsPublishing(true)
 
     // Show loading toast
-    const toastId = toast.loading('מפרסם גיחוך...')
+    const toastId = toast.loading(t('publish.loading'))
 
     try {
       // 0. Validate against the firestore.rules limits BEFORE exporting or
@@ -52,9 +54,10 @@ export function usePublishMeme() {
         tags: selectedTags
       })
       if (validationError) {
+        const message = t(`publish.validation.${validationError.key}`, validationError.values)
         setIsPublishing(false)
-        toast.error(validationError, { id: toastId })
-        return { success: false, error: validationError }
+        toast.error(message, { id: toastId })
+        return { success: false, error: message }
       }
 
       // 1. Deselect all elements to avoid rendering selection boxes
@@ -155,7 +158,7 @@ export function usePublishMeme() {
       setIsPublishing(false)
 
       // Show success toast
-      toast.success('הגיחוך פורסם בהצלחה! 🎉', { id: toastId })
+      toast.success(t('publish.success'), { id: toastId })
 
       return {
         success: true,
@@ -166,14 +169,14 @@ export function usePublishMeme() {
       console.error('Error publishing meme:', error)
       setIsPublishing(false)
 
-      // Show error toast — translate known Firebase denials into actionable
-      // Hebrew instead of surfacing the raw English SDK message.
-      let errorMessage = error instanceof Error ? error.message : 'שגיאה בפרסום הגיחוך'
+      // Show error toast — turn known Firebase denials into actionable
+      // wording instead of surfacing the raw English SDK message.
+      let errorMessage = error instanceof Error ? error.message : t('publish.genericError')
       if (error instanceof FirebaseError) {
         if (error.code === 'permission-denied' || error.code === 'storage/unauthorized') {
-          errorMessage = 'הפרסום נדחה על ידי השרת — ייתכן שהתוכן חורג מהמגבלות (למשל טקסט ארוך מדי). נסו לקצר ולפרסם שוב.'
+          errorMessage = t('publish.rejected')
         } else if (error.code === 'unavailable' || error.code === 'storage/retry-limit-exceeded') {
-          errorMessage = 'בעיית תקשורת עם השרת — בדקו את החיבור לאינטרנט ונסו שוב.'
+          errorMessage = t('publish.networkError')
         }
       }
       toast.error(errorMessage, { id: toastId })

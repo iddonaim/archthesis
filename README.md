@@ -51,7 +51,7 @@ src/
 ├── stores/          # Zustand stores (memes, editor, scene)
 ├── hooks/           # usePublishMeme, useTagSuggestions
 ├── contexts/        # AuthContext (admin auth)
-├── i18n/            # i18next setup + he/en locale files
+├── i18n/            # i18next setup + he/en locale files (6 namespaces)
 ├── lib/             # Firebase config, templates, cache, utils
 ├── types/           # TypeScript type definitions
 └── App.tsx          # Routing + providers
@@ -117,6 +117,28 @@ Custom Tailwind theme:
 - Primary: `#FF6B6B` (red) · Secondary: `#4ECDC4` (cyan) · Accent: `#FFE66D` (yellow) · Dark: `#2C3E50` (navy)
 - Fonts: Heebo, IBM Plex Sans Hebrew
 - Direction: RTL by default, with an English (LTR) toggle
+
+### Internationalization
+
+The UI is fully bilingual: Hebrew (default, RTL) and English (LTR). Strings
+live in `src/i18n/locales/{he,en}/` across six namespaces — `common`, `home`,
+`gallery`, `editor`, `admin` and `privacy` — and `src/i18n/index.ts` keeps
+`<html lang>` and `<html dir>` in sync with the active language.
+
+Two conventions worth knowing before adding UI:
+
+- **Use logical CSS utilities**, not physical ones: `text-start` over
+  `text-right`, `ms-*`/`me-*` over `ml-*`/`mr-*`, `start-*`/`end-*` over
+  `left-*`/`right-*`. Anything pinned to a physical side stays put when the
+  language flips.
+- **Tag values are canonical Hebrew.** The suggested tags in
+  `src/lib/tagLabels.ts` are stored in Hebrew whatever the UI language, and
+  only their labels are translated (via `useTagLabel`). This keeps one tag
+  vocabulary across languages so the gallery filter and the tag analytics
+  don't fragment. Custom tags a user types are shown exactly as entered.
+
+`src/i18n/__tests__/locales.test.ts` fails the build if the two locales drift
+apart in key structure or interpolation placeholders.
 
 Design direction for the visual-overhaul pass: [docs/design-brief.md](./docs/design-brief.md)
 

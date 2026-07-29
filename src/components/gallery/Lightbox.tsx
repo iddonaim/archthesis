@@ -11,6 +11,8 @@ import Button from '@/components/common/Button'
 import Badge from '@/components/common/Badge'
 import type { Meme } from '@/types/meme'
 import toast from 'react-hot-toast'
+import { dateLocale } from '@/lib/utils'
+import { useTagLabel } from '@/hooks/useTagLabel'
 
 interface LightboxProps {
   meme: Meme
@@ -32,6 +34,7 @@ export default function Lightbox({
   const { likedMemes, toggleLike } = useMemeStore()
   const [isLiking, setIsLiking] = useState(false)
   const [localLikes, setLocalLikes] = useState(meme.likes)
+  const tagLabel = useTagLabel()
 
   const isLiked = likedMemes.includes(meme.id)
 
@@ -136,11 +139,19 @@ export default function Lightbox({
     onClose()
   }
 
-  // Keyboard navigation
+  // Keyboard navigation. Which arrow key means "next" follows the reading
+  // direction: in Hebrew the gallery advances leftwards, in English rightwards.
+  const isRtl = i18n.dir() === 'rtl'
+  const PreviousIcon = isRtl ? ChevronRight : ChevronLeft
+  const NextIcon = isRtl ? ChevronLeft : ChevronRight
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowLeft' && onNext) {
+    const forwardKey = isRtl ? 'ArrowLeft' : 'ArrowRight'
+    const backKey = isRtl ? 'ArrowRight' : 'ArrowLeft'
+
+    if (e.key === forwardKey && onNext) {
       onNext()
-    } else if (e.key === 'ArrowRight' && onPrevious) {
+    } else if (e.key === backKey && onPrevious) {
       onPrevious()
     } else if (e.key === 'Escape') {
       onClose()
@@ -162,7 +173,7 @@ export default function Lightbox({
       }
     }
 
-    const locale = i18n.language === 'he' ? 'he-IL' : 'en-US'
+    const locale = dateLocale(i18n.language)
     if (date && !isNaN(date.getTime())) {
       try {
         return new Intl.DateTimeFormat(locale, {
@@ -238,7 +249,7 @@ export default function Lightbox({
                 {/* Close button */}
                 <button
                   onClick={onClose}
-                  className="absolute top-0 right-0 -mt-12 p-2 text-white hover:text-gray-300 transition-colors z-10"
+                  className="absolute top-0 end-0 -mt-12 p-2 text-white hover:text-gray-300 transition-colors z-10"
                   aria-label={t('lightbox.close')}
                 >
                   <X size={32} />
@@ -248,10 +259,10 @@ export default function Lightbox({
                 {onPrevious && (
                   <button
                     onClick={onPrevious}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 -mr-16 p-3 text-white hover:text-gray-300 transition-colors bg-black/30 rounded-full hover:bg-black/50"
+                    className="absolute start-0 top-1/2 -translate-y-1/2 -ms-16 p-3 text-white hover:text-gray-300 transition-colors bg-black/30 rounded-full hover:bg-black/50"
                     aria-label={t('lightbox.previous')}
                   >
-                    <ChevronRight size={32} />
+                    <PreviousIcon size={32} />
                   </button>
                 )}
 
@@ -259,10 +270,10 @@ export default function Lightbox({
                 {onNext && (
                   <button
                     onClick={onNext}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 -ml-16 p-3 text-white hover:text-gray-300 transition-colors bg-black/30 rounded-full hover:bg-black/50"
+                    className="absolute end-0 top-1/2 -translate-y-1/2 -me-16 p-3 text-white hover:text-gray-300 transition-colors bg-black/30 rounded-full hover:bg-black/50"
                     aria-label={t('lightbox.next')}
                   >
-                    <ChevronLeft size={32} />
+                    <NextIcon size={32} />
                   </button>
                 )}
 
@@ -313,7 +324,7 @@ export default function Lightbox({
                           <div className="flex flex-wrap gap-2">
                             {meme.tags.map((tag) => (
                               <Badge key={tag} variant="secondary">
-                                {tag}
+                                {tagLabel(tag)}
                               </Badge>
                             ))}
                           </div>

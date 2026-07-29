@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, forwardRef, useImperativeHandle } from 'react'
 import { Stage, Layer, Image as KonvaImage, Text, Transformer, Line, Rect, Group } from 'react-konva'
+import { useTranslation } from 'react-i18next'
 import { useEditorStore } from '@/stores/useEditorStore'
 import { useSceneStore } from '@/stores/useSceneStore'
 import { useEditorKeyboard } from '@/hooks/useEditorKeyboard'
@@ -51,6 +52,7 @@ function EditableText({
   const transformerRef = useRef<Konva.Transformer>(null)
   const [isEditing, setIsEditing] = useState(false)
   const hasTriggeredEdit = useRef(false)
+  const { t } = useTranslation('editor')
 
   useEffect(() => {
     if (isSelected && transformerRef.current && textRef.current) {
@@ -139,7 +141,7 @@ function EditableText({
       setIsEditing(false) // React will show text again via visible={!isEditing}
     }
 
-    const PLACEHOLDER_TEXT = 'כתוב כאן...'
+    const PLACEHOLDER_TEXT = t('canvasPlaceholder')
     let userHasTyped = false // Track if user actually typed anything
 
     const handleTextSave = () => {

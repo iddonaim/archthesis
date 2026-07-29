@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import Layout from '@/components/layout/Layout'
 import TemplateSelector from '@/components/editor/TemplateSelector'
 import CanvasEditor, { type CanvasEditorHandle } from '@/components/editor/CanvasEditor'
@@ -71,6 +72,7 @@ export default function CreatePage() {
   const navigate = useNavigate()
   const location = useLocation()
   const { publishMeme, isPublishing } = usePublishMeme()
+  const { t } = useTranslation('editor')
 
   // Check if user has accepted terms on mount
   useEffect(() => {
@@ -176,7 +178,7 @@ export default function CreatePage() {
   const handlePublish = async () => {
     const stage = canvasRef.current?.getStage()
     if (!stage) {
-      alert('אנא המתן עד שהעורך יהיה מוכן')
+      alert(t('publish.notReady'))
       return
     }
 
@@ -189,7 +191,7 @@ export default function CreatePage() {
       })
       setShowSuccessModal(true)
     } else {
-      alert(`שגיאה בפרסום: ${result.error}`)
+      alert(t('publish.error', { error: result.error }))
     }
   }
 
@@ -334,7 +336,7 @@ export default function CreatePage() {
         <div className="flex items-center justify-center min-h-screen">
           <div className="flex flex-col items-center gap-4">
             <Spinner size="lg" />
-            <p className="text-lg text-gray-600">טוען גיחוך...</p>
+            <p className="text-lg text-gray-600">{t('title.loadingMeme')}</p>
           </div>
         </div>
       </Layout>
@@ -347,7 +349,7 @@ export default function CreatePage() {
       <>
         <Layout>
           <div className="container mx-auto px-4 py-4 md:py-8">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-8">בחרו תבנית</h1>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-8">{t('title.chooseTemplate')}</h1>
             <TemplateSelector canvasWidth={canvasDimensions.width} canvasHeight={canvasDimensions.height} />
           </div>
         </Layout>
@@ -368,7 +370,7 @@ export default function CreatePage() {
         {/* Compact single-row toolbar on phones (icons only) so the canvas
             starts above the fold; labels appear from the sm breakpoint up. */}
         <div className="mb-3 md:mb-8 flex flex-row items-center justify-between gap-2 flex-wrap">
-          <h1 className="text-xl md:text-3xl lg:text-4xl font-bold">עורך הגיחוכים</h1>
+          <h1 className="text-xl md:text-3xl lg:text-4xl font-bold">{t('title.editor')}</h1>
           <div className="flex flex-row items-center gap-1.5 sm:gap-2">
             {/* Undo/Redo Controls */}
             <Button
@@ -376,8 +378,8 @@ export default function CreatePage() {
               onClick={undo}
               disabled={past.length === 0}
               className="flex items-center justify-center p-2 min-w-[44px]"
-              title="ביטול פעולה אחרונה"
-              aria-label="ביטול פעולה אחרונה"
+              title={t('toolbar.undo')}
+              aria-label={t('toolbar.undo')}
             >
               <Undo2 size={18} />
             </Button>
@@ -386,8 +388,8 @@ export default function CreatePage() {
               onClick={redo}
               disabled={future.length === 0}
               className="flex items-center justify-center p-2 min-w-[44px]"
-              title="ביצוע שוב של הפעולה"
-              aria-label="ביצוע שוב של הפעולה"
+              title={t('toolbar.redo')}
+              aria-label={t('toolbar.redo')}
             >
               <Redo2 size={18} />
             </Button>
@@ -398,11 +400,11 @@ export default function CreatePage() {
                 variant="secondary"
                 onClick={handleChangeCustomImageClick}
                 className="text-sm md:text-base p-2 min-w-[44px] sm:px-4 flex items-center justify-center gap-2"
-                title="החלף תמונה"
-                aria-label="החלף תמונה"
+                title={t('toolbar.changeImage')}
+                aria-label={t('toolbar.changeImage')}
               >
                 <Upload size={18} />
-                <span className="hidden sm:inline">החלף תמונה</span>
+                <span className="hidden sm:inline">{t('toolbar.changeImage')}</span>
               </Button>
             )}
             {/* Choose Different Template */}
@@ -410,27 +412,27 @@ export default function CreatePage() {
               variant="outline"
               onClick={handleSwitchTemplateClick}
               className="text-sm md:text-base p-2 min-w-[44px] sm:px-4 flex items-center justify-center gap-2"
-              title="בחר תבנית אחרת"
-              aria-label="בחר תבנית אחרת"
+              title={t('toolbar.changeTemplate')}
+              aria-label={t('toolbar.changeTemplate')}
             >
               <LayoutGrid size={18} />
-              <span className="hidden sm:inline">בחר תבנית אחרת</span>
+              <span className="hidden sm:inline">{t('toolbar.changeTemplate')}</span>
             </Button>
             {/* Start Fresh */}
             <Button
               variant="danger"
               onClick={() => {
-                if (confirm('האם אתה בטוח? כל השינויים יימחקו')) {
+                if (confirm(t('toolbar.startOverConfirm'))) {
                   resetEditor()
                   resetScene()
                 }
               }}
               className="text-sm md:text-base p-2 min-w-[44px] sm:px-4 flex items-center justify-center gap-2"
-              title="התחל מחדש"
-              aria-label="התחל מחדש"
+              title={t('toolbar.startOver')}
+              aria-label={t('toolbar.startOver')}
             >
               <RotateCcw size={18} />
-              <span className="hidden sm:inline">התחל מחדש</span>
+              <span className="hidden sm:inline">{t('toolbar.startOver')}</span>
             </Button>
           </div>
         </div>
@@ -446,14 +448,14 @@ export default function CreatePage() {
             if (!file) return
 
             if (!file.type.startsWith('image/')) {
-              alert('נא לבחור קובץ תמונה')
+              alert(t('upload.notAnImage'))
               return
             }
 
             const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
             if (file.size > MAX_FILE_SIZE) {
               const fileSizeMB = (file.size / 1024 / 1024).toFixed(2)
-              alert(`גודל הקובץ (${fileSizeMB}MB) חורג מהמקסימום המותר (20MB).\nנא לבחור תמונה קטנה יותר.`)
+              alert(t('upload.tooLarge', { size: fileSizeMB }))
               return
             }
 
@@ -517,7 +519,7 @@ export default function CreatePage() {
             {/* Drag handle for mobile viewports: tap toggles, drag resizes */}
             <div
               role="button"
-              aria-label={isSheetExpanded ? 'הקטן את חלונית הכלים' : 'הגדל את חלונית הכלים'}
+              aria-label={isSheetExpanded ? t('toolbar.collapseSheet') : t('toolbar.expandSheet')}
               tabIndex={0}
               onPointerDown={handleSheetPointerDown}
               onPointerMove={handleSheetPointerMove}
@@ -537,11 +539,11 @@ export default function CreatePage() {
             {/* Tab Headers */}
             <div className="grid grid-cols-5 border-b border-ink/5 flex-shrink-0">
               {[
-                { id: 'text' as EditorTab, icon: Type, label: 'טקסט' },
-                { id: 'emoji' as EditorTab, icon: Smile, label: 'אמוג׳י' },
-                { id: 'sticker' as EditorTab, icon: Sticker, label: 'סטיקרים' },
-                { id: 'location' as EditorTab, icon: MapPin, label: 'מיקום' },
-                { id: 'tags' as EditorTab, icon: Tag, label: 'תגיות' },
+                { id: 'text' as EditorTab, icon: Type, label: t('tabs.text') },
+                { id: 'emoji' as EditorTab, icon: Smile, label: t('tabs.emoji') },
+                { id: 'sticker' as EditorTab, icon: Sticker, label: t('tabs.sticker') },
+                { id: 'location' as EditorTab, icon: MapPin, label: t('tabs.location') },
+                { id: 'tags' as EditorTab, icon: Tag, label: t('tabs.tags') },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -596,7 +598,7 @@ export default function CreatePage() {
                 disabled={isPublishing}
               >
                 <Sparkles className="h-5 w-5" />
-                <span>{isPublishing ? 'מפרסם...' : 'פרסם גיחוך'}</span>
+                <span>{isPublishing ? t('publish.publishing') : t('publish.publish')}</span>
               </Button>
             </div>
           </div>
@@ -615,9 +617,9 @@ export default function CreatePage() {
       )}
 
       {/* Navigation Confirmation Dialog */}
-      <Modal isOpen={showNavigationDialog} onClose={handleCancelNavigation} title="רגע, יש לך גיחוך בעבודה!">
+      <Modal isOpen={showNavigationDialog} onClose={handleCancelNavigation} title={t('dialogs.unsaved.title')}>
         <div className="space-y-4">
-          <p className="text-gray-700">מה תרצה לעשות עם הגיחוך שלך?</p>
+          <p className="text-gray-700">{t('dialogs.unsaved.question')}</p>
           <div className="flex flex-col gap-3">
             <Button
               variant="primary"
@@ -625,81 +627,81 @@ export default function CreatePage() {
               disabled={isPublishing}
               className="w-full"
             >
-              {isPublishing ? 'מפרסם...' : 'פרסם גיחוך'}
+              {isPublishing ? t('publish.publishing') : t('publish.publish')}
             </Button>
             <Button
               variant="danger"
               onClick={handleDiscardAndNavigate}
               className="w-full"
             >
-              מחק והמשך
+              {t('dialogs.unsaved.discard')}
             </Button>
             <Button
               variant="outline"
               onClick={handleCancelNavigation}
               className="w-full"
             >
-              בטל
+              {t('dialogs.unsaved.cancel')}
             </Button>
           </div>
         </div>
       </Modal>
 
       {/* Template Switch Confirmation Dialog */}
-      <Modal isOpen={showTemplateSwitchModal} onClose={() => setShowTemplateSwitchModal(false)} title="החלפת תבנית">
+      <Modal isOpen={showTemplateSwitchModal} onClose={() => setShowTemplateSwitchModal(false)} title={t('dialogs.changeTemplate.title')}>
         <div className="space-y-4">
-          <p className="text-gray-700">מה תרצה לעשות עם העריכות הנוכחיות?</p>
+          <p className="text-gray-700">{t('dialogs.changeTemplate.question')}</p>
           <div className="flex flex-col gap-3">
             <Button
               variant="primary"
               onClick={handleSaveAndSwitchTemplate}
               className="w-full"
             >
-              שמור והחלף תבנית
+              {t('dialogs.changeTemplate.save')}
             </Button>
             <Button
               variant="danger"
               onClick={handleDiscardAndSwitchTemplate}
               className="w-full"
             >
-              התחל מחדש (מחק הכל)
+              {t('dialogs.changeTemplate.startOver')}
             </Button>
             <Button
               variant="outline"
               onClick={() => setShowTemplateSwitchModal(false)}
               className="w-full"
             >
-              ביטול
+              {t('actions.cancel', { ns: 'common' })}
             </Button>
           </div>
         </div>
       </Modal>
 
       {/* Image Upload Confirmation Dialog */}
-      <Modal isOpen={showImageUploadModal} onClose={() => setShowImageUploadModal(false)} title="החלפת תמונה">
+      <Modal isOpen={showImageUploadModal} onClose={() => setShowImageUploadModal(false)} title={t('dialogs.changeImage.title')}>
         <div className="space-y-4">
-          <p className="text-gray-700">מה תרצה לעשות עם העריכות הנוכחיות?</p>
+          <p className="text-gray-700">{t('dialogs.changeImage.question')}</p>
           <div className="flex flex-col gap-3">
             <Button
               variant="primary"
               onClick={handleSaveAndUploadImage}
               className="w-full"
             >
-              שמור והעלה תמונה חדשה
+              {t('dialogs.changeImage.save')}
             </Button>
             <Button
               variant="danger"
               onClick={handleDiscardAndUploadImage}
               className="w-full"
             >
-              התחל מחדש (מחק הכל)
+              {t('dialogs.changeImage.startOver')}
             </Button>
             <Button
               variant="outline"
               onClick={() => setShowImageUploadModal(false)}
               className="w-full"
             >
-              ביטול
+              {t('actions.cancel', { ns: 'common' })}
             </Button>
           </div>
         </div>

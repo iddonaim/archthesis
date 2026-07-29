@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import Layout from '@/components/layout/Layout'
 import { useAuth } from '@/contexts/AuthContext'
 import MemeManagementTable from '@/components/admin/MemeManagementTable'
@@ -16,14 +17,15 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<Tab>('analytics')
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
+  const { t } = useTranslation('admin')
 
   const handleSignOut = async () => {
     try {
       await signOut()
-      toast.success('התנתקת בהצלחה')
+      toast.success(t('dashboard.logoutSuccess'))
       navigate('/')
     } catch (error) {
-      toast.error('שגיאה בהתנתקות')
+      toast.error(t('dashboard.logoutError'))
     }
   }
 
@@ -39,9 +41,9 @@ export default function AdminPage() {
                   <Shield className="w-6 h-6" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-800">פאנל ניהול</h1>
+                  <h1 className="text-2xl font-bold text-gray-800">{t('dashboard.title')}</h1>
                   <p className="text-sm text-gray-600">
-                    מחובר כ: {user?.email} • {APP_VERSION} ({BUILD_DATE})
+                    {t('dashboard.signedInAs', { email: user?.email, version: APP_VERSION, date: BUILD_DATE })}
                   </p>
                 </div>
               </div>
@@ -51,7 +53,7 @@ export default function AdminPage() {
                 className="flex items-center gap-2"
               >
                 <LogOut className="w-4 h-4" />
-                התנתק
+                {t('dashboard.logout')}
               </Button>
             </div>
           </div>
@@ -70,7 +72,7 @@ export default function AdminPage() {
                 }`}
               >
                 <BarChart3 className="w-5 h-5" />
-                סטטיסטיקות
+                {t('dashboard.tabs.analytics')}
               </button>
               <button
                 onClick={() => setActiveTab('memes')}
@@ -81,7 +83,7 @@ export default function AdminPage() {
                 }`}
               >
                 <Image className="w-5 h-5" />
-                ניהול גיחוכים
+                {t('dashboard.tabs.memes')}
               </button>
               <button
                 onClick={() => setActiveTab('messages')}
@@ -92,7 +94,7 @@ export default function AdminPage() {
                 }`}
               >
                 <Mail className="w-5 h-5" />
-                הודעות קשר
+                {t('dashboard.tabs.messages')}
               </button>
             </div>
           </div>

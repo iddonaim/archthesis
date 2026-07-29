@@ -1,0 +1,227 @@
+{
+  "title": {
+    "chooseTemplate": "Choose a Template",
+    "editor": "Meme Editor",
+    "loadingMeme": "Loading meme..."
+  },
+  "defaultText": "Write here...",
+  "canvasPlaceholder": "Write here...",
+  "templates": {
+    "uploadTitle": "Upload Your Own Image",
+    "uploadHint": "Click here to choose an image from your computer",
+    "divider": "Or Choose an Existing Template",
+    "loadError": "Error loading template"
+  },
+  "toolbar": {
+    "undo": "Undo last action",
+    "redo": "Redo action",
+    "changeImage": "Change Image",
+    "changeTemplate": "Choose Different Template",
+    "startOver": "Start Over",
+    "startOverConfirm": "Are you sure? All changes will be deleted",
+    "expandSheet": "Expand the tools panel",
+    "collapseSheet": "Collapse the tools panel"
+  },
+  "tabs": {
+    "text": "Text",
+    "emoji": "Emoji",
+    "sticker": "Stickers",
+    "location": "Location",
+    "tags": "Tags"
+  },
+  "selection": {
+    "text": "Text",
+    "emoji": "Emoji",
+    "sticker": "Sticker",
+    "location": "Location",
+    "duplicate": "Duplicate",
+    "bringToFront": "Bring to front",
+    "sendToBack": "Send to back",
+    "delete": "Delete (Delete)"
+  },
+  "upload": {
+    "notAnImage": "Please select an image file",
+    "tooLarge": "File size ({{size}}MB) exceeds the maximum allowed (20MB).\nPlease choose a smaller image."
+  },
+  "publish": {
+    "publishing": "Publishing...",
+    "publish": "Publish Meme",
+    "notReady": "Please wait until the editor is ready",
+    "error": "Error publishing: {{error}}",
+    "loading": "Publishing meme...",
+    "success": "Meme published successfully! 🎉",
+    "genericError": "Error publishing the meme",
+    "rejected": "The server rejected the publish — the content may exceed the limits (for example, text that is too long). Try shortening it and publishing again.",
+    "networkError": "Trouble reaching the server — check your internet connection and try again.",
+    "validation": {
+      "memeTextTooLong": "The text on the meme is too long ({{count}} characters) — the limit is {{limit}} characters. Try shortening it.",
+      "descriptionTooLong": "The description is too long — the limit is {{limit}} characters.",
+      "usernameTooLong": "The username is too long — the limit is {{limit}} characters.",
+      "tooManyTags": "Too many tags selected — the limit is {{limit}} tags."
+    }
+  },
+  "dialogs": {
+    "unsaved": {
+      "title": "Wait, you have a meme in progress!",
+      "question": "What would you like to do with your meme?",
+      "discard": "Delete and Continue",
+      "cancel": "Cancel"
+    },
+    "changeTemplate": {
+      "title": "Change Template",
+      "question": "What would you like to do with the current edits?",
+      "save": "Save and Change Template",
+      "startOver": "Start Over (Delete All)"
+    },
+    "changeImage": {
+      "title": "Change Image",
+      "question": "What would you like to do with the current edits?",
+      "save": "Save and Upload New Image",
+      "startOver": "Start Over (Delete All)"
+    }
+  },
+  "textPanel": {
+    "descriptionLabel": "Meme Description (Optional)",
+    "descriptionPlaceholder": "Add a description to your meme...",
+    "addText": "Add Text to Canvas",
+    "hint": "Double-click text on the canvas to edit it"
+  },
+  "emojiPanel": {
+    "title": "Emoji",
+    "searchPlaceholder": "Search emoji...",
+    "hint": "Click an emoji to add it to the image"
+  },
+  "colorPanel": {
+    "title": "Colors",
+    "noSelection": "Select text to change colors",
+    "textColor": "Text color:",
+    "outlineColor": "Outline color:",
+    "outlineWidth": "Outline width: {{width}}px",
+    "backgroundColor": "Background color:",
+    "transparent": "Transparent"
+  },
+  "tagsPanel": {
+    "title": "Tags",
+    "selected": "Selected tags ({{count}}/3):",
+    "empty": "No tags selected yet",
+    "common": "Popular tags:",
+    "customPlaceholder": "Custom tag...",
+    "similar": "Similar tags:",
+    "add": "Add Tag",
+    "hint": "Type at least 2 characters for suggestions",
+    "limitReached": "You can add up to 3 tags"
+  },
+  "locationPanel": {
+    "title": "Location and Username",
+    "usernameLabel": "Username (optional)",
+    "usernamePlaceholder": "Enter a username...",
+    "usernameHint": "The name will appear in the gallery below your meme",
+    "sectionTitle": "Location",
+    "locating": "Locating...",
+    "myLocation": "My Location",
+    "searchLabel": "Search Location",
+    "searchPlaceholder": "Type a city, street or place name...",
+    "customLabel": "Custom Location",
+    "customPlaceholder": "Enter any location text...",
+    "customAdd": "Add",
+    "customHint": "Enter free text to display as the location (without GPS coordinates)",
+    "noResults": "No results found",
+    "selected": "Selected Location",
+    "onMeme": "On the meme:",
+    "remove": "Remove location",
+    "showOnImage": "Add location to the image",
+    "showOnImageHint": "The location will appear on the image (you can drag and resize it)",
+    "showInGallery": "Show in gallery",
+    "showInGalleryHint": "The location will appear below the meme in the gallery",
+    "hideFromGallery": "Hide from gallery, for research use only",
+    "hideFromGalleryHint": "The location will only be available in the admin console",
+    "unsupported": "Your browser doesn't support geolocation",
+    "lookupError": "Error locating position",
+    "unavailable": "Cannot get your location"
+  },
+  "stickerPanel": {
+    "title": "Stickers",
+    "myStickers": "My stickers",
+    "mine": "Mine",
+    "processing": "Processing image...",
+    "upload": "Upload an image as a sticker",
+    "uploadHint": "PNG with a transparent background works best",
+    "addToCanvas": "Add to canvas",
+    "personalSticker": "Personal sticker",
+    "removeFromLibrary": "Remove from library",
+    "libraryHint": "Stickers you upload are saved here for next time (up to {{limit}})",
+    "hint": "Click a sticker to add it to the image — you can move, rotate and resize it",
+    "notAnImage": "Please select an image file",
+    "tooLarge": "The image is too large (maximum 10MB)",
+    "loadError": "We couldn't load the image, try another file"
+  },
+  "stickers": {
+    "packs": {
+      "meme": "Memes",
+      "props": "Props",
+      "hebrew": "Hebrew",
+      "tools": "Drafting"
+    },
+    "meme": {
+      "cryingLaughing": "Crying with laughter",
+      "sobbing": "Sobbing",
+      "holdingBackTears": "Holding back tears",
+      "skull": "Skull",
+      "moai": "Moai",
+      "fire": "Fire",
+      "hundred": "Hundred points",
+      "clown": "Clown",
+      "smilingWithTear": "Smiling with a tear",
+      "eyes": "Eyes",
+      "foldedHands": "Folded hands",
+      "cool": "Cool",
+      "nailPolish": "Nail polish",
+      "salute": "Saluting",
+      "nerd": "Nerd",
+      "explodingHead": "Exploding head",
+      "popcorn": "Popcorn",
+      "poop": "Poop",
+      "heartOnFire": "Heart on fire",
+      "steaming": "Steaming with anger"
+    },
+    "props": {
+      "sunglasses": "Sunglasses",
+      "glasses": "Glasses",
+      "crown": "Crown",
+      "topHat": "Top hat",
+      "cap": "Cap",
+      "disguise": "Disguise",
+      "boom": "Boom",
+      "anger": "Anger",
+      "party": "Party popper",
+      "sparkles": "Sparkles",
+      "speechBalloon": "Speech balloon",
+      "trophy": "Trophy"
+    },
+    "hebrew": {
+      "walla": "וואלה",
+      "sababa": "סבבה",
+      "einmatzav": "אין מצב",
+      "dai": "!!די",
+      "haval": "חבל על הזמן",
+      "kapara": "כפרה",
+      "mehamem": "מהמם",
+      "lonormali": "לא נורמלי"
+    },
+    "tools": {
+      "speechBubble": "Speech bubble",
+      "thoughtBubble": "Thought bubble",
+      "approvedStamp": "Approved stamp",
+      "rejectedStamp": "Rejected stamp",
+      "hardHat": "Hard hat",
+      "blueprint": "Blueprint",
+      "setSquare": "Set square",
+      "greekColumn": "Greek column",
+      "crane": "Crane",
+      "wow": "Wow!",
+      "arrow": "Arrow",
+      "crown": "Crown",
+      "sunglasses": "Sunglasses"
+    }
+  }
+}

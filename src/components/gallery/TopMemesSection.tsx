@@ -1,4 +1,5 @@
 import { Trophy } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import MemeCard from './MemeCard'
 import type { Meme } from '@/types/meme'
 
@@ -7,6 +8,8 @@ interface TopMemesSectionProps {
 }
 
 export default function TopMemesSection({ memes }: TopMemesSectionProps) {
+  const { t } = useTranslation('gallery')
+
   // Get top 3 memes by likes
   const topMemes = [...memes]
     .sort((a, b) => b.likes - a.likes)
@@ -24,10 +27,10 @@ export default function TopMemesSection({ memes }: TopMemesSectionProps) {
         </div>
         <div>
           <h2 className="text-3xl font-black text-amber-900">
-            הגיחוכים המובילים
+            {t('topMemes.title')}
           </h2>
           <p className="text-amber-700">
-            הגיחוכים שקיבלו הכי הרבה לבבות החודש
+            {t('topMemes.subtitle')}
           </p>
         </div>
       </div>
@@ -37,17 +40,17 @@ export default function TopMemesSection({ memes }: TopMemesSectionProps) {
           <div key={meme.id} className="relative">
             {/* Medal badge */}
             {index === 0 && (
-              <div className="absolute -top-3 -right-3 z-10 bg-amber-500 text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold shadow-lg">
+              <div className="absolute -top-3 -start-3 z-10 bg-amber-500 text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold shadow-lg">
                 🥇
               </div>
             )}
             {index === 1 && (
-              <div className="absolute -top-3 -right-3 z-10 bg-gray-400 text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold shadow-lg">
+              <div className="absolute -top-3 -start-3 z-10 bg-gray-400 text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold shadow-lg">
                 🥈
               </div>
             )}
             {index === 2 && (
-              <div className="absolute -top-3 -right-3 z-10 bg-amber-700 text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold shadow-lg">
+              <div className="absolute -top-3 -start-3 z-10 bg-amber-700 text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold shadow-lg">
                 🥉
               </div>
             )}

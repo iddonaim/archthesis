@@ -1,4 +1,5 @@
 import { Palette, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useSceneStore } from '@/stores/useSceneStore'
 import type { TextElement } from '@/types/scene'
 
@@ -17,6 +18,7 @@ const PRESET_COLORS = [
 
 export default function ColorPanel() {
   const { scene, updateElement } = useSceneStore()
+  const { t } = useTranslation('editor')
 
   const selectedId = scene.selection[0]
   const selectedTextBox = scene.elements.find(
@@ -26,7 +28,7 @@ export default function ColorPanel() {
   if (!selectedTextBox || !selectedId) {
     return (
       <div className="text-center py-8 text-gray-500 text-sm">
-        בחרו טקסט כדי לשנות צבעים
+        {t('colorPanel.noSelection')}
       </div>
     )
   }
@@ -43,13 +45,13 @@ export default function ColorPanel() {
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-4">
         <Palette size={20} className="text-primary" />
-        <h3 className="font-bold text-lg">צבעים</h3>
+        <h3 className="font-bold text-lg">{t('colorPanel.title')}</h3>
       </div>
 
       {/* Text Color */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          צבע טקסט:
+          {t('colorPanel.textColor')}
         </label>
         <div className="grid grid-cols-5 gap-2 mb-3">
           {PRESET_COLORS.map((color) => (
@@ -77,7 +79,7 @@ export default function ColorPanel() {
       {/* Stroke Color */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          צבע מתאר:
+          {t('colorPanel.outlineColor')}
         </label>
         <div className="grid grid-cols-5 gap-2 mb-3">
           {PRESET_COLORS.map((color) => (
@@ -105,7 +107,7 @@ export default function ColorPanel() {
       {/* Stroke Width */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          עובי מתאר: {selectedTextBox.strokeWidth || 0}px
+          {t('colorPanel.outlineWidth', { width: selectedTextBox.strokeWidth || 0 })}
         </label>
         <input
           type="range"
@@ -122,7 +124,7 @@ export default function ColorPanel() {
       {/* Background Color */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          צבע רקע:
+          {t('colorPanel.backgroundColor')}
         </label>
         <div className="grid grid-cols-6 gap-2 mb-3">
           {/* Transparent option */}
@@ -133,7 +135,7 @@ export default function ColorPanel() {
                 ? 'border-primary bg-gray-50'
                 : 'border-gray-300 hover:border-gray-400 bg-white'
             }`}
-            title="שקוף"
+            title={t('colorPanel.transparent')}
           >
             <X size={16} className="text-gray-500" />
           </button>

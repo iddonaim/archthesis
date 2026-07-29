@@ -44,7 +44,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' }:
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className={`w-full ${sizes[size]} transform overflow-hidden rounded-2xl bg-white p-6 text-right align-middle shadow-xl transition-all`}>
+              <Dialog.Panel className={`w-full ${sizes[size]} transform overflow-hidden rounded-2xl bg-white p-6 text-start align-middle shadow-xl transition-all`}>
                 {title && (
                   <div className="flex items-center justify-between mb-4">
                     <button
