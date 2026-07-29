@@ -13,7 +13,9 @@ export default function FeaturedCarousel() {
   const [memes, setMemes] = useState<Meme[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  // Held as a flag rather than a message: a stored string would freeze the
+  // error in whichever language was active when the fetch failed.
+  const [hasError, setHasError] = useState(false)
   const { t, i18n } = useTranslation('home')
 
   // The carousel arrows are direction-aware: "previous" sits on the reading
@@ -62,13 +64,13 @@ export default function FeaturedCarousel() {
         setIsLoading(false)
       } catch (err) {
         console.error('Error fetching featured memes:', err)
-        setError(t('carousel.error'))
+        setHasError(true)
         setIsLoading(false)
       }
     }
 
     fetchFeaturedMemes()
-  }, [t])
+  }, [])
 
   // Auto-advance carousel every 5 seconds
   useEffect(() => {
@@ -108,11 +110,11 @@ export default function FeaturedCarousel() {
     )
   }
 
-  if (error || memes.length === 0) {
+  if (hasError || memes.length === 0) {
     return (
       <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
         <p className="text-gray-500 mb-4">
-          {error || t('carousel.empty')}
+          {hasError ? t('carousel.error') : t('carousel.empty')}
         </p>
         <Link to="/create">
           <Button variant="primary">{t('carousel.createFirst')}</Button>
