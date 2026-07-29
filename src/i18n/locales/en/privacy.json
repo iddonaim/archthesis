@@ -13,7 +13,7 @@
       "sections": [
         {
           "title": "Nice to Meet You",
-          "content": "I'm Iddo, a fifth-year architecture student. This site is the laboratory of my thesis, part of my final project. The goal is to examine how absurdity, humour and memes can become planning tools."
+          "content": "I'm Iddo, a fifth-year architecture student. This site is the laboratory of my thesis, part of my final project. The goal is to examine how absurdity, humor and memes can become planning tools."
         },
         {
           "title": "Everything Here Is Public, and That's the Whole Point",
@@ -21,7 +21,7 @@
         },
         {
           "title": "Location Is Part of the Story – Use It Wisely",
-          "content": "Please note! If you chose to add a location to the meme, everyone will see it. For the purposes of the research there is no need to share the specific location of your home — the street name, the neighbourhood or the general area is enough."
+          "content": "Please note! If you chose to add a location to the meme, everyone will see it. For the purposes of the research there is no need to share the specific location of your home — the street name, the neighborhood or the general area is enough."
         },
         {
           "title": "Give a Smile",
@@ -51,7 +51,7 @@
       {
         "id": "data-collection",
         "title": "3. Data Collection and Types of Data",
-        "content": "We collect information solely for the purposes of the research and the operation of the site, while adhering to principles of data minimisation:",
+        "content": "We collect information solely for the purposes of the research and the operation of the site, while adhering to principles of data minimization:",
         "subsections": [
           {
             "title": "a. Virtual Works (Memes)",
@@ -62,7 +62,7 @@
             "content": "The site lets you add a location (geo-tagging) to a meme, for the purpose of mapping architectural critique.",
             "warnings": [
               "Please note: if you chose to add a location, it becomes a public part of the work.",
-              "Warning: do not mark the exact location of a private residence, or any location that could reveal your identity or harm your privacy. We recommend marking only at the level of the neighbourhood or the general street."
+              "Warning: do not mark the exact location of a private residence, or any location that could reveal your identity or harm your privacy. We recommend marking only at the level of the neighborhood or the general street."
             ]
           },
           {
@@ -75,7 +75,7 @@
           },
           {
             "title": "d. Technical Data (Automatic)",
-            "content": "We use standard tools to analyse general usage patterns (such as Google Analytics / Firebase) without personal identification (number of visitors, pages viewed, types of interaction)."
+            "content": "We use standard tools to analyze general usage patterns (such as Google Analytics / Firebase) without personal identification (number of visitors, pages viewed, types of interaction)."
           }
         ]
       },
@@ -90,7 +90,7 @@
         ],
         "note": {
           "label": "Data retention period:",
-          "text": "The data will be kept at least until the end of the research (the end of 2026). After that, data may be kept in an academic archive, or in anonymised form for follow-up research."
+          "text": "The data will be kept at least until the end of the research (the end of 2026). After that, data may be kept in an academic archive, or in anonymized form for follow-up research."
         }
       },
       {
@@ -113,8 +113,8 @@
             "text": "You retain the rights to the personal images you upload."
           },
           {
-            "label": "Licence of use:",
-            "text": "By creating a meme and publishing it on the site, you grant the project a non-exclusive, worldwide, royalty-free licence to display the content, to analyse it and to publish it within the academic and exhibition settings described above."
+            "label": "License of use:",
+            "text": "By creating a meme and publishing it on the site, you grant the project a non-exclusive, worldwide, royalty-free license to display the content, to analyze it and to publish it within the academic and exhibition settings described above."
           },
           {
             "label": "Fair use:",
