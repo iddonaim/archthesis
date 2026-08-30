@@ -68,7 +68,70 @@ read rule at `firestore.rules:18`.
 
 ## Layer 3 — Module & flow architecture
 
-*Not yet extracted. Next layer boundary.*
+*The extraction brief scoped the dependency-cruiser requirement to cuboid-studio and
+map-context; the graph below is included anyway for symmetry.* Collapsed to top-level folders
+under `src/`; alias imports (`@/…`) resolve via `tsconfig.app.json:30-32` (exact command under
+**Regenerate**).
+
+```mermaid
+flowchart LR
+
+subgraph 0["src"]
+1["App.tsx"]
+2["__tests__"]
+3["components"]
+4["contexts"]
+5["data"]
+6["hooks"]
+7["i18n"]
+8["index.css"]
+9["lib"]
+A["main.tsx"]
+B["pages"]
+C["stores"]
+D["test"]
+E["types"]
+F["version.ts"]
+G["vite-env.d.ts"]
+end
+1-->3
+1-->4
+1-->B
+2-->B
+2-->D
+2-->9
+3-->9
+3-->4
+3-->F
+3-->6
+3-->C
+3-->5
+3-->D
+3-->7
+4-->9
+6-->9
+6-->C
+9-->7
+A-->1
+A-->7
+A-->8
+B-->3
+B-->4
+B-->F
+B-->6
+B-->9
+B-->C
+B-->D
+C-->E
+C-->9
+D-->4
+D-->7
+```
+
+Reading notes: a conventional layered React app — `main.tsx` → `App.tsx` → `pages` →
+`components`, with `stores` (Zustand) and `lib` (Firebase init, validation) underneath; no
+cycles at folder level. The Firestore write path documented in Layer 2 runs
+`pages`/`components` → `hooks` (`usePublishMeme`) → `lib` (`lib/firebase`).
 
 ---
 
@@ -88,6 +151,11 @@ sed -n '136,156p' src/hooks/usePublishMeme.ts        # memes create shape
 sed -n '35,43p' src/components/common/ContactModal.tsx
 grep -n "match /" firestore.rules                    # all declared collections
 grep -rn "'templates'\|'analytics'" src              # confirm still unused
+
+# Regenerate the Layer 3 module graph (exact command used; no repo installs — npx only):
+npx --yes --package dependency-cruiser@16 --package typescript@5 depcruise \
+  --no-config --ts-config tsconfig.app.json --output-type mermaid \
+  --include-only '^src' --collapse '^src/[^/]+' src
 ```
 
 ## Extracted
