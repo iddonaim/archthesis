@@ -130,8 +130,16 @@ D-->7
 
 Reading notes: a conventional layered React app — `main.tsx` → `App.tsx` → `pages` →
 `components`, with `stores` (Zustand) and `lib` (Firebase init, validation) underneath; no
-cycles at folder level. The Firestore write path documented in Layer 2 runs
-`pages`/`components` → `hooks` (`usePublishMeme`) → `lib` (`lib/firebase`).
+cycles at folder level. The **meme-publication** write path from Layer 2 §2.1 runs
+`pages`/`components` → `hooks` (`usePublishMeme`) → `lib` (`lib/firebase`) — but that hook
+handles publication only. Every other Layer 2 mutation calls Firestore **directly from a
+component** (importing `db` from `lib/firebase`), never passing through `hooks`:
+
+- contact-message creation — `src/components/common/ContactModal.tsx:35`
+- like/unlike increments — `src/components/gallery/MemeCard.tsx:46-48`,
+  `src/components/gallery/Lightbox.tsx:52-54`
+- admin meme hide/show and delete — `src/components/admin/MemeManagementTable.tsx:65-67,86`
+- admin message mark-read and delete — `src/components/admin/ContactMessagesTable.tsx:79-81,69`
 
 ---
 
