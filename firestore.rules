@@ -12,6 +12,35 @@ service cloud.firestore {
         && request.auth.token.admin == true;
     }
 
+    // Research service identity (Cuboid Studio Phase 0 harness + export).
+    // Granted via a Firebase Custom Claim (research: true) set through the
+    // Admin SDK, same mechanism as the admin claim above:
+    //   admin.auth().setCustomUserClaims(uid, { research: true })
+    function isResearch() {
+      return request.auth != null
+        && request.auth.token.research == true;
+    }
+
+    // research_records — Phase 0 baseline dataset (append-only). Owned by
+    // cuboid-studio's research harness; lives here because this file is the
+    // DEPLOYED source of truth (see the Cuboid Studio banner below).
+    // Create-only for the research identity; update/delete denied for
+    // EVERYONE (research and admin included): records are never edited or
+    // deleted, corrections are new records.
+    match /research_records/{recordId} {
+      allow read: if isResearch();
+      allow create: if isResearch();
+      allow update, delete: if false;
+    }
+
+    // research_batches — one manifest per batch (corpus source + raw vs used
+    // counts, matrix, regime hashes). Same append-only regime.
+    match /research_batches/{batchId} {
+      allow read: if isResearch();
+      allow create: if isResearch();
+      allow update, delete: if false;
+    }
+
     // Memes collection
     match /memes/{memeId} {
       // Anyone can read memes
