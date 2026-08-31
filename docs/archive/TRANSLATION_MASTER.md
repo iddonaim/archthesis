@@ -1,3 +1,5 @@
+> HISTORIC (2026-08-30): process record kept deliberately — the 2026-07-27 translation explicitly followed this table (CHANGELOG cites it as the wording reference). Superseded for current strings by `src/i18n/locales/`. Do not cite as current.
+
 # Translation Master Document - Hebrew to English
 **Project:** Archthesis React - Meme Generator
 **Total Strings:** ~680 user-facing text instances

@@ -1,3 +1,5 @@
+> HISTORIC (2026-08-30): process record, not current. One-shot visual-direction brief, purpose served — superseded by the shipped design (CHANGELOG v3.4.0 "bubblegum pop"; the dark/blueprint direction was dropped, and the 4-tab editor it describes is now 6 panels). Do not cite as current.
+
 # archthesis — design direction brief
 
 > A brief for a visual-direction pass on archthesis, a Hebrew-first meme platform with a thesis behind it. Paste this into claude.ai/design to drive the first round of mockups.
