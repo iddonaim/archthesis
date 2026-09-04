@@ -1,3 +1,5 @@
+> DROP CANDIDATE (2026-08-30): docs triage marked this file for deletion. Not deleted here — listed as a delete candidate in the triage PR for the owner's decision. Do not cite.
+
 # Hebrew Source Text - For Translation
 **Project:** Archthesis React - Meme Generator
 **Total Strings:** ~680 user-facing text instances
