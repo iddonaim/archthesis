@@ -1,3 +1,5 @@
+> HISTORIC (2026-08-30): process record, not current. Jan-2026 status snapshot (v3.3.6) — superseded by the root README and CHANGELOG (per the archive README). Do not cite as current.
+
 # Project Status - Hebrew Meme Generator
 
 **Last Updated:** January 7, 2026

@@ -1,3 +1,5 @@
+> DROP CANDIDATE (2026-08-30): docs triage marked this file for deletion. Not deleted here — listed as a delete candidate in the triage PR for the owner's decision. Do not cite.
+
 # Bug Fix: Default Text Appearing in Published Memes
 
 ## Issue
