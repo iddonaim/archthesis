@@ -1,3 +1,5 @@
+> HISTORIC (2026-08-30): process record, not current. Superseded by the CHANGELOG session "Placeholder Text Fix (v3.3.8)". Do not cite as current.
+
 # Bug Fix: Placeholder Text Appearing in Published Memes
 
 **Date**: February 2, 2026

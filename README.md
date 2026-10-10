@@ -140,13 +140,13 @@ Two conventions worth knowing before adding UI:
 `src/i18n/__tests__/locales.test.ts` fails the build if the two locales drift
 apart in key structure or interpolation placeholders.
 
-Design direction for the visual-overhaul pass: [docs/design-brief.md](./docs/design-brief.md)
+Design direction for the visual-overhaul pass (historical — the shipped v3.4.0 design superseded it): [docs/design-brief.md](./docs/design-brief.md)
 
 ## 📚 Documentation
 
 - [CHANGELOG.md](./CHANGELOG.md) — full development history, newest first
 - [docs/FIREBASE_SETUP_GUIDE.md](./docs/FIREBASE_SETUP_GUIDE.md) — Firebase setup & deployment
-- [docs/design-brief.md](./docs/design-brief.md) — visual design direction
+- [docs/design-brief.md](./docs/design-brief.md) — visual design direction (historical; superseded by the shipped design)
 - [docs/REVIEW_2026-07.md](./docs/REVIEW_2026-07.md) — July 2026 repo review & suggestions
 - [docs/archive/](./docs/archive/) — historical session notes (kept for reference, not maintained)
 

@@ -1,3 +1,5 @@
+> HISTORIC (2026-08-30): dated feature announcement, not current documentation. The `?ref=` origin-tracking feature itself is still live in code; for current information start with the root README and CHANGELOG. (Its `ORIGIN_TRACKING.md` links were always dangling — that file never existed.)
+
 # Deployment Summary - Origin Tracking Feature
 
 **Date:** January 2, 2026
